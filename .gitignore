@@ -13,6 +13,7 @@
 /.vscode/*
 !/.vscode/mcp.json
 !/prompt-codex-imania.md
+!/wp-content/plugins/imania-pricing-engine/**
 
 # Ignora backups do All-in-One WP Migration
 /wp-content/plugins/all-in-one-wp-migration/
