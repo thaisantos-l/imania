@@ -9,6 +9,10 @@
 # Mantém apenas a pasta wp-content e tudo dentro dela
 !/wp-content/themes/
 !/wp-content/plugins/
+!/.vscode/
+/.vscode/*
+!/.vscode/mcp.json
+!/prompt-codex-imania.md
 
 # Ignora backups do All-in-One WP Migration
 /wp-content/plugins/all-in-one-wp-migration/
