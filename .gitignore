@@ -7,9 +7,11 @@
 !/.gitignore
 
 # Mantém apenas a pasta wp-content e tudo dentro dela
-!/wp-content/themes
+!/wp-content/themes/
+!/wp-content/plugins/
 
 # Ignora backups do All-in-One WP Migration
-
+/wp-content/plugins/all-in-one-wp-migration/
+/wp-content/plugins/all-in-one-wp-migration-pro/
 /wp-content/ai1wm-backups/
 /wp-content/ai1wm-backups/**
