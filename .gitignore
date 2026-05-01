@@ -1,0 +1,15 @@
+﻿!/wp-content/themes
+
+# Ignora tudo por padrão
+/*
+
+# Mantém este arquivo versionado
+!/.gitignore
+
+# Mantém apenas a pasta wp-content e tudo dentro dela
+!/wp-content/themes
+
+# Ignora backups do All-in-One WP Migration
+
+/wp-content/ai1wm-backups/
+/wp-content/ai1wm-backups/**
