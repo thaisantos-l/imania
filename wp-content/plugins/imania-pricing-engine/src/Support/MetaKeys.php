@@ -16,6 +16,11 @@ final class MetaKeys {
 	const PRICE_PJ               = '_imania_price_pj';
 	const DISCOUNT_PF            = '_imania_discount_pf';
 	const DISCOUNT_PJ            = '_imania_discount_pj';
+	const CATEGORY_PRICING_MODE  = '_imania_category_pricing_mode';
+	const CATEGORY_PRICE_PF      = '_imania_category_price_pf';
+	const CATEGORY_PRICE_PJ      = '_imania_category_price_pj';
+	const CATEGORY_DISCOUNT_PF   = '_imania_category_discount_pf';
+	const CATEGORY_DISCOUNT_PJ   = '_imania_category_discount_pj';
 
 	const OPTION_GROUP           = 'imania_pricing_engine_settings';
 	const OPTION_FALLBACK_MODE   = 'imania_fallback_mode';

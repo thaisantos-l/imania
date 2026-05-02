@@ -1,18 +1,29 @@
-﻿!/wp-content/themes
-
 # Ignora tudo por padrão
 /*
 
 # Mantém este arquivo versionado
 !/.gitignore
 
-# Mantém apenas a pasta wp-content e tudo dentro dela
-!/wp-content/themes/
-!/wp-content/plugins/
+# Mantém arquivos de configuração do projeto
 !/.vscode/
 /.vscode/*
 !/.vscode/mcp.json
 !/prompt-codex-imania.md
+
+# Reabre wp-content, mas ignora tudo dentro por padrão
+!/wp-content/
+/wp-content/*
+
+# Mantém temas
+!/wp-content/themes/
+!/wp-content/themes/**
+
+# Reabre plugins, mas ignora tudo por padrão
+!/wp-content/plugins/
+/wp-content/plugins/*
+
+# Mantém apenas o plugin custom
+!/wp-content/plugins/imania-pricing-engine/
 !/wp-content/plugins/imania-pricing-engine/**
 
 # Ignora backups do All-in-One WP Migration
