@@ -1,0 +1,58 @@
+/* Card de produto reutilizável. */
+.imania-product-card {
+	background: #fff;
+	border: 1px solid rgba(18, 18, 18, 0.07);
+	border-radius: var(--im-radius-lg);
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	overflow: hidden;
+	transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.imania-product-card:hover {
+	box-shadow: var(--im-shadow-card);
+	transform: translateY(-2px);
+}
+
+.imania-product-card__thumb {
+	align-items: center;
+	background: var(--im-color-surface);
+	display: flex;
+	height: 220px;
+	justify-content: center;
+	padding: var(--im-space-3);
+}
+
+.imania-product-card__thumb img {
+	height: 100%;
+	object-fit: contain;
+	width: 100%;
+}
+
+.imania-product-card__content {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	padding: var(--im-space-3);
+}
+
+.imania-product-card__cat {
+	color: var(--im-color-primary);
+	font-size: 0.74rem;
+	font-weight: 800;
+	letter-spacing: 0.07em;
+	margin: 0 0 4px;
+	text-transform: uppercase;
+}
+
+.imania-product-card__title {
+	font-size: 1rem;
+	font-weight: 700;
+	line-height: 1.35;
+	margin: 0;
+}
+
+.imania-product-card .imania-btn {
+	margin-top: auto;
+}
