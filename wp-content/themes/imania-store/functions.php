@@ -138,10 +138,14 @@ add_action( 'widgets_init', 'imania_store_widgets_init' );
  * Enqueue scripts and styles.
  */
 function imania_store_scripts() {
+	wp_enqueue_style( 'imania-store-fonts', 'https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600;700;800&display=swap', array(), null );
+	wp_enqueue_style( 'imania-store-bootstrap-grid', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap-grid.min.css', array(), '5.3.3' );
 	wp_enqueue_style( 'imania-store-style', get_stylesheet_uri(), array(), _S_VERSION );
+	wp_enqueue_style( 'imania-store-theme', get_template_directory_uri() . '/assets/css/imania-theme.css', array( 'imania-store-style', 'imania-store-bootstrap-grid' ), _S_VERSION );
 	wp_style_add_data( 'imania-store-style', 'rtl', 'replace' );
 
 	wp_enqueue_script( 'imania-store-navigation', get_template_directory_uri() . '/js/navigation.js', array(), _S_VERSION, true );
+	wp_enqueue_script( 'imania-store-theme', get_template_directory_uri() . '/assets/js/imania-theme.js', array(), _S_VERSION, true );
 
 	if ( is_singular() && comments_open() && get_option( 'thread_comments' ) ) {
 		wp_enqueue_script( 'comment-reply' );
@@ -163,6 +167,11 @@ require get_template_directory() . '/inc/template-tags.php';
  * Functions which enhance the theme by hooking into WordPress.
  */
 require get_template_directory() . '/inc/template-functions.php';
+
+/**
+ * Home helpers.
+ */
+require get_template_directory() . '/inc/home.php';
 
 /**
  * Customizer additions.
