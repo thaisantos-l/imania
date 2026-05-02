@@ -1,0 +1,127 @@
+/* Layout e componentes da Home. */
+.imania-home {
+	background: linear-gradient(180deg, #fff 0%, #fbfbfb 100%);
+}
+
+.imania-hero {
+	padding: var(--im-space-6) 0 var(--im-space-5);
+}
+
+.imania-hero__content {
+	max-width: 560px;
+}
+
+.imania-hero__title {
+	font-size: clamp(2rem, 5vw, 3.6rem);
+	font-weight: 800;
+	line-height: 1.05;
+	margin: 0;
+}
+
+.imania-hero__subtitle {
+	color: var(--im-color-muted);
+	font-size: 1.02rem;
+	margin: 14px 0 24px;
+}
+
+.imania-hero__actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	margin-bottom: 20px;
+}
+
+.imania-hero__stats {
+	display: grid;
+	gap: 10px;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.imania-stat {
+	background: var(--im-color-surface);
+	border-radius: var(--im-radius-md);
+	padding: 12px;
+}
+
+.imania-stat strong {
+	display: block;
+	font-size: 1.3rem;
+	font-weight: 800;
+	line-height: 1;
+}
+
+.imania-stat span {
+	color: var(--im-color-muted);
+	font-size: 0.82rem;
+}
+
+.imania-hero-product {
+	background: var(--im-color-surface);
+	border-radius: var(--im-radius-lg);
+	box-shadow: var(--im-shadow-card);
+	display: grid;
+	gap: 18px;
+	padding: var(--im-space-4);
+}
+
+.imania-hero-product__image {
+	background: #fff;
+	border-radius: var(--im-radius-md);
+	display: block;
+	overflow: hidden;
+	padding: 14px;
+}
+
+.imania-hero-product__image img {
+	display: block;
+	margin: 0 auto;
+	max-height: 280px;
+	object-fit: contain;
+}
+
+.imania-hero-product__label {
+	color: var(--im-color-primary);
+	font-size: 0.8rem;
+	font-weight: 800;
+	letter-spacing: 0.06em;
+	margin: 0;
+	text-transform: uppercase;
+}
+
+.imania-hero-product h3 {
+	font-size: 1.3rem;
+	font-weight: 700;
+	margin: 6px 0 0;
+}
+
+.imania-categories {
+	padding: var(--im-space-5) 0;
+}
+
+.imania-chip {
+	align-items: center;
+	background: #fff;
+	border: 1px solid rgba(18, 18, 18, 0.08);
+	border-radius: 999px;
+	display: flex;
+	gap: 8px;
+	justify-content: space-between;
+	padding: 11px 14px;
+	transition: all 0.2s ease;
+}
+
+.imania-chip:hover {
+	border-color: var(--im-color-primary);
+	color: var(--im-color-primary);
+}
+
+.imania-chip span {
+	font-size: 0.9rem;
+	font-weight: 700;
+}
+
+.imania-chip small {
+	color: var(--im-color-muted);
+	font-size: 0.75rem;
+	font-weight: 600;
+}

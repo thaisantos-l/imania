@@ -1,0 +1,200 @@
+/* Arquivo principal compilável: centraliza base + módulos do tema. */
+@import url('./_header-footer');
+@import url('./_home');
+@import url('./_product-section.scss');
+@import url('./_product-card.scss');
+:root {
+	--im-color-bg: #ffffff;
+	--im-color-surface: #f5f5f5;
+	--im-color-text: #121212;
+	--im-color-muted: #5f5f5f;
+	--im-color-primary: orange;
+	--im-color-primary-dark: #0087CB;
+	--im-color-accent: #ffcc29;
+	--im-color-danger: #ff0000;
+	--im-radius-sm: 8px;
+	--im-radius-md: 14px;
+	--im-radius-lg: 22px;
+	--im-shadow-card: 0 12px 30px rgba(18, 18, 18, 0.09);
+	--im-space-1: 8px;
+	--im-space-2: 12px;
+	--im-space-3: 16px;
+	--im-space-4: 20px;
+	--im-space-5: 28px;
+	--im-space-6: 40px;
+	--im-space-7: 56px;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap');
+
+html,
+body {
+	background: var(--im-color-bg);
+	color: var(--im-color-text);
+	font-family: "Raleway", sans-serif;
+}
+
+body {
+	font-size: 16px;
+	line-height: 1.5;
+}
+
+a {
+	color: inherit;
+	text-decoration: none;
+}
+
+img {
+	height: auto;
+	max-width: 100%;
+}
+
+.site-main {
+	padding-bottom: var(--im-space-7);
+}
+
+.imania-btn {
+	align-items: center;
+	border: 0;
+	border-radius: 10px;
+	display: inline-flex;
+	font-size: 0.95rem;
+	font-weight: 700;
+	gap: 8px;
+	justify-content: center;
+	line-height: 1;
+	padding: 13px 20px;
+	transition: all 0.2s ease;
+}
+
+.imania-btn:focus-visible {
+	outline: 2px solid var(--im-color-primary);
+	outline-offset: 2px;
+}
+
+.imania-btn--primary {
+	background: var(--im-color-primary);
+	color: #fff;
+}
+
+.imania-btn--primary:hover {
+	background: var(--im-color-primary-dark);
+	color: #fff;
+}
+
+.imania-btn--outline {
+	background: #fff;
+	border: 1px solid var(--im-color-primary);
+	color: var(--im-color-primary);
+}
+
+.imania-btn--outline:hover {
+	background: var(--im-color-primary);
+	color: #fff;
+}
+
+.imania-btn--ghost {
+	background: transparent;
+	color: var(--im-color-primary);
+	font-weight: 700;
+	padding: 8px 0;
+}
+
+.imania-btn--sm {
+	font-size: 0.84rem;
+	padding: 10px 14px;
+}
+
+.imania-kicker {
+	color: var(--im-color-primary);
+	font-size: 0.85rem;
+	font-weight: 800;
+	letter-spacing: 0.08em;
+	margin: 0 0 10px;
+	text-transform: uppercase;
+}
+
+.imania-price {
+	color: var(--im-color-text);
+	font-size: 1rem;
+	font-weight: 700;
+	margin: 10px 0 14px;
+}
+
+.imania-price del {
+	color: var(--im-color-muted);
+	font-weight: 500;
+}
+
+.imania-price ins {
+	color: var(--im-color-primary);
+	text-decoration: none;
+}
+
+.imania-login-to-price {
+	color: var(--im-color-primary);
+	font-weight: 700;
+}
+
+.imania-empty-state {
+	background: var(--im-color-surface);
+	border-radius: var(--im-radius-md);
+	padding: var(--im-space-4);
+	text-align: center;
+}
+
+.imania-empty-state p {
+	color: var(--im-color-muted);
+	margin: 0;
+}
+
+@import '_header-footer';
+@import '_home';
+@import '_product-section';
+@import '_product-card';
+
+@media (max-width: 991.98px) {
+	.imania-navigation {
+		display: none;
+	}
+
+	.imania-navigation.is-open {
+		display: block;
+	}
+
+	.imania-navigation .menu {
+		background: #fff;
+		border: 1px solid rgba(0, 0, 0, 0.08);
+		border-radius: var(--im-radius-md);
+		flex-direction: column;
+		padding: var(--im-space-3);
+	}
+
+	.imania-hero-product__image img {
+		max-height: 220px;
+	}
+}
+
+@media (max-width: 767.98px) {
+	.imania-hero {
+		padding-top: var(--im-space-5);
+	}
+
+	.imania-hero__actions .imania-btn {
+		width: 100%;
+	}
+
+	.imania-hero__stats {
+		grid-template-columns: 1fr;
+	}
+
+	.imania-product-card__thumb {
+		height: 170px;
+	}
+
+	.imania-section-head {
+		align-items: flex-start;
+		flex-direction: column;
+		gap: 6px;
+	}
+}
