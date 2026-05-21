@@ -2,8 +2,6 @@
 
 namespace Imania\PricingEngine\Infrastructure\Woo;
 
-use Imania\PricingEngine\Domain\Customer\CustomerTypeResolver;
-use Imania\PricingEngine\Domain\Pricing\PriceCalculator;
 use Imania\PricingEngine\Support\MetaKeys;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -12,29 +10,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 final class PriceHooks {
 
-	/**
-	 * @var CustomerTypeResolver
-	 */
-	private $customer_type_resolver;
-
-	/**
-	 * @var PriceCalculator
-	 */
-	private $price_calculator;
-
-	public function __construct( CustomerTypeResolver $customer_type_resolver, PriceCalculator $price_calculator ) {
-		$this->customer_type_resolver = $customer_type_resolver;
-		$this->price_calculator       = $price_calculator;
-	}
-
 	public function register() {
 		add_filter( 'woocommerce_get_price_html', array( $this, 'hide_price_for_guests' ), 99, 2 );
-
-		add_filter( 'woocommerce_product_get_price', array( $this, 'apply_customer_price' ), 99, 2 );
-		add_filter( 'woocommerce_product_variation_get_price', array( $this, 'apply_customer_price' ), 99, 2 );
-
-		add_filter( 'woocommerce_variation_prices_price', array( $this, 'apply_variation_prices' ), 99, 3 );
-		add_filter( 'woocommerce_variation_prices_regular_price', array( $this, 'apply_variation_prices' ), 99, 3 );
 	}
 
 	/**
@@ -65,53 +42,6 @@ final class PriceHooks {
 			esc_url( $target_url ),
 			esc_html__( 'Faca login para ver o preco.', 'imania-pricing-engine' )
 		);
-	}
-
-	/**
-	 * @param string|float $price Product price.
-	 * @param \WC_Product  $product Product object.
-	 *
-	 * @return string|float
-	 */
-	public function apply_customer_price( $price, $product ) {
-		if ( ! is_user_logged_in() ) {
-			return $price;
-		}
-
-		if ( '' === $price || null === $price ) {
-			return $price;
-		}
-
-		$customer_type = $this->customer_type_resolver->resolve();
-		if ( ! $this->customer_type_resolver->is_valid( $customer_type ) ) {
-			return $price;
-		}
-
-		if ( ! $product instanceof \WC_Product ) {
-			return $price;
-		}
-
-		return $this->price_calculator->calculate_price( $product, $customer_type, $price );
-	}
-
-	/**
-	 * @param string|float $price Variation price.
-	 * @param \WC_Product_Variation $variation Variation product.
-	 * @param \WC_Product_Variable  $product Parent variable product.
-	 *
-	 * @return string|float
-	 */
-	public function apply_variation_prices( $price, $variation, $product ) {
-		if ( ! is_user_logged_in() ) {
-			return $price;
-		}
-
-		$customer_type = $this->customer_type_resolver->resolve();
-		if ( ! $this->customer_type_resolver->is_valid( $customer_type ) ) {
-			return $price;
-		}
-
-		return $this->price_calculator->calculate_price( $variation, $customer_type, $price );
 	}
 
 	/**
