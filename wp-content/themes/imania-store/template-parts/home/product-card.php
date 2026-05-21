@@ -16,6 +16,8 @@ $permalink = get_permalink( $product->get_id() );
 $terms     = get_the_terms( $product->get_id(), 'product_cat' );
 $cat_name  = ! is_wp_error( $terms ) && ! empty( $terms ) ? $terms[0]->name : '';
 $name      = $product->get_name();
+$product_id = $product->get_id();
+$is_favorited = imania_store_is_in_wishlist( $product_id );
 
 $gallery_ids = $product->get_gallery_image_ids();
 $media_count = 1 + count( $gallery_ids );
@@ -39,9 +41,9 @@ if ( 'showcase' === $variant ) :
 			<div class="imania-price"><?php echo wp_kses_post( $product->get_price_html() ); ?></div>
 		</div>
 		<div class="imania-product-card__actions">
-			<button class="imania-product-card__wishlist" type="button" aria-label="<?php esc_attr_e( 'Adicionar aos favoritos', 'imania-store' ); ?>">
+			<button class="imania-product-card__wishlist<?php echo $is_favorited ? ' is-active' : ''; ?>" type="button" data-imania-wishlist-toggle data-product-id="<?php echo esc_attr( $product_id ); ?>" aria-pressed="<?php echo $is_favorited ? 'true' : 'false'; ?>" aria-label="<?php esc_attr_e( 'Adicionar aos favoritos', 'imania-store' ); ?>">
 				<svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
-					<path d="M12 20.4s-7-4.4-9.3-8.2C.8 8.9 2.2 5 6 5c2.4 0 3.7 1.5 4 2 .3-.5 1.6-2 4-2 3.8 0 5.2 3.9 3.3 7.2-2.3 3.8-9.3 8.2-9.3 8.2Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>
+					<path d="M12 20.4s-7-4.4-9.3-8.2C.8 8.9 2.2 5 6 5c2.4 0 3.7 1.5 4 2 .3-.5 1.6-2 4-2 3.8 0 5.2 3.9 3.3 7.2-2.3 3.8-9.3 8.2-9.3 8.2Z" stroke="currentColor" fill="none" stroke-width="1.4" stroke-linejoin="round"/>
 				</svg>
 			</button>
 			<a class="imania-product-card__buy" href="<?php echo esc_url( $permalink ); ?>"><?php esc_html_e( 'COMPRAR', 'imania-store' ); ?></a>
@@ -63,6 +65,13 @@ endif;
 			<a href="<?php echo esc_url( $permalink ); ?>"><?php echo esc_html( $product->get_name() ); ?></a>
 		</h3>
 		<div class="imania-price"><?php echo wp_kses_post( $product->get_price_html() ); ?></div>
-		<a class="imania-btn imania-btn--outline imania-btn--sm" href="<?php echo esc_url( $permalink ); ?>"><?php esc_html_e( 'Ver produto', 'imania-store' ); ?></a>
+		<div class="imania-product-card__footer-actions">
+			<button class="imania-product-card__wishlist imania-product-card__wishlist--compact<?php echo $is_favorited ? ' is-active' : ''; ?>" type="button" data-imania-wishlist-toggle data-product-id="<?php echo esc_attr( $product_id ); ?>" aria-pressed="<?php echo $is_favorited ? 'true' : 'false'; ?>" aria-label="<?php esc_attr_e( 'Adicionar aos favoritos', 'imania-store' ); ?>">
+				<svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+					<path d="M12 20.4s-7-4.4-9.3-8.2C.8 8.9 2.2 5 6 5c2.4 0 3.7 1.5 4 2 .3-.5 1.6-2 4-2 3.8 0 5.2 3.9 3.3 7.2-2.3 3.8-9.3 8.2-9.3 8.2Z" stroke="currentColor" fill="none" stroke-width="1.4" stroke-linejoin="round"/>
+				</svg>
+			</button>
+			<a class="imania-btn imania-btn--outline imania-btn--sm" href="<?php echo esc_url( $permalink ); ?>"><?php esc_html_e( 'Ver produto', 'imania-store' ); ?></a>
+		</div>
 	</div>
 </article>

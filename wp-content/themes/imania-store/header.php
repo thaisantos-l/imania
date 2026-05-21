@@ -72,16 +72,28 @@
 					$my_account_url = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'myaccount' ) : wp_login_url();
 					$cart_url       = function_exists( 'wc_get_cart_url' ) ? wc_get_cart_url() : home_url( '/' );
 					$search_url     = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'shop' ) : home_url( '/' );
-					$favorites_url  = home_url( '/' );
+					$favorites_url  = function_exists( 'wc_get_account_endpoint_url' ) ? wc_get_account_endpoint_url( 'wishlist' ) : home_url( '/' );
 					$header_icon_uri = trailingslashit( get_template_directory_uri() ) . 'assets/img/header/';
 					?>
 					<div class="imania-header-actions">
 						<a href="<?php echo esc_url( $search_url ); ?>" aria-label="<?php esc_attr_e( 'Buscar produtos', 'imania-store' ); ?>">
 							<img src="<?php echo esc_url( $header_icon_uri . 'busca.png' ); ?>" alt="" aria-hidden="true" />
 						</a>
-						<a href="<?php echo esc_url( $favorites_url ); ?>" aria-label="<?php esc_attr_e( 'Favoritos', 'imania-store' ); ?>">
-							<img src="<?php echo esc_url( $header_icon_uri . 'favorito.png' ); ?>" alt="" aria-hidden="true" />
-						</a>
+						<?php if ( is_user_logged_in() ) : ?>
+							<a href="<?php echo esc_url( $favorites_url ); ?>" aria-label="<?php esc_attr_e( 'Favoritos', 'imania-store' ); ?>">
+								<img src="<?php echo esc_url( $header_icon_uri . 'favorito.png' ); ?>" alt="" aria-hidden="true" />
+								<?php
+								$wishlist_count = count( imania_store_get_wishlist_ids() );
+								if ( $wishlist_count > 0 ) :
+									?>
+									<span class="imania-cart-count"><?php echo esc_html( $wishlist_count ); ?></span>
+								<?php endif; ?>
+							</a>
+						<?php else : ?>
+							<button type="button" class="imania-header-actions__btn" data-imania-login-required aria-label="<?php esc_attr_e( 'Favoritos', 'imania-store' ); ?>">
+								<img src="<?php echo esc_url( $header_icon_uri . 'favorito.png' ); ?>" alt="" aria-hidden="true" />
+							</button>
+						<?php endif; ?>
 						<a href="<?php echo esc_url( $cart_url ); ?>" aria-label="<?php esc_attr_e( 'Carrinho', 'imania-store' ); ?>">
 							<img src="<?php echo esc_url( $header_icon_uri . 'carrinho.png' ); ?>" alt="" aria-hidden="true" />
 						</a>
