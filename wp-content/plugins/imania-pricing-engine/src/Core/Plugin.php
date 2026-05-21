@@ -7,7 +7,6 @@ use Imania\PricingEngine\Domain\Customer\DocumentRepository;
 use Imania\PricingEngine\Domain\Customer\DocumentValidator;
 use Imania\PricingEngine\Domain\Pricing\PriceCalculator;
 use Imania\PricingEngine\Domain\Pricing\PricingRuleResolver;
-use Imania\PricingEngine\Infrastructure\Admin\CategoryPricingFields;
 use Imania\PricingEngine\Infrastructure\Admin\ProductPricingFields;
 use Imania\PricingEngine\Infrastructure\Admin\SettingsPage;
 use Imania\PricingEngine\Infrastructure\Auth\LoginRedirectHandler;
@@ -48,9 +47,6 @@ final class Plugin {
 
 		$admin_fields = new ProductPricingFields();
 		$admin_fields->register();
-
-		$category_fields = new CategoryPricingFields();
-		$category_fields->register();
 
 		$settings_page = new SettingsPage();
 		$settings_page->register();
