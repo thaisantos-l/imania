@@ -26,9 +26,15 @@
 	<a class="skip-link screen-reader-text" href="#primary"><?php esc_html_e( 'Skip to content', 'imania-store' ); ?></a>
 
 	<header id="masthead" class="site-header imania-header">
+		<div class="imania-header-topbar">
+			<p>
+				<?php esc_html_e( 'Sua primeira compra com', 'imania-store' ); ?>
+				<strong><?php esc_html_e( '10% off com cupom 1COMPRA', 'imania-store' ); ?></strong>
+			</p>
+		</div>
 		<div class="container">
-			<div class="row align-items-center g-3">
-				<div class="col-7 col-lg-3">
+			<div class="row align-items-center g-3 imania-header-main">
+				<div class="col-7 col-lg-2">
 					<div class="site-branding imania-branding">
 						<?php
 						the_custom_logo();
@@ -47,7 +53,7 @@
 					</button>
 				</div>
 
-				<div class="col-12 col-lg-6">
+				<div class="col-12 col-lg-8">
 					<nav id="site-navigation" class="main-navigation imania-navigation" data-imania-menu>
 						<?php
 						wp_nav_menu(
@@ -61,18 +67,26 @@
 					</nav>
 				</div>
 
-				<div class="col-lg-3 d-none d-lg-flex justify-content-end">
+				<div class="col-lg-2 d-none d-lg-flex justify-content-end">
 					<?php
 					$my_account_url = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'myaccount' ) : wp_login_url();
 					$cart_url       = function_exists( 'wc_get_cart_url' ) ? wc_get_cart_url() : home_url( '/' );
+					$search_url     = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'shop' ) : home_url( '/' );
+					$favorites_url  = home_url( '/' );
+					$header_icon_uri = trailingslashit( get_template_directory_uri() ) . 'assets/img/header/';
 					?>
 					<div class="imania-header-actions">
-						<a href="<?php echo esc_url( $my_account_url ); ?>" aria-label="<?php esc_attr_e( 'Minha conta', 'imania-store' ); ?>">👤</a>
+						<a href="<?php echo esc_url( $search_url ); ?>" aria-label="<?php esc_attr_e( 'Buscar produtos', 'imania-store' ); ?>">
+							<img src="<?php echo esc_url( $header_icon_uri . 'busca.png' ); ?>" alt="" aria-hidden="true" />
+						</a>
+						<a href="<?php echo esc_url( $favorites_url ); ?>" aria-label="<?php esc_attr_e( 'Favoritos', 'imania-store' ); ?>">
+							<img src="<?php echo esc_url( $header_icon_uri . 'favorito.png' ); ?>" alt="" aria-hidden="true" />
+						</a>
 						<a href="<?php echo esc_url( $cart_url ); ?>" aria-label="<?php esc_attr_e( 'Carrinho', 'imania-store' ); ?>">
-							🛒
-							<?php if ( function_exists( 'WC' ) && WC()->cart ) : ?>
-								<span class="imania-cart-count"><?php echo esc_html( WC()->cart->get_cart_contents_count() ); ?></span>
-							<?php endif; ?>
+							<img src="<?php echo esc_url( $header_icon_uri . 'carrinho.png' ); ?>" alt="" aria-hidden="true" />
+						</a>
+						<a href="<?php echo esc_url( $my_account_url ); ?>" aria-label="<?php esc_attr_e( 'Minha conta', 'imania-store' ); ?>">
+							<img src="<?php echo esc_url( $header_icon_uri . 'conta.png' ); ?>" alt="" aria-hidden="true" />
 						</a>
 					</div>
 				</div>

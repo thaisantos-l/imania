@@ -122,6 +122,53 @@ function imania_store_get_home_products( $segment, $limit = 8 ) {
 }
 
 /**
+ * Get home products by category slug.
+ *
+ * @param string $category_slug Category slug.
+ * @param int    $limit         Product limit.
+ *
+ * @return array<WC_Product>
+ */
+function imania_store_get_home_products_by_category( $category_slug, $limit = 8 ) {
+	static $cache = array();
+
+	$category_slug = sanitize_title( $category_slug );
+	$limit         = max( 1, absint( $limit ) );
+	$key           = $category_slug . ':' . $limit;
+
+	if ( isset( $cache[ $key ] ) ) {
+		return $cache[ $key ];
+	}
+
+	if ( ! function_exists( 'wc_get_products' ) ) {
+		$cache[ $key ] = array();
+		return $cache[ $key ];
+	}
+
+	$args = array(
+		'status'       => 'publish',
+		'limit'        => $limit,
+		'return'       => 'objects',
+		'stock_status' => 'instock',
+		'visibility'   => 'visible',
+		'orderby'      => 'date',
+		'order'        => 'DESC',
+	);
+
+	if ( '' !== $category_slug ) {
+		$args['category'] = array( $category_slug );
+	}
+
+	$products = wc_get_products( $args );
+	if ( empty( $products ) ) {
+		$products = imania_store_get_home_products( 'new', $limit );
+	}
+
+	$cache[ $key ] = is_array( $products ) ? $products : array();
+	return $cache[ $key ];
+}
+
+/**
  * Get hero product.
  *
  * @return WC_Product|null
@@ -174,4 +221,86 @@ function imania_store_get_home_stats() {
 		'categories' => $category_count,
 		'highlights' => count( imania_store_get_home_products( 'featured', 8 ) ),
 	);
+}
+
+/**
+ * Get testimonial posts.
+ *
+ * @param int $limit Posts limit.
+ *
+ * @return array<WP_Post>
+ */
+function imania_store_get_testimonials( $limit = 4 ) {
+	static $cache = array();
+
+	$limit = max( 1, absint( $limit ) );
+	$key   = 'testimonials:' . $limit;
+
+	if ( isset( $cache[ $key ] ) ) {
+		return $cache[ $key ];
+	}
+
+	$query = new WP_Query(
+		array(
+			'post_type'              => 'imaniaco',
+			'post_status'            => 'publish',
+			'posts_per_page'         => $limit,
+			'orderby'                => 'date',
+			'order'                  => 'DESC',
+			'no_found_rows'          => true,
+			'ignore_sticky_posts'    => true,
+			'update_post_meta_cache' => true,
+			'update_post_term_cache' => false,
+		)
+	);
+
+	$cache[ $key ] = $query->have_posts() ? $query->posts : array();
+	return $cache[ $key ];
+}
+
+/**
+ * Get ACF field or fallback post meta.
+ *
+ * @param int    $post_id Post id.
+ * @param string $field_name Field name.
+ *
+ * @return mixed
+ */
+function imania_store_get_custom_field( $post_id, $field_name ) {
+	if ( function_exists( 'get_field' ) ) {
+		return get_field( $field_name, $post_id );
+	}
+
+	return get_post_meta( $post_id, $field_name, true );
+}
+
+/**
+ * Resolve image URL from ACF value.
+ *
+ * @param mixed  $value ACF image value.
+ * @param string $size Image size.
+ *
+ * @return string
+ */
+function imania_store_resolve_image_url( $value, $size = 'thumbnail' ) {
+	if ( empty( $value ) ) {
+		return '';
+	}
+
+	if ( is_array( $value ) ) {
+		if ( isset( $value['sizes'][ $size ] ) && is_string( $value['sizes'][ $size ] ) ) {
+			return $value['sizes'][ $size ];
+		}
+
+		if ( isset( $value['url'] ) && is_string( $value['url'] ) ) {
+			return $value['url'];
+		}
+	}
+
+	if ( is_numeric( $value ) ) {
+		$image = wp_get_attachment_image_url( (int) $value, $size );
+		return is_string( $image ) ? $image : '';
+	}
+
+	return is_string( $value ) ? $value : '';
 }

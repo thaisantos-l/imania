@@ -4,98 +4,400 @@
 }
 
 .imania-hero {
-	padding: var(--im-space-6) 0 var(--im-space-5);
+	padding: 0 0 var(--im-space-5);
 }
 
-.imania-hero__content {
-	max-width: 560px;
+.imania-home-banner {
+	background: #d9d9d9;
+	position: relative;
 }
 
-.imania-hero__title {
-	font-size: clamp(2rem, 5vw, 3.6rem);
-	font-weight: 800;
-	line-height: 1.05;
+.imania-home-banner__swiper {
+	min-height: clamp(240px, 44vw, 560px);
+	position: relative;
+}
+
+.imania-home-banner__slide {
 	margin: 0;
 }
 
-.imania-hero__subtitle {
-	color: var(--im-color-muted);
-	font-size: 1.02rem;
-	margin: 14px 0 24px;
+.imania-home-banner__slide img {
+	display: block;
+	height: 100%;
+	object-fit: cover;
+	width: 100%;
 }
 
-.imania-hero__actions {
+.imania-home-banner__pagination.swiper-pagination-bullets {
+	bottom: 18px;
 	display: flex;
-	flex-wrap: wrap;
-	gap: 10px;
-	margin-bottom: 20px;
+	gap: 8px;
+	justify-content: center;
+	left: 50%;
+	position: absolute;
+	transform: translateX(-50%);
+	z-index: 2;
 }
 
-.imania-hero__stats {
-	display: grid;
-	gap: 10px;
-	grid-template-columns: repeat(3, minmax(0, 1fr));
+.imania-home-banner__pagination .swiper-pagination-bullet {
+	background: rgba(255, 255, 255, 0.55);
+	border-radius: 999px;
+	height: 8px;
+	margin: 0 !important;
+	opacity: 1;
+	transition: all 0.2s ease;
+	width: 24px;
 }
 
-.imania-stat {
-	background: var(--im-color-surface);
-	border-radius: var(--im-radius-md);
-	padding: 12px;
-}
-
-.imania-stat strong {
-	display: block;
-	font-size: 1.3rem;
-	font-weight: 800;
-	line-height: 1;
-}
-
-.imania-stat span {
-	color: var(--im-color-muted);
-	font-size: 0.82rem;
-}
-
-.imania-hero-product {
-	background: var(--im-color-surface);
-	border-radius: var(--im-radius-lg);
-	box-shadow: var(--im-shadow-card);
-	display: grid;
-	gap: 18px;
-	padding: var(--im-space-4);
-}
-
-.imania-hero-product__image {
+.imania-home-banner__pagination .swiper-pagination-bullet-active {
 	background: #fff;
-	border-radius: var(--im-radius-md);
-	display: block;
-	overflow: hidden;
-	padding: 14px;
+	width: 34px;
 }
 
-.imania-hero-product__image img {
-	display: block;
-	margin: 0 auto;
-	max-height: 280px;
-	object-fit: contain;
-}
-
-.imania-hero-product__label {
-	color: var(--im-color-primary);
-	font-size: 0.8rem;
-	font-weight: 800;
-	letter-spacing: 0.06em;
-	margin: 0;
-	text-transform: uppercase;
-}
-
-.imania-hero-product h3 {
-	font-size: 1.3rem;
-	font-weight: 700;
-	margin: 6px 0 0;
+.imania-home-banner__empty {
+	align-items: center;
+	color: rgba(18, 18, 18, 0.72);
+	display: flex;
+	justify-content: center;
+	min-height: 320px;
+	padding: 16px;
+	text-align: center;
 }
 
 .imania-categories {
 	padding: var(--im-space-5) 0;
+}
+
+.imania-showcase {
+	padding: 18px 0 12px;
+}
+
+.imania-showcase__head {
+	align-items: center;
+	display: flex;
+	gap: 12px;
+	justify-content: space-between;
+}
+
+.imania-showcase__head h2 {
+	color: #000;
+	font-size: clamp(2rem, 2.8vw, 2.9rem);
+	font-weight: 800;
+	line-height: 1;
+	margin: 0;
+}
+
+.imania-showcase__more {
+	align-items: center;
+	background: var(--im-color-primary);
+	border-radius: 10px;
+	color: var(--im-color-white);
+	display: inline-flex;
+	font-size: 1.05rem;
+	font-weight: 600;
+	gap: 8px;
+	line-height: 1;
+	padding: 9px 14px;
+}
+
+.imania-showcase__line {
+	background: var(--im-color-accent);
+	height: 1px;
+	margin: 10px 0 22px;
+	width: 100%;
+}
+
+.imania-product-card--showcase {
+	background: transparent;
+	border: 0;
+	border-radius: 0;
+	box-shadow: none;
+	overflow: visible;
+}
+
+.imania-product-card--showcase:hover {
+	box-shadow: none;
+	transform: none;
+}
+
+.imania-product-card--showcase .imania-product-card__thumb {
+	background: #cfcfcf;
+	border-radius: 12px;
+	height: clamp(220px, 23vw, 340px);
+	padding: 14px;
+}
+
+.imania-product-card--showcase .imania-product-card__thumb img {
+	height: 100%;
+	object-fit: contain;
+	width: 100%;
+}
+
+.imania-product-card__dots {
+	display: flex;
+	gap: 8px;
+	justify-content: center;
+	margin: -20px 0 10px;
+	position: relative;
+}
+
+.imania-product-card__dots span {
+	background: #9a9a9a;
+	border-radius: 999px;
+	display: inline-block;
+	height: 10px;
+	width: 10px;
+}
+
+.imania-product-card__dots span.is-active {
+	background: #000;
+}
+
+.imania-product-card__meta-line {
+	align-items: baseline;
+	display: flex;
+	gap: 8px;
+	justify-content: space-between;
+	margin-bottom: 8px;
+}
+
+.imania-product-card--showcase .imania-product-card__title {
+	color: #000;
+	font-size: 1.95rem;
+	font-weight: 500;
+	line-height: 1.2;
+	margin: 0;
+	text-transform: uppercase;
+}
+
+.imania-product-card--showcase .imania-price {
+	color: #000;
+	font-size: 2rem;
+	font-weight: 500;
+	margin: 0;
+}
+
+.imania-product-card--showcase .imania-price .imania-login-to-price {
+	color: #000;
+	font-size: 1.6rem;
+	font-weight: 500;
+}
+
+.imania-product-card__actions {
+	align-items: center;
+	display: grid;
+	gap: 12px;
+	grid-template-columns: 34px minmax(0, 1fr);
+}
+
+.imania-product-card__wishlist {
+	align-items: center;
+	background: transparent;
+	border: 0;
+	color: #000;
+	display: inline-flex;
+	height: 34px;
+	justify-content: center;
+	padding: 0;
+	width: 34px;
+}
+
+.imania-product-card__wishlist svg {
+	display: block;
+}
+
+.imania-product-card__buy {
+	align-items: center;
+	background: var(--im-color-danger);
+	border-radius: 10px;
+	color: var(--im-color-white);
+	display: inline-flex;
+	font-size: 2.1rem;
+	font-weight: 700;
+	justify-content: center;
+	line-height: 1;
+	min-height: 52px;
+	padding: 10px 18px;
+}
+
+.imania-promo-split {
+	margin: 12px 0 24px;
+}
+
+.imania-promo-split__content,
+.imania-promo-split__media {
+	align-items: center;
+	display: flex;
+	min-height: clamp(260px, 34vw, 420px);
+}
+
+.imania-promo-split__content {
+	background: var(--im-color-accent);
+	justify-content: center;
+	padding: clamp(28px, 4vw, 56px);
+}
+
+.imania-promo-split__content h2 {
+	color: var(--im-color-text);
+	font-size: clamp(2rem, 4vw, 3.6rem);
+	font-weight: 500;
+	line-height: 1.08;
+	margin: 0 0 12px;
+	max-width: 520px;
+}
+
+.imania-promo-split__content h2 strong {
+	font-weight: 800;
+}
+
+.imania-promo-split__content p {
+	color: var(--im-color-text);
+	font-size: clamp(1.15rem, 1.6vw, 2rem);
+	font-weight: 700;
+	line-height: 1.25;
+	margin: 0 0 18px;
+	max-width: 580px;
+}
+
+.imania-promo-split__media {
+	background: #d0d0d0;
+	color: var(--im-color-text);
+	font-size: clamp(2rem, 2.4vw, 3rem);
+	justify-content: center;
+}
+
+.imania-promo-split--reverse .imania-promo-split__media {
+	order: 1;
+}
+
+.imania-promo-split--reverse .imania-promo-split__content {
+	order: 2;
+}
+
+.imania-testimonials {
+	padding: 18px 0 26px;
+}
+
+.imania-testimonials__head {
+	margin-bottom: 18px;
+	text-align: center;
+}
+
+.imania-testimonials__head h2 {
+	color: #000;
+	font-size: clamp(2.2rem, 3.6vw, 3.5rem);
+	font-weight: 800;
+	line-height: 1;
+	margin: 0;
+	text-transform: uppercase;
+}
+
+.imania-testimonials__head h2 span {
+	color: var(--im-color-primary);
+}
+
+.imania-testimonial-card {
+	background: #d9d9d9;
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	padding: 10px 10px 8px;
+}
+
+.imania-testimonial-card__top {
+	align-items: center;
+	display: flex;
+	gap: 8px;
+	margin-bottom: 8px;
+	min-height: 28px;
+}
+
+.imania-testimonial-card__dot {
+	background: var(--im-color-danger);
+	border-radius: 999px;
+	display: block;
+	height: 28px;
+	width: 28px;
+}
+
+.imania-testimonial-card__client h3 {
+	color: #000;
+	font-size: 0.8rem;
+	font-weight: 700;
+	line-height: 1.1;
+	margin: 0;
+	text-transform: uppercase;
+}
+
+.imania-testimonial-card__client p {
+	color: #000;
+	font-size: 0.65rem;
+	line-height: 1;
+	margin: 2px 0 0;
+}
+
+.imania-testimonial-card__photo {
+	background: #787575;
+	height: clamp(220px, 24vw, 320px);
+	margin-bottom: 10px;
+	overflow: hidden;
+}
+
+.imania-testimonial-card__photo img {
+	height: 100%;
+	object-fit: cover;
+	width: 100%;
+}
+
+.imania-testimonial-card__bottom {
+	align-items: flex-end;
+	display: grid;
+	gap: 10px;
+	grid-template-columns: 64px 1fr;
+}
+
+.imania-testimonial-card__product-thumb {
+	background: #f2f2f2;
+	height: 64px;
+	width: 64px;
+}
+
+.imania-testimonial-card__product-thumb img {
+	height: 100%;
+	object-fit: cover;
+	width: 100%;
+}
+
+.imania-testimonial-card__meta {
+display: grid;
+gap: 4px;
+}
+
+.imania-testimonial-card__product-name {
+	color: #000;
+	font-size: 0.7rem;
+	font-weight: 700;
+	line-height: 1.15;
+	margin: 0;
+	text-transform: uppercase;
+}
+
+.imania-testimonial-card__product-price {
+	color: #000;
+	font-size: 0.85rem;
+	font-weight: 700;
+	line-height: 1;
+	margin: 0;
+}
+
+.imania-testimonial-card__cta {
+	color: #000;
+	font-size: 0.95rem;
+	font-weight: 800;
+	grid-column: 2;
+	justify-self: end;
+	line-height: 1;
+	text-transform: uppercase;
 }
 
 .imania-chip {
@@ -124,4 +426,103 @@
 	color: var(--im-color-muted);
 	font-size: 0.75rem;
 	font-weight: 600;
+}
+
+@media (max-width: 991.98px) {
+	.imania-home-banner__swiper {
+		min-height: clamp(220px, 40vw, 420px);
+	}
+}
+
+@media (max-width: 767.98px) {
+	.imania-home-banner__swiper {
+		min-height: clamp(180px, 58vw, 320px);
+	}
+
+	.imania-home-banner__pagination.swiper-pagination-bullets {
+		bottom: 12px;
+	}
+
+	.imania-home-banner__pagination .swiper-pagination-bullet {
+		height: 7px;
+		width: 18px;
+	}
+
+	.imania-home-banner__pagination .swiper-pagination-bullet-active {
+		width: 28px;
+	}
+
+	.imania-showcase {
+		padding-top: 12px;
+	}
+
+	.imania-showcase__head h2 {
+		font-size: clamp(1.8rem, 6.8vw, 2.8rem);
+	}
+
+	.imania-showcase__more {
+		font-size: 0.95rem;
+		padding: 7px 10px;
+	}
+
+	.imania-product-card--showcase .imania-product-card__thumb {
+		height: clamp(190px, 64vw, 330px);
+	}
+
+	.imania-product-card--showcase .imania-product-card__title {
+		font-size: 1.2rem;
+	}
+
+	.imania-product-card--showcase .imania-price {
+		font-size: 1.35rem;
+	}
+
+	.imania-product-card__actions {
+		gap: 10px;
+		grid-template-columns: 28px minmax(0, 1fr);
+	}
+
+	.imania-product-card__buy {
+		font-size: 1.9rem;
+		min-height: 44px;
+	}
+
+	.imania-promo-split {
+		margin-top: 8px;
+	}
+
+	.imania-promo-split__content,
+	.imania-promo-split__media {
+		min-height: 220px;
+	}
+
+	.imania-promo-split__content p {
+		font-size: 1.15rem;
+	}
+
+	.imania-promo-split--reverse .imania-promo-split__media,
+	.imania-promo-split--reverse .imania-promo-split__content {
+		order: initial;
+	}
+
+	.imania-testimonials__head {
+		text-align: left;
+	}
+
+	.imania-testimonial-card__photo {
+		height: clamp(180px, 54vw, 300px);
+	}
+
+	.imania-testimonial-card__bottom {
+		grid-template-columns: 54px 1fr;
+	}
+
+	.imania-testimonial-card__product-thumb {
+		height: 54px;
+		width: 54px;
+	}
+
+	.imania-testimonial-card__cta {
+		font-size: 0.78rem;
+	}
 }
