@@ -1,6 +1,5 @@
 /* Estrutura visual de header e footer. */
 .imania-header {
-  background: purple;
   border-bottom: 1px solid rgba(0, 0, 0, 0.06);
   position: sticky;
   top: 0;

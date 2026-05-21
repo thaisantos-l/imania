@@ -1,26 +1,49 @@
 <?php
 /**
- * Home hero featured product card.
+ * Home banner slider.
  *
  * @package Imania_Store
  */
 
-$product = isset( $args['product'] ) && $args['product'] instanceof WC_Product ? $args['product'] : null;
+$banner_dir      = trailingslashit( get_template_directory() ) . 'assets/img/home';
+$banner_base_url = trailingslashit( get_template_directory_uri() ) . 'assets/img/home';
+$slides          = array();
+
+if ( is_dir( $banner_dir ) ) {
+	$files = glob( $banner_dir . '/*.{jpg,jpeg,png,webp,avif}', GLOB_BRACE );
+	if ( ! empty( $files ) ) {
+		sort( $files );
+		foreach ( $files as $file ) {
+			$filename = wp_basename( $file );
+			$slides[] = array(
+				'url' => trailingslashit( $banner_base_url ) . rawurlencode( $filename ),
+				'alt' => trim( ucwords( str_replace( array( '-', '_' ), ' ', pathinfo( $filename, PATHINFO_FILENAME ) ) ) ),
+			);
+		}
+	}
+}
 ?>
-<div class="imania-hero-product">
-	<?php if ( $product ) : ?>
-		<a class="imania-hero-product__image" href="<?php echo esc_url( get_permalink( $product->get_id() ) ); ?>">
-			<?php echo wp_kses_post( $product->get_image( 'woocommerce_single', array( 'loading' => 'eager' ) ) ); ?>
-		</a>
-		<div class="imania-hero-product__meta">
-			<p class="imania-hero-product__label"><?php esc_html_e( 'Produto em evidência', 'imania-store' ); ?></p>
-			<h3><a href="<?php echo esc_url( get_permalink( $product->get_id() ) ); ?>"><?php echo esc_html( $product->get_name() ); ?></a></h3>
-			<div class="imania-price"><?php echo wp_kses_post( $product->get_price_html() ); ?></div>
-			<a class="imania-btn imania-btn--primary" href="<?php echo esc_url( get_permalink( $product->get_id() ) ); ?>"><?php esc_html_e( 'Ver produto', 'imania-store' ); ?></a>
+<div class="imania-home-banner" data-imania-banner aria-label="<?php esc_attr_e( 'Banners rotativos da home', 'imania-store' ); ?>">
+	<?php if ( ! empty( $slides ) ) : ?>
+		<div class="swiper imania-home-banner__swiper" data-imania-banner-swiper>
+			<div class="swiper-wrapper">
+			<?php foreach ( $slides as $index => $slide ) : ?>
+				<figure class="swiper-slide imania-home-banner__slide<?php echo 0 === $index ? ' is-active' : ''; ?>">
+					<img
+						src="<?php echo esc_url( $slide['url'] ); ?>"
+						alt="<?php echo esc_attr( $slide['alt'] ); ?>"
+						loading="<?php echo 0 === $index ? 'eager' : 'lazy'; ?>"
+					/>
+				</figure>
+			<?php endforeach; ?>
+			</div>
+			<?php if ( count( $slides ) > 1 ) : ?>
+				<div class="swiper-pagination imania-home-banner__pagination" data-imania-banner-pagination></div>
+			<?php endif; ?>
 		</div>
 	<?php else : ?>
-		<div class="imania-hero-product__empty">
-			<p><?php esc_html_e( 'Cadastre produtos para destacar na Home.', 'imania-store' ); ?></p>
+		<div class="imania-home-banner__empty">
+			<p><?php esc_html_e( 'Adicione imagens em assets/img/home para exibir o banner.', 'imania-store' ); ?></p>
 		</div>
 	<?php endif; ?>
 </div>

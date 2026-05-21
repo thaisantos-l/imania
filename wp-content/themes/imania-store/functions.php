@@ -104,6 +104,43 @@ function imania_store_setup()
 add_action('after_setup_theme', 'imania_store_setup');
 
 /**
+ * Register testimonials post type.
+ */
+function imania_store_register_imaniacos_post_type()
+{
+	$labels = array(
+		'name' => __('Imaniacos', 'imania-store'),
+		'singular_name' => __('Imaniaco', 'imania-store'),
+		'menu_name' => __('Imaniacos', 'imania-store'),
+		'name_admin_bar' => __('Imaniaco', 'imania-store'),
+		'add_new' => __('Adicionar novo', 'imania-store'),
+		'add_new_item' => __('Adicionar novo imaniaco', 'imania-store'),
+		'new_item' => __('Novo imaniaco', 'imania-store'),
+		'edit_item' => __('Editar imaniaco', 'imania-store'),
+		'view_item' => __('Ver imaniaco', 'imania-store'),
+		'all_items' => __('Todos os imaniacos', 'imania-store'),
+		'search_items' => __('Buscar imaniacos', 'imania-store'),
+		'not_found' => __('Nenhum imaniaco encontrado.', 'imania-store'),
+		'not_found_in_trash' => __('Nenhum imaniaco encontrado na lixeira.', 'imania-store'),
+	);
+
+	$args = array(
+		'labels' => $labels,
+		'public' => true,
+		'show_ui' => true,
+		'show_in_menu' => true,
+		'show_in_rest' => true,
+		'menu_icon' => 'dashicons-format-quote',
+		'supports' => array('title', 'thumbnail'),
+		'has_archive' => true,
+		'rewrite' => array('slug' => 'imaniacos'),
+	);
+
+	register_post_type('imaniaco', $args);
+}
+add_action('init', 'imania_store_register_imaniacos_post_type');
+
+/**
  * Set the content width in pixels, based on the theme's design and stylesheet.
  *
  * Priority 0 to make it available to lower priority callbacks.
@@ -144,12 +181,14 @@ function imania_store_scripts()
 {
 	wp_enqueue_style('imania-store-fonts', 'https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600;700;800&display=swap', array(), null);
 	wp_enqueue_style('imania-store-bootstrap-grid', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap-grid.min.css', array(), '5.3.3');
+	wp_enqueue_style('imania-store-swiper', 'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css', array(), '11.2.8');
 	wp_enqueue_style('imania-store-style', get_stylesheet_uri(), array(), _S_VERSION);
-	wp_enqueue_style('imania-store-theme', get_template_directory_uri() . '/assets/css/main.css', array('imania-store-style', 'imania-store-bootstrap-grid'), _S_VERSION);
+	wp_enqueue_style('imania-store-theme', get_template_directory_uri() . '/assets/css/main.css', array('imania-store-style', 'imania-store-bootstrap-grid', 'imania-store-swiper'), _S_VERSION);
 	wp_style_add_data('imania-store-style', 'rtl', 'replace');
 
 	wp_enqueue_script('imania-store-navigation', get_template_directory_uri() . '/js/navigation.js', array(), _S_VERSION, true);
-	wp_enqueue_script('imania-store-theme', get_template_directory_uri() . '/assets/js/imania-theme.js', array(), _S_VERSION, true);
+	wp_enqueue_script('imania-store-swiper', 'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js', array(), '11.2.8', true);
+	wp_enqueue_script('imania-store-theme', get_template_directory_uri() . '/assets/js/imania-theme.js', array('imania-store-swiper'), _S_VERSION, true);
 
 	if (is_singular() && comments_open() && get_option('thread_comments')) {
 		wp_enqueue_script('comment-reply');

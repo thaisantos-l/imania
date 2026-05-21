@@ -5,11 +5,12 @@
 @import url('./_product-card.scss');
 :root {
 	--im-color-bg: #ffffff;
+	--im-color-white: #ffffff;
 	--im-color-surface: #f5f5f5;
-	--im-color-text: #121212;
-	--im-color-muted: #5f5f5f;
-	--im-color-primary: orange;
-	--im-color-primary-dark: #0087CB;
+	--im-color-text: #000000;
+	--im-color-muted: #3f3f3f;
+	--im-color-primary: #0087CB;
+	--im-color-primary-dark: #006ea5;
 	--im-color-accent: #ffcc29;
 	--im-color-danger: #ff0000;
 	--im-radius-sm: 8px;
@@ -74,12 +75,12 @@ img {
 
 .imania-btn--primary {
 	background: var(--im-color-primary);
-	color: #fff;
+	color: var(--im-color-white);
 }
 
 .imania-btn--primary:hover {
 	background: var(--im-color-primary-dark);
-	color: #fff;
+	color: var(--im-color-white);
 }
 
 .imania-btn--outline {
@@ -90,7 +91,7 @@ img {
 
 .imania-btn--outline:hover {
 	background: var(--im-color-primary);
-	color: #fff;
+	color: var(--im-color-white);
 }
 
 .imania-btn--ghost {
@@ -105,8 +106,12 @@ img {
 	padding: 10px 14px;
 }
 
+.imania-btn--with-icon svg {
+	display: block;
+}
+
 .imania-kicker {
-	color: var(--im-color-primary);
+	color: var(--im-color-accent);
 	font-size: 0.85rem;
 	font-weight: 800;
 	letter-spacing: 0.08em;
@@ -127,7 +132,7 @@ img {
 }
 
 .imania-price ins {
-	color: var(--im-color-primary);
+	color: var(--im-color-danger);
 	text-decoration: none;
 }
 
