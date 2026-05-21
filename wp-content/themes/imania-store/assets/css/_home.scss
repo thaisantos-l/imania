@@ -206,6 +206,24 @@
 	display: block;
 }
 
+.imania-product-card__wishlist.is-active {
+	color: var(--im-color-danger);
+}
+
+.imania-product-card__wishlist path {
+	transition: fill 0.2s ease, stroke 0.2s ease;
+}
+
+.imania-product-card__wishlist.is-active path {
+	fill: var(--im-color-danger);
+	stroke: var(--im-color-danger);
+}
+
+.imania-product-card__wishlist.is-loading {
+	opacity: 0.55;
+	pointer-events: none;
+}
+
 .imania-product-card__buy {
 	align-items: center;
 	background: var(--im-color-danger);

@@ -190,11 +190,305 @@ function imania_store_scripts()
 	wp_enqueue_script('imania-store-swiper', 'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js', array(), '11.2.8', true);
 	wp_enqueue_script('imania-store-theme', get_template_directory_uri() . '/assets/js/imania-theme.js', array('imania-store-swiper'), _S_VERSION, true);
 
+	$login_url = function_exists('imania_store_get_login_to_price_url') ? imania_store_get_login_to_price_url() : wp_login_url();
+	$wishlist_url = function_exists('wc_get_account_endpoint_url') ? wc_get_account_endpoint_url('wishlist') : home_url('/');
+	wp_localize_script(
+		'imania-store-theme',
+		'imaniaWishlist',
+		array(
+			'ajaxUrl' => admin_url('admin-ajax.php'),
+			'nonce' => wp_create_nonce('imania_wishlist_nonce'),
+			'isLoggedIn' => is_user_logged_in(),
+			'loginUrl' => $login_url,
+			'wishlistUrl' => $wishlist_url,
+			'messages' => array(
+				'genericError' => __('Não foi possível atualizar sua wishlist. Tente novamente.', 'imania-store'),
+				'added' => __('Produto adicionado à wishlist.', 'imania-store'),
+				'removed' => __('Produto removido da wishlist.', 'imania-store'),
+			),
+		)
+	);
+
 	if (is_singular() && comments_open() && get_option('thread_comments')) {
 		wp_enqueue_script('comment-reply');
 	}
 }
 add_action('wp_enqueue_scripts', 'imania_store_scripts');
+
+/**
+ * Get user wishlist product ids.
+ *
+ * @param int $user_id Optional user id.
+ *
+ * @return int[]
+ */
+function imania_store_get_wishlist_ids($user_id = 0)
+{
+	$user_id = $user_id > 0 ? (int) $user_id : get_current_user_id();
+	if ($user_id <= 0) {
+		return array();
+	}
+
+	$raw = get_user_meta($user_id, 'imania_wishlist_product_ids', true);
+	if (!is_array($raw)) {
+		return array();
+	}
+
+	$ids = array_values(array_unique(array_filter(array_map('absint', $raw))));
+	return $ids;
+}
+
+/**
+ * Save wishlist ids.
+ *
+ * @param int   $user_id User id.
+ * @param int[] $ids Product ids.
+ */
+function imania_store_save_wishlist_ids($user_id, array $ids)
+{
+	$user_id = (int) $user_id;
+	if ($user_id <= 0) {
+		return;
+	}
+
+	$ids = array_values(array_unique(array_filter(array_map('absint', $ids))));
+	update_user_meta($user_id, 'imania_wishlist_product_ids', $ids);
+}
+
+/**
+ * Check if product is in wishlist.
+ *
+ * @param int      $product_id Product id.
+ * @param int|null $user_id Optional user id.
+ *
+ * @return bool
+ */
+function imania_store_is_in_wishlist($product_id, $user_id = null)
+{
+	$product_id = absint($product_id);
+	if ($product_id <= 0) {
+		return false;
+	}
+
+	if (null === $user_id) {
+		$user_id = get_current_user_id();
+	}
+
+	$ids = imania_store_get_wishlist_ids((int) $user_id);
+	return in_array($product_id, $ids, true);
+}
+
+/**
+ * Toggle wishlist item for user.
+ *
+ * @param int    $user_id User id.
+ * @param int    $product_id Product id.
+ * @param string $mode toggle|add|remove.
+ *
+ * @return bool True when favorited after operation.
+ */
+function imania_store_update_wishlist_item($user_id, $product_id, $mode = 'toggle')
+{
+	$user_id = (int) $user_id;
+	$product_id = absint($product_id);
+	$mode = sanitize_key((string) $mode);
+	if ($user_id <= 0 || $product_id <= 0) {
+		return false;
+	}
+
+	$ids = imania_store_get_wishlist_ids($user_id);
+	$index = array_search($product_id, $ids, true);
+	$exists = false !== $index;
+
+	if ('add' === $mode && !$exists) {
+		$ids[] = $product_id;
+		$exists = true;
+	} elseif ('remove' === $mode && $exists) {
+		unset($ids[$index]);
+		$exists = false;
+	} elseif ('toggle' === $mode) {
+		if ($exists) {
+			unset($ids[$index]);
+			$exists = false;
+		} else {
+			$ids[] = $product_id;
+			$exists = true;
+		}
+	}
+
+	imania_store_save_wishlist_ids($user_id, $ids);
+	return $exists;
+}
+
+/**
+ * Register wishlist endpoint on My Account.
+ */
+function imania_store_register_wishlist_endpoint()
+{
+	add_rewrite_endpoint('wishlist', EP_ROOT | EP_PAGES);
+}
+add_action('init', 'imania_store_register_wishlist_endpoint');
+
+/**
+ * Flush rewrite rules on theme switch for custom endpoint.
+ */
+function imania_store_flush_rewrite_on_switch()
+{
+	imania_store_register_wishlist_endpoint();
+	flush_rewrite_rules(false);
+}
+add_action('after_switch_theme', 'imania_store_flush_rewrite_on_switch');
+
+/**
+ * Flush endpoint rewrite once for active theme.
+ */
+function imania_store_maybe_flush_wishlist_endpoint()
+{
+	if ('1' === get_option('imania_wishlist_endpoint_flushed')) {
+		return;
+	}
+
+	imania_store_register_wishlist_endpoint();
+	flush_rewrite_rules(false);
+	update_option('imania_wishlist_endpoint_flushed', '1', true);
+}
+add_action('init', 'imania_store_maybe_flush_wishlist_endpoint', 20);
+
+/**
+ * Add wishlist item to My Account menu.
+ *
+ * @param array<string,string> $items Menu items.
+ *
+ * @return array<string,string>
+ */
+function imania_store_add_wishlist_to_account_menu($items)
+{
+	$new_items = array();
+
+	foreach ($items as $key => $label) {
+		if ('customer-logout' === $key) {
+			$new_items['wishlist'] = __('Wishlist', 'imania-store');
+		}
+		$new_items[$key] = $label;
+	}
+
+	if (!isset($new_items['wishlist'])) {
+		$new_items['wishlist'] = __('Wishlist', 'imania-store');
+	}
+
+	return $new_items;
+}
+add_filter('woocommerce_account_menu_items', 'imania_store_add_wishlist_to_account_menu');
+
+/**
+ * Wishlist endpoint page title.
+ *
+ * @param string $title Default title.
+ *
+ * @return string
+ */
+function imania_store_wishlist_endpoint_title($title)
+{
+	return __('Minha wishlist', 'imania-store');
+}
+add_filter('woocommerce_endpoint_wishlist_title', 'imania_store_wishlist_endpoint_title');
+
+/**
+ * Render wishlist endpoint content.
+ */
+function imania_store_render_wishlist_endpoint_content()
+{
+	if (!is_user_logged_in()) {
+		echo '<p>' . esc_html__('Faça login para acessar sua wishlist.', 'imania-store') . '</p>';
+		return;
+	}
+
+	$ids = imania_store_get_wishlist_ids();
+	if (empty($ids)) {
+		echo '<p>' . esc_html__('Sua wishlist está vazia.', 'imania-store') . '</p>';
+		return;
+	}
+
+	$products = wc_get_products(
+		array(
+			'include' => $ids,
+			'limit' => -1,
+			'orderby' => 'include',
+			'status' => 'publish',
+			'return' => 'objects',
+		)
+	);
+
+	if (empty($products)) {
+		echo '<p>' . esc_html__('Sua wishlist está vazia.', 'imania-store') . '</p>';
+		return;
+	}
+	?>
+	<div class="imania-wishlist-account">
+		<div class="row g-3">
+			<?php foreach ($products as $product) : ?>
+				<div class="col-12 col-md-6">
+					<div class="imania-wishlist-account__item" data-wishlist-account-item="<?php echo esc_attr($product->get_id()); ?>">
+						<a class="imania-wishlist-account__thumb" href="<?php echo esc_url(get_permalink($product->get_id())); ?>">
+							<?php echo wp_kses_post($product->get_image('woocommerce_thumbnail', array('loading' => 'lazy'))); ?>
+						</a>
+						<div class="imania-wishlist-account__content">
+							<h3><a href="<?php echo esc_url(get_permalink($product->get_id())); ?>"><?php echo esc_html($product->get_name()); ?></a></h3>
+							<div class="imania-price"><?php echo wp_kses_post($product->get_price_html()); ?></div>
+							<div class="imania-wishlist-account__actions">
+								<a class="imania-btn imania-btn--primary imania-btn--sm" href="<?php echo esc_url(get_permalink($product->get_id())); ?>"><?php esc_html_e('Ver produto', 'imania-store'); ?></a>
+								<button type="button" class="imania-btn imania-btn--outline imania-btn--sm imania-wishlist-remove" data-imania-wishlist-toggle data-imania-wishlist-mode="remove" data-imania-remove-row data-product-id="<?php echo esc_attr($product->get_id()); ?>">
+									<?php esc_html_e('Remover', 'imania-store'); ?>
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			<?php endforeach; ?>
+		</div>
+	</div>
+	<?php
+}
+add_action('woocommerce_account_wishlist_endpoint', 'imania_store_render_wishlist_endpoint_content');
+
+/**
+ * Handle wishlist AJAX toggle.
+ */
+function imania_store_handle_wishlist_ajax()
+{
+	check_ajax_referer('imania_wishlist_nonce', 'nonce');
+
+	if (!is_user_logged_in()) {
+		wp_send_json_error(
+			array('message' => __('Faça login para adicionar à wishlist.', 'imania-store')),
+			401
+		);
+	}
+
+	$product_id = isset($_POST['product_id']) ? absint(wp_unslash($_POST['product_id'])) : 0;
+	$mode = isset($_POST['mode']) ? sanitize_key(wp_unslash($_POST['mode'])) : 'toggle';
+	if ($product_id <= 0 || !in_array($mode, array('toggle', 'add', 'remove'), true)) {
+		wp_send_json_error(array('message' => __('Produto inválido.', 'imania-store')), 400);
+	}
+
+	$product = wc_get_product($product_id);
+	if (!$product instanceof WC_Product) {
+		wp_send_json_error(array('message' => __('Produto não encontrado.', 'imania-store')), 404);
+	}
+
+	$is_favorited = imania_store_update_wishlist_item(get_current_user_id(), $product_id, $mode);
+	$count = count(imania_store_get_wishlist_ids());
+
+	wp_send_json_success(
+		array(
+			'productId' => $product_id,
+			'isFavorited' => $is_favorited,
+			'count' => $count,
+			'wishlistUrl' => function_exists('wc_get_account_endpoint_url') ? wc_get_account_endpoint_url('wishlist') : home_url('/'),
+		)
+	);
+}
+add_action('wp_ajax_imania_toggle_wishlist', 'imania_store_handle_wishlist_ajax');
 
 /**
  * Implement the Custom Header feature.

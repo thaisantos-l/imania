@@ -56,3 +56,15 @@
 .imania-product-card .imania-btn {
 	margin-top: auto;
 }
+
+.imania-product-card__footer-actions {
+	align-items: center;
+	display: flex;
+	gap: 10px;
+	margin-top: auto;
+}
+
+.imania-product-card__footer-actions .imania-btn {
+	flex: 1;
+	margin-top: 0;
+}

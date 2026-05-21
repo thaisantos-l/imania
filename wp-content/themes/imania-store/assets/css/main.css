@@ -153,6 +153,40 @@ img {
   margin: 0;
 }
 
+.imania-wishlist-account__item {
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: var(--im-radius-md);
+  display: grid;
+  gap: 14px;
+  grid-template-columns: 110px minmax(0, 1fr);
+  padding: 12px;
+}
+
+.imania-wishlist-account__thumb {
+  background: var(--im-color-surface);
+  border-radius: 8px;
+  display: flex;
+  overflow: hidden;
+}
+
+.imania-wishlist-account__thumb img {
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
+}
+
+.imania-wishlist-account__content h3 {
+  font-size: 1rem;
+  margin: 0 0 6px;
+}
+
+.imania-wishlist-account__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
 /* Estrutura visual de header e footer. */
 .imania-header {
   border-bottom: 1px solid rgba(0, 0, 0, 0.06);
@@ -239,7 +273,25 @@ img {
   min-width: 28px;
 }
 
+.imania-header-actions__btn {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  display: inline-flex;
+  justify-content: center;
+  min-height: 28px;
+  min-width: 28px;
+  padding: 0;
+}
+
 .imania-header-actions a img {
+  display: block;
+  height: 28px;
+  width: 28px;
+}
+
+.imania-header-actions__btn img {
   display: block;
   height: 28px;
   width: 28px;
@@ -293,6 +345,71 @@ img {
   margin: 0;
 }
 
+.imania-modal-open {
+  overflow: hidden;
+}
+
+.imania-modal {
+  inset: 0;
+  position: fixed;
+  z-index: 9999;
+}
+
+.imania-modal[hidden] {
+  display: none;
+}
+
+.imania-modal__overlay {
+  background: rgba(0, 0, 0, 0.45);
+  inset: 0;
+  position: absolute;
+}
+
+.imania-modal__dialog {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 16px 50px rgba(0, 0, 0, 0.2);
+  left: 50%;
+  max-width: 520px;
+  padding: 26px 22px 22px;
+  position: relative;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: calc(100% - 24px);
+  z-index: 2;
+}
+
+.imania-modal__close {
+  background: transparent;
+  border: 0;
+  color: #000;
+  cursor: pointer;
+  font-size: 2.1rem;
+  line-height: 1;
+  padding: 0;
+  position: absolute;
+  right: 14px;
+  top: 8px;
+}
+
+.imania-modal__dialog h2 {
+  font-size: 1.6rem;
+  font-weight: 800;
+  margin: 0 0 8px;
+}
+
+.imania-modal__dialog p {
+  color: var(--im-color-muted);
+  font-size: 1rem;
+  margin: 0 0 18px;
+}
+
+.imania-modal__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
 @media (max-width: 991.98px) {
   .imania-header-topbar p {
     font-size: 1.25rem;
@@ -314,6 +431,9 @@ img {
 @media (max-width: 767.98px) {
   .imania-header-topbar p {
     font-size: 1rem;
+  }
+  .imania-modal__dialog h2 {
+    font-size: 1.3rem;
   }
 }
 /* Layout e componentes da Home. */
@@ -522,6 +642,24 @@ img {
 
 .imania-product-card__wishlist svg {
   display: block;
+}
+
+.imania-product-card__wishlist.is-active {
+  color: var(--im-color-danger);
+}
+
+.imania-product-card__wishlist path {
+  transition: fill 0.2s ease, stroke 0.2s ease;
+}
+
+.imania-product-card__wishlist.is-active path {
+  fill: var(--im-color-danger);
+  stroke: var(--im-color-danger);
+}
+
+.imania-product-card__wishlist.is-loading {
+  opacity: 0.55;
+  pointer-events: none;
 }
 
 .imania-product-card__buy {
@@ -900,6 +1038,18 @@ img {
 
 .imania-product-card .imania-btn {
   margin-top: auto;
+}
+
+.imania-product-card__footer-actions {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+  margin-top: auto;
+}
+
+.imania-product-card__footer-actions .imania-btn {
+  flex: 1;
+  margin-top: 0;
 }
 
 @media (max-width: 991.98px) {

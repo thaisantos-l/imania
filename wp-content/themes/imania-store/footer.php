@@ -34,6 +34,8 @@
 			</div>
 		</div>
 	</footer><!-- #colophon -->
+
+	<?php get_template_part('template-parts/modals/login-modal'); ?>
 </div><!-- #page -->
 
 <?php wp_footer(); ?>

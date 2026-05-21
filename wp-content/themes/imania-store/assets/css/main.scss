@@ -153,6 +153,40 @@ img {
 	margin: 0;
 }
 
+.imania-wishlist-account__item {
+	background: #fff;
+	border: 1px solid rgba(0, 0, 0, 0.08);
+	border-radius: var(--im-radius-md);
+	display: grid;
+	gap: 14px;
+	grid-template-columns: 110px minmax(0, 1fr);
+	padding: 12px;
+}
+
+.imania-wishlist-account__thumb {
+	background: var(--im-color-surface);
+	border-radius: 8px;
+	display: flex;
+	overflow: hidden;
+}
+
+.imania-wishlist-account__thumb img {
+	height: 100%;
+	object-fit: cover;
+	width: 100%;
+}
+
+.imania-wishlist-account__content h3 {
+	font-size: 1rem;
+	margin: 0 0 6px;
+}
+
+.imania-wishlist-account__actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
 @import '_header-footer';
 @import '_home';
 @import '_product-section';
