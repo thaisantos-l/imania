@@ -32,7 +32,7 @@ final class SettingsPage {
 		register_setting( MetaKeys::OPTION_GROUP, MetaKeys::OPTION_GLOBAL_PRICE_PJ, array( 'sanitize_callback' => 'wc_format_decimal' ) );
 		register_setting( MetaKeys::OPTION_GROUP, MetaKeys::OPTION_GLOBAL_DISC_PF, array( 'sanitize_callback' => 'wc_format_decimal' ) );
 		register_setting( MetaKeys::OPTION_GROUP, MetaKeys::OPTION_GLOBAL_DISC_PJ, array( 'sanitize_callback' => 'wc_format_decimal' ) );
-		register_setting( MetaKeys::OPTION_GROUP, MetaKeys::OPTION_PRIORITY, array( 'sanitize_callback' => array( $this, 'sanitize_priority' ) ) );
+		register_setting( MetaKeys::OPTION_GROUP, MetaKeys::OPTION_PRIORITY, array( 'sanitize_callback' => 'sanitize_text_field' ) );
 	}
 
 	/**
@@ -47,36 +47,6 @@ final class SettingsPage {
 		}
 
 		return $mode;
-	}
-
-	/**
-	 * @param string $priority Priority string.
-	 *
-	 * @return string
-	 */
-	public function sanitize_priority( $priority ) {
-		$priority = sanitize_text_field( (string) $priority );
-		$parts    = array_filter( array_map( 'trim', explode( ',', strtolower( $priority ) ) ) );
-		$allowed  = array( 'product', 'category', 'global' );
-		$final    = array();
-
-		foreach ( $parts as $part ) {
-			if ( in_array( $part, $allowed, true ) && ! in_array( $part, $final, true ) ) {
-				$final[] = $part;
-			}
-		}
-
-		if ( empty( $final ) ) {
-			$final = $allowed;
-		}
-
-		foreach ( $allowed as $fallback ) {
-			if ( ! in_array( $fallback, $final, true ) ) {
-				$final[] = $fallback;
-			}
-		}
-
-		return implode( ',', $final );
 	}
 
 	public function render_page() {
