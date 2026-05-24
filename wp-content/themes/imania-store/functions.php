@@ -182,13 +182,17 @@ function imania_store_scripts()
 	$theme_js_path = get_template_directory() . '/assets/js/imania-theme.js';
 	$account_orders_js_path = get_template_directory() . '/assets/js/account-orders.js';
 	$conta_js_path = get_template_directory() . '/assets/js/conta.js';
+	$single_product_js_path = get_template_directory() . '/assets/js/single-product.js';
 	$theme_css_path = get_template_directory() . '/assets/css/main.css';
 	$conta_css_path = get_template_directory() . '/assets/css/conta.css';
+	$single_product_css_path = get_template_directory() . '/assets/css/single-product.css';
 	$theme_js_ver = file_exists($theme_js_path) ? (string) filemtime($theme_js_path) : _S_VERSION;
 	$account_orders_js_ver = file_exists($account_orders_js_path) ? (string) filemtime($account_orders_js_path) : _S_VERSION;
 	$conta_js_ver = file_exists($conta_js_path) ? (string) filemtime($conta_js_path) : _S_VERSION;
+	$single_product_js_ver = file_exists($single_product_js_path) ? (string) filemtime($single_product_js_path) : _S_VERSION;
 	$theme_css_ver = file_exists($theme_css_path) ? (string) filemtime($theme_css_path) : _S_VERSION;
 	$conta_css_ver = file_exists($conta_css_path) ? (string) filemtime($conta_css_path) : _S_VERSION;
+	$single_product_css_ver = file_exists($single_product_css_path) ? (string) filemtime($single_product_css_path) : _S_VERSION;
 
 	wp_enqueue_style('imania-store-fonts', 'https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600;700;800&display=swap', array(), null);
 	wp_enqueue_style('imania-store-bootstrap-grid', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap-grid.min.css', array(), '5.3.3');
@@ -223,6 +227,27 @@ function imania_store_scripts()
 					'loading' => __('Processando...', 'imania-store'),
 					'loginSuccess' => __('Login realizado com sucesso.', 'imania-store'),
 					'registerSuccess' => __('Cadastro realizado com sucesso.', 'imania-store'),
+				),
+			)
+		);
+	}
+
+	if (function_exists('is_product') && is_product()) {
+		wp_enqueue_style('imania-store-single-product', get_template_directory_uri() . '/assets/css/single-product.css', array('imania-store-theme'), $single_product_css_ver);
+		wp_enqueue_script('imania-store-single-product', get_template_directory_uri() . '/assets/js/single-product.js', array('imania-store-swiper'), $single_product_js_ver, true);
+
+		wp_localize_script(
+			'imania-store-single-product',
+			'imaniaSingleProduct',
+			array(
+				'ajaxUrl' => admin_url('admin-ajax.php'),
+				'nonce' => wp_create_nonce('imania_single_product_nonce'),
+				'isLoggedIn' => is_user_logged_in(),
+				'loginUrl' => function_exists('imania_store_get_login_to_price_url') ? imania_store_get_login_to_price_url() : wp_login_url(),
+				'messages' => array(
+					'loading' => __('Processando...', 'imania-store'),
+					'genericError' => __('Nao foi possivel adicionar o produto agora. Tente novamente.', 'imania-store'),
+					'added' => __('Produto adicionado ao carrinho.', 'imania-store'),
 				),
 			)
 		);
@@ -289,6 +314,9 @@ function imania_store_add_conta_body_class($classes)
 {
 	if (imania_store_is_conta_page()) {
 		$classes[] = 'imania-page-conta';
+	}
+	if (function_exists('is_product') && is_product()) {
+		$classes[] = 'imania-page-single-product';
 	}
 
 	return $classes;
@@ -712,6 +740,137 @@ function imania_store_document_exists_for_another_user($normalized_document, $ig
 	);
 
 	return !empty($query->get_results());
+}
+
+/**
+ * Restrict purchasable products for guests.
+ *
+ * @param bool       $purchasable Current state.
+ * @param WC_Product $product     Product object.
+ *
+ * @return bool
+ */
+function imania_store_restrict_guest_product_purchase($purchasable, $product)
+{
+	if (is_user_logged_in()) {
+		return (bool) $purchasable;
+	}
+
+	return false;
+}
+add_filter('woocommerce_is_purchasable', 'imania_store_restrict_guest_product_purchase', 20, 2);
+add_filter('woocommerce_variation_is_purchasable', 'imania_store_restrict_guest_product_purchase', 20, 2);
+
+/**
+ * Resolve related products from current product categories.
+ *
+ * @param int $product_id Product id.
+ * @param int $limit      Results limit.
+ *
+ * @return WC_Product[]
+ */
+function imania_store_get_single_related_products($product_id, $limit = 4)
+{
+	static $request_cache = array();
+
+	$product_id = absint($product_id);
+	$limit = max(1, absint($limit));
+	$cache_key = $product_id . ':' . $limit;
+
+	if (isset($request_cache[$cache_key])) {
+		return $request_cache[$cache_key];
+	}
+
+	if ($product_id <= 0 || !function_exists('wc_get_products')) {
+		$request_cache[$cache_key] = array();
+		return $request_cache[$cache_key];
+	}
+
+	$category_terms = wp_get_post_terms(
+		$product_id,
+		'product_cat',
+		array(
+			'orderby' => 'parent',
+			'order' => 'DESC',
+		)
+	);
+	$category_terms = is_wp_error($category_terms) ? array() : (array) $category_terms;
+	$category_slug = '';
+
+	if (!empty($category_terms)) {
+		$deepest_term = null;
+		$deepest_level = -1;
+
+		foreach ($category_terms as $term) {
+			if (!$term instanceof WP_Term) {
+				continue;
+			}
+
+			$level = 0;
+			$parent_id = (int) $term->parent;
+			while ($parent_id > 0) {
+				$parent_term = get_term($parent_id, 'product_cat');
+				if (!$parent_term instanceof WP_Term || is_wp_error($parent_term)) {
+					break;
+				}
+				$level++;
+				$parent_id = (int) $parent_term->parent;
+			}
+
+			if ($level > $deepest_level) {
+				$deepest_level = $level;
+				$deepest_term = $term;
+			}
+		}
+
+		if ($deepest_term instanceof WP_Term) {
+			$category_slug = sanitize_title($deepest_term->slug);
+		}
+	}
+
+	$args = array(
+		'status' => 'publish',
+		'limit' => $limit,
+		'exclude' => array($product_id),
+		'return' => 'objects',
+		'stock_status' => 'instock',
+		'visibility' => 'visible',
+		'orderby' => 'date',
+		'order' => 'DESC',
+	);
+	if ('' !== $category_slug) {
+		$args['category'] = array($category_slug);
+	}
+
+	$products = wc_get_products($args);
+
+	$request_cache[$cache_key] = is_array($products) ? $products : array();
+	return $request_cache[$cache_key];
+}
+
+/**
+ * Extract first WooCommerce notice message.
+ *
+ * @param string $type Notice type.
+ *
+ * @return string
+ */
+function imania_store_get_first_wc_notice_message($type = 'error')
+{
+	$notices = wc_get_notices($type);
+	if (!is_array($notices) || empty($notices)) {
+		return '';
+	}
+
+	$first = $notices[0];
+	if (is_array($first) && !empty($first['notice'])) {
+		return wp_strip_all_tags((string) $first['notice']);
+	}
+	if (is_string($first)) {
+		return wp_strip_all_tags($first);
+	}
+
+	return '';
 }
 
 /**
@@ -1558,6 +1717,96 @@ function imania_store_handle_auth_register_ajax()
 }
 add_action('wp_ajax_nopriv_imania_account_register', 'imania_store_handle_auth_register_ajax');
 add_action('wp_ajax_imania_account_register', 'imania_store_handle_auth_register_ajax');
+
+/**
+ * Handle single product add-to-cart via AJAX.
+ */
+function imania_store_handle_single_add_to_cart_ajax()
+{
+	if ('POST' !== strtoupper((string) $_SERVER['REQUEST_METHOD'])) {
+		imania_store_send_account_json_error(__('Metodo invalido.', 'imania-store'), 405, 'invalid_method');
+	}
+
+	$is_valid_nonce = check_ajax_referer('imania_single_product_nonce', 'nonce', false);
+	if (false === $is_valid_nonce) {
+		imania_store_send_account_json_error(__('Falha de seguranca. Atualize a pagina e tente novamente.', 'imania-store'), 403, 'invalid_nonce');
+	}
+
+	if (!is_user_logged_in()) {
+		imania_store_send_account_json_error(__('Faca login para comprar.', 'imania-store'), 401, 'not_authenticated');
+	}
+
+	if (!function_exists('WC') || !WC()->cart instanceof WC_Cart) {
+		imania_store_send_account_json_error(__('Carrinho indisponivel no momento.', 'imania-store'), 500, 'cart_unavailable');
+	}
+
+	$product_id = isset($_POST['product_id']) ? absint(wp_unslash($_POST['product_id'])) : 0;
+	$quantity = isset($_POST['quantity']) ? wc_stock_amount(wp_unslash($_POST['quantity'])) : 1;
+	$variation_id = isset($_POST['variation_id']) ? absint(wp_unslash($_POST['variation_id'])) : 0;
+
+	$product = wc_get_product($variation_id > 0 ? $variation_id : $product_id);
+	if (!$product instanceof WC_Product) {
+		imania_store_send_account_json_error(__('Produto invalido.', 'imania-store'), 404, 'invalid_product');
+	}
+
+	$quantity = max(1, (int) $quantity);
+	$variation = array();
+	$posted_attributes = isset($_POST['variation']) && is_array($_POST['variation']) ? (array) wp_unslash($_POST['variation']) : array();
+	foreach ($posted_attributes as $key => $value) {
+		$attribute_key = wc_clean((string) $key);
+		if (0 === strpos($attribute_key, 'attribute_')) {
+			$variation[$attribute_key] = wc_clean((string) $value);
+		}
+	}
+
+	if (!empty($_POST) && empty($variation)) {
+		foreach ($_POST as $key => $value) {
+			$attribute_key = wc_clean((string) $key);
+			if (0 !== strpos($attribute_key, 'attribute_')) {
+				continue;
+			}
+			$variation[$attribute_key] = wc_clean((string) wp_unslash($value));
+		}
+	}
+
+	wc_clear_notices();
+	$passed = apply_filters('woocommerce_add_to_cart_validation', true, $product_id, $quantity, $variation_id, $variation);
+	if (!$passed) {
+		$message = imania_store_get_first_wc_notice_message('error');
+		wc_clear_notices();
+		imania_store_send_account_json_error(
+			'' !== $message ? $message : __('Nao foi possivel adicionar o produto.', 'imania-store'),
+			422,
+			'add_to_cart_validation_failed'
+		);
+	}
+
+	$added_key = WC()->cart->add_to_cart($product_id, $quantity, $variation_id, $variation);
+	if (!$added_key) {
+		$message = imania_store_get_first_wc_notice_message('error');
+		wc_clear_notices();
+		imania_store_send_account_json_error(
+			'' !== $message ? $message : __('Nao foi possivel adicionar o produto ao carrinho.', 'imania-store'),
+			422,
+			'add_to_cart_failed'
+		);
+	}
+
+	WC()->cart->calculate_totals();
+	wc_clear_notices();
+
+	imania_store_send_account_json_success(
+		array(
+			'message' => __('Produto adicionado ao carrinho.', 'imania-store'),
+			'productId' => $product_id,
+			'variationId' => $variation_id,
+			'count' => WC()->cart->get_cart_contents_count(),
+			'cartUrl' => function_exists('wc_get_cart_url') ? wc_get_cart_url() : home_url('/'),
+		)
+	);
+}
+add_action('wp_ajax_imania_single_add_to_cart', 'imania_store_handle_single_add_to_cart_ajax');
+add_action('wp_ajax_nopriv_imania_single_add_to_cart', 'imania_store_handle_single_add_to_cart_ajax');
 
 /**
  * Handle wishlist AJAX toggle.
