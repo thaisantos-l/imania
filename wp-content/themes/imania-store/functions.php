@@ -306,6 +306,70 @@ function imania_store_send_account_json_success(array $data = array())
 }
 
 /**
+ * Ensure PF/PJ customer roles exist with same capabilities as Woo customer.
+ */
+function imania_store_ensure_customer_pf_pj_roles()
+{
+	$customer_role = get_role('customer');
+	if (!$customer_role instanceof WP_Role) {
+		return;
+	}
+
+	$caps = is_array($customer_role->capabilities) ? $customer_role->capabilities : array('read' => true);
+	$target_roles = array(
+		'customer_pf' => __('Cliente PF', 'imania-store'),
+		'customer_pj' => __('Cliente PJ', 'imania-store'),
+	);
+
+	foreach ($target_roles as $slug => $label) {
+		$role = get_role($slug);
+		if (!$role instanceof WP_Role) {
+			add_role($slug, $label, $caps);
+			continue;
+		}
+
+		foreach ($caps as $cap => $grant) {
+			$role->add_cap($cap, (bool) $grant);
+		}
+	}
+}
+add_action('init', 'imania_store_ensure_customer_pf_pj_roles', 5);
+
+/**
+ * Resolve customer role from customer type.
+ *
+ * @param string $customer_type pf|pj.
+ *
+ * @return string
+ */
+function imania_store_get_customer_role_from_type($customer_type)
+{
+	return 'pj' === sanitize_key((string) $customer_type) ? 'customer_pj' : 'customer_pf';
+}
+
+/**
+ * Assign PF/PJ role to a user.
+ *
+ * @param int    $user_id User id.
+ * @param string $customer_type pf|pj.
+ */
+function imania_store_assign_customer_typed_role($user_id, $customer_type)
+{
+	$user_id = absint($user_id);
+	if ($user_id <= 0) {
+		return;
+	}
+
+	$role = imania_store_get_customer_role_from_type($customer_type);
+	$user = get_userdata($user_id);
+	if (!$user instanceof WP_User) {
+		return;
+	}
+
+	$user->set_role($role);
+}
+
+/**
  * Resolve account cache version for user.
  *
  * @param int $user_id User id.
@@ -1024,6 +1088,7 @@ function imania_store_handle_account_profile_save_ajax()
 		update_user_meta($user_id, 'billing_cnpj', $normalized_document);
 		delete_user_meta($user_id, 'billing_cpf');
 	}
+	imania_store_assign_customer_typed_role($user_id, $customer_type);
 
 	imania_store_invalidate_account_cache($user_id);
 
