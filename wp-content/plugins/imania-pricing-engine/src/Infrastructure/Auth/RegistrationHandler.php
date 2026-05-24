@@ -124,9 +124,16 @@ final class RegistrationHandler {
 		if ( CustomerTypeResolver::PF === $customer_type ) {
 			update_user_meta( $customer_id, 'billing_persontype', '1' );
 			update_user_meta( $customer_id, 'billing_cpf', $document );
+			$target_role = 'customer_pf';
 		} else {
 			update_user_meta( $customer_id, 'billing_persontype', '2' );
 			update_user_meta( $customer_id, 'billing_cnpj', $document );
+			$target_role = 'customer_pj';
+		}
+
+		$user = get_userdata( $customer_id );
+		if ( $user instanceof \WP_User ) {
+			$user->set_role( $target_role );
 		}
 	}
 }
