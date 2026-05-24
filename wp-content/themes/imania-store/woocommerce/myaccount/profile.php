@@ -25,6 +25,7 @@ $country = isset($country) ? (string) $country : '';
 	<h2 id="imania-account-profile-title"><?php esc_html_e('Informações do Perfil', 'imania-store'); ?></h2>
 
 	<form class="imania-account-profile__form" method="post" action="" novalidate>
+		<?php wp_nonce_field('imania_account_profile_nonce', 'imania_account_profile_nonce'); ?>
 		<div class="imania-account-profile__grid imania-account-profile__grid--2">
 			<div class="imania-account-profile__field">
 				<label for="imania_profile_first_name"><?php esc_html_e('Nome', 'imania-store'); ?></label>
