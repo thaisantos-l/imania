@@ -161,6 +161,7 @@ img {
 	gap: 14px;
 	grid-template-columns: 110px minmax(0, 1fr);
 	padding: 12px;
+	transition: transform 0.24s ease, opacity 0.24s ease, box-shadow 0.24s ease;
 }
 
 .imania-wishlist-account__thumb {
@@ -187,10 +188,56 @@ img {
 	gap: 8px;
 }
 
+[data-wishlist-account-col] {
+	overflow: hidden;
+	transition: height 0.3s ease, opacity 0.24s ease, transform 0.28s ease, margin 0.3s ease, padding 0.3s ease;
+	will-change: height, opacity, transform;
+}
+
+[data-wishlist-account-col].is-removing {
+	opacity: 0;
+	transform: scale(0.97);
+	margin-top: 0 !important;
+	margin-bottom: 0 !important;
+	padding-top: 0 !important;
+	padding-bottom: 0 !important;
+}
+
+.imania-wishlist-feedback--added {
+	animation: imaniaWishlistFeedbackAdded 0.28s ease;
+}
+
+.imania-wishlist-feedback--removed {
+	animation: imaniaWishlistFeedbackRemoved 0.28s ease;
+}
+
+@keyframes imaniaWishlistFeedbackAdded {
+	0% {
+		transform: scale(1);
+	}
+	45% {
+		transform: scale(1.02);
+	}
+	100% {
+		transform: scale(1);
+	}
+}
+
+@keyframes imaniaWishlistFeedbackRemoved {
+	0% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0.65;
+	}
+}
+
 @import '_header-footer';
 @import '_home';
 @import '_product-section';
 @import '_product-card';
+@import '_account';
+@import '_account-orders';
 
 @media (max-width: 991.98px) {
 	.imania-navigation {
