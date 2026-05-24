@@ -325,6 +325,28 @@
 		content.hidden = isLoading;
 	}
 
+	function renderNotice(type, message) {
+		var oldNotices = content.querySelectorAll('[data-imania-account-notice]');
+		oldNotices.forEach(function (node) {
+			node.remove();
+		});
+
+		if (!message) {
+			return;
+		}
+
+		var notice = document.createElement('div');
+		notice.setAttribute('data-imania-account-notice', '');
+		notice.className = 'woocommerce-message';
+		if (type === 'error') {
+			notice.className = 'woocommerce-error';
+		} else if (type === 'info') {
+			notice.className = 'woocommerce-info';
+		}
+		notice.textContent = message;
+		content.insertBefore(notice, content.firstChild);
+	}
+
 	function setActiveLink(endpoint) {
 		document.querySelectorAll('[data-imania-account-nav]').forEach(function (link) {
 			var isActive = link.getAttribute('data-endpoint') === endpoint;
@@ -407,6 +429,75 @@
 			});
 	}
 
+	function saveProfileForm(form) {
+		if (!form || !config.profileNonce) {
+			return;
+		}
+
+		var profileSection = form.closest('.imania-account-profile');
+		var formData = new FormData(form);
+		formData.set('action', 'imania_account_profile_save');
+		formData.set('nonce', config.profileNonce);
+
+		var submitButton = form.querySelector('.imania-account-profile__actions .imania-btn--primary');
+		var originalButtonText = submitButton ? submitButton.textContent : '';
+		form.setAttribute('aria-busy', 'true');
+		if (profileSection) {
+			profileSection.setAttribute('aria-busy', 'true');
+			profileSection.style.opacity = '0.5';
+			profileSection.style.pointerEvents = 'none';
+		}
+
+		form.querySelectorAll('input, select, textarea, button').forEach(function (field) {
+			field.disabled = true;
+		});
+
+		if (submitButton) {
+			submitButton.textContent = 'Salvando...';
+		}
+
+		renderNotice('info', 'Processando atualizacao do perfil...');
+
+		fetch(config.ajaxUrl, {
+			method: 'POST',
+			body: new URLSearchParams(formData)
+		})
+			.then(function (response) {
+				return response.json();
+			})
+			.then(function (result) {
+				if (!result || !result.success) {
+					var message = (result && result.data && result.data.message)
+						? result.data.message
+						: ((config.messages && config.messages.profileSaveError) ? config.messages.profileSaveError : 'Erro ao salvar.');
+					throw new Error(message);
+				}
+
+				renderNotice('success', (result.data && result.data.message) ? result.data.message : ((config.messages && config.messages.profileSaved) ? config.messages.profileSaved : 'Perfil atualizado com sucesso.'));
+			})
+			.catch(function (error) {
+				renderNotice('error', (error && error.message) ? error.message : ((config.messages && config.messages.profileSaveError) ? config.messages.profileSaveError : 'Erro ao salvar.'));
+				if (window.console && typeof window.console.error === 'function') {
+					window.console.error('[imania-account-profile]', error);
+				}
+			})
+			.finally(function () {
+				form.removeAttribute('aria-busy');
+				if (profileSection) {
+					profileSection.removeAttribute('aria-busy');
+					profileSection.style.opacity = '';
+					profileSection.style.pointerEvents = '';
+				}
+				form.querySelectorAll('input, select, textarea, button').forEach(function (field) {
+					field.disabled = false;
+				});
+
+				if (submitButton) {
+					submitButton.textContent = originalButtonText || 'Salvar';
+				}
+			});
+	}
+
 	document.addEventListener('click', function (event) {
 		var link = event.target.closest('[data-imania-account-nav], .imania-account__nav a');
 		if (!link) {
@@ -429,6 +520,31 @@
 
 		event.preventDefault();
 		loadEndpoint(endpoint, true);
+	});
+
+	document.addEventListener('click', function (event) {
+		var saveButton = event.target.closest('.imania-account-profile__actions .imania-btn--primary');
+		if (!saveButton) {
+			return;
+		}
+
+		var form = saveButton.closest('.imania-account-profile__form');
+		if (!form) {
+			return;
+		}
+
+		event.preventDefault();
+		saveProfileForm(form);
+	});
+
+	document.addEventListener('submit', function (event) {
+		var form = event.target.closest('.imania-account-profile__form');
+		if (!form) {
+			return;
+		}
+
+		event.preventDefault();
+		saveProfileForm(form);
 	});
 
 	window.addEventListener('popstate', function () {

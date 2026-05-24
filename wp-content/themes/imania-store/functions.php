@@ -227,6 +227,7 @@ function imania_store_scripts()
 			array(
 				'ajaxUrl' => admin_url('admin-ajax.php'),
 				'nonce' => wp_create_nonce('imania_account_nonce'),
+				'profileNonce' => wp_create_nonce('imania_account_profile_nonce'),
 				'baseUrl' => trailingslashit($account_base_url),
 				'endpoints' => array(
 					'profile' => function_exists('wc_get_account_endpoint_url') ? wc_get_account_endpoint_url('profile') : trailingslashit($account_base_url),
@@ -236,6 +237,8 @@ function imania_store_scripts()
 				),
 				'messages' => array(
 					'genericError' => __('NÃ£o foi possÃ­vel carregar esta seÃ§Ã£o agora. Tente novamente.', 'imania-store'),
+					'profileSaved' => __('Perfil atualizado com sucesso.', 'imania-store'),
+					'profileSaveError' => __('Nao foi possivel salvar seu perfil agora.', 'imania-store'),
 				),
 			)
 		);
@@ -246,6 +249,268 @@ function imania_store_scripts()
 	}
 }
 add_action('wp_enqueue_scripts', 'imania_store_scripts');
+
+/**
+ * Allowed custom account endpoints.
+ *
+ * @return string[]
+ */
+function imania_store_get_allowed_account_endpoints()
+{
+	return array('profile', 'orders', 'wishlist', 'payment-methods');
+}
+
+/**
+ * Return sanitized endpoint if allowed, or fallback profile.
+ *
+ * @param string $endpoint Endpoint slug.
+ *
+ * @return string
+ */
+function imania_store_sanitize_account_endpoint($endpoint)
+{
+	$endpoint = sanitize_key((string) $endpoint);
+	return in_array($endpoint, imania_store_get_allowed_account_endpoints(), true) ? $endpoint : 'profile';
+}
+
+/**
+ * Standardized JSON error for account ajax handlers.
+ *
+ * @param string $message Message.
+ * @param int    $status  HTTP status code.
+ * @param string $code    Error code.
+ *
+ * @return never
+ */
+function imania_store_send_account_json_error($message, $status = 400, $code = 'invalid_request')
+{
+	wp_send_json_error(
+		array(
+			'code' => sanitize_key((string) $code),
+			'message' => (string) $message,
+		),
+		absint($status)
+	);
+}
+
+/**
+ * Standardized JSON success for account ajax handlers.
+ *
+ * @param array $data Payload.
+ *
+ * @return never
+ */
+function imania_store_send_account_json_success(array $data = array())
+{
+	wp_send_json_success($data);
+}
+
+/**
+ * Resolve account cache version for user.
+ *
+ * @param int $user_id User id.
+ *
+ * @return int
+ */
+function imania_store_get_account_cache_version($user_id)
+{
+	$user_id = absint($user_id);
+	if ($user_id <= 0) {
+		return 1;
+	}
+
+	$version = (int) get_user_meta($user_id, 'imania_account_cache_version', true);
+	return $version > 0 ? $version : 1;
+}
+
+/**
+ * Invalidate account endpoint cache for user.
+ *
+ * @param int $user_id User id.
+ */
+function imania_store_invalidate_account_cache($user_id)
+{
+	$user_id = absint($user_id);
+	if ($user_id <= 0) {
+		return;
+	}
+
+	$next_version = imania_store_get_account_cache_version($user_id) + 1;
+	update_user_meta($user_id, 'imania_account_cache_version', $next_version);
+}
+
+/**
+ * Build account endpoint cache key.
+ *
+ * @param int    $user_id  User id.
+ * @param string $endpoint Endpoint.
+ * @param int    $page     Page.
+ *
+ * @return string
+ */
+function imania_store_get_account_endpoint_cache_key($user_id, $endpoint, $page = 1)
+{
+	$user_id = absint($user_id);
+	$page = max(1, absint($page));
+	$endpoint = imania_store_sanitize_account_endpoint($endpoint);
+	$version = imania_store_get_account_cache_version($user_id);
+	return sprintf('imania_account_html_%d_%s_%d_%d', $user_id, $endpoint, $page, $version);
+}
+
+/**
+ * Get request-level cached wishlist products.
+ *
+ * @param int $user_id User id.
+ *
+ * @return WC_Product[]
+ */
+function imania_store_get_wishlist_products($user_id)
+{
+	static $request_cache = array();
+
+	$user_id = absint($user_id);
+	if ($user_id <= 0) {
+		return array();
+	}
+
+	if (isset($request_cache[$user_id])) {
+		return $request_cache[$user_id];
+	}
+
+	$ids = imania_store_get_wishlist_ids($user_id);
+	if (empty($ids)) {
+		$request_cache[$user_id] = array();
+		return $request_cache[$user_id];
+	}
+
+	$products = wc_get_products(
+		array(
+			'include' => $ids,
+			'limit' => -1,
+			'orderby' => 'include',
+			'status' => 'publish',
+			'return' => 'objects',
+		)
+	);
+
+	$request_cache[$user_id] = is_array($products) ? $products : array();
+	return $request_cache[$user_id];
+}
+
+/**
+ * Resolve customer type from plugin rules when available.
+ *
+ * @param int $user_id User id.
+ *
+ * @return string|null
+ */
+function imania_store_resolve_customer_type($user_id)
+{
+	$user_id = absint($user_id);
+	if ($user_id <= 0) {
+		return null;
+	}
+
+	if (class_exists('\Imania\PricingEngine\Domain\Customer\CustomerTypeResolver')) {
+		$resolver = new \Imania\PricingEngine\Domain\Customer\CustomerTypeResolver();
+		$type = $resolver->resolve($user_id);
+		return is_string($type) && '' !== $type ? $type : null;
+	}
+
+	$type = (string) get_user_meta($user_id, 'imania_customer_type', true);
+	if ('pf' === $type || 'pj' === $type) {
+		return $type;
+	}
+
+	$billing_type = (string) get_user_meta($user_id, 'billing_persontype', true);
+	if ('1' === $billing_type) {
+		return 'pf';
+	}
+	if ('2' === $billing_type) {
+		return 'pj';
+	}
+
+	return null;
+}
+
+/**
+ * Validate customer document according to type.
+ *
+ * @param string $customer_type pf|pj
+ * @param string $document_raw Raw document.
+ *
+ * @return array{valid:bool,normalized:string,error:string}
+ */
+function imania_store_validate_customer_document($customer_type, $document_raw)
+{
+	$customer_type = sanitize_key((string) $customer_type);
+	$normalized = preg_replace('/\D+/', '', (string) $document_raw);
+	$normalized = is_string($normalized) ? $normalized : '';
+
+	if ('pf' !== $customer_type && 'pj' !== $customer_type) {
+		return array('valid' => false, 'normalized' => $normalized, 'error' => 'invalid_type');
+	}
+
+	if (class_exists('\Imania\PricingEngine\Domain\Customer\DocumentValidator')) {
+		$validator = new \Imania\PricingEngine\Domain\Customer\DocumentValidator();
+		if ('pf' === $customer_type) {
+			$valid = $validator->is_valid_cpf($normalized);
+			return array('valid' => (bool) $valid, 'normalized' => $normalized, 'error' => $valid ? '' : 'invalid_cpf');
+		}
+
+		$valid = $validator->is_valid_cnpj($normalized);
+		return array('valid' => (bool) $valid, 'normalized' => $normalized, 'error' => $valid ? '' : 'invalid_cnpj');
+	}
+
+	$expected = 'pf' === $customer_type ? 11 : 14;
+	$is_valid_length = strlen($normalized) === $expected;
+	return array(
+		'valid' => $is_valid_length,
+		'normalized' => $normalized,
+		'error' => $is_valid_length ? '' : ('pf' === $customer_type ? 'invalid_cpf' : 'invalid_cnpj'),
+	);
+}
+
+/**
+ * Check if a normalized document is already linked to another account.
+ *
+ * @param string $normalized_document Document with digits only.
+ * @param int    $ignore_user_id      User id to ignore.
+ *
+ * @return bool
+ */
+function imania_store_document_exists_for_another_user($normalized_document, $ignore_user_id)
+{
+	$normalized_document = preg_replace('/\D+/', '', (string) $normalized_document);
+	$normalized_document = is_string($normalized_document) ? $normalized_document : '';
+	$ignore_user_id = absint($ignore_user_id);
+
+	if ('' === $normalized_document) {
+		return false;
+	}
+
+	if (class_exists('\Imania\PricingEngine\Domain\Customer\DocumentRepository')) {
+		$repository = new \Imania\PricingEngine\Domain\Customer\DocumentRepository();
+		return (bool) $repository->exists_for_another_user($normalized_document, $ignore_user_id);
+	}
+
+	$query = new WP_User_Query(
+		array(
+			'fields' => 'ID',
+			'number' => 1,
+			'count_total' => false,
+			'exclude' => $ignore_user_id > 0 ? array($ignore_user_id) : array(),
+			'meta_query' => array(
+				array(
+					'key' => 'imania_document',
+					'value' => $normalized_document,
+				),
+			),
+		)
+	);
+
+	return !empty($query->get_results());
+}
 
 /**
  * Get user wishlist product ids.
@@ -285,6 +550,7 @@ function imania_store_save_wishlist_ids($user_id, array $ids)
 
 	$ids = array_values(array_unique(array_filter(array_map('absint', $ids))));
 	update_user_meta($user_id, 'imania_wishlist_product_ids', $ids);
+	imania_store_invalidate_account_cache($user_id);
 }
 
 /**
@@ -436,26 +702,13 @@ add_filter('woocommerce_endpoint_wishlist_title', 'imania_store_wishlist_endpoin
  */
 function imania_store_render_wishlist_endpoint_content()
 {
-	if (!is_user_logged_in()) {
+	$user_id = get_current_user_id();
+	if ($user_id <= 0) {
 		echo '<p>' . esc_html__('FaÃ§a login para acessar sua wishlist.', 'imania-store') . '</p>';
 		return;
 	}
 
-	$ids = imania_store_get_wishlist_ids();
-	if (empty($ids)) {
-		echo '<p>' . esc_html__('Sua wishlist estÃ¡ vazia.', 'imania-store') . '</p>';
-		return;
-	}
-
-	$products = wc_get_products(
-		array(
-			'include' => $ids,
-			'limit' => -1,
-			'orderby' => 'include',
-			'status' => 'publish',
-			'return' => 'objects',
-		)
-	);
+	$products = imania_store_get_wishlist_products($user_id);
 
 	if (empty($products)) {
 		echo '<p>' . esc_html__('Sua wishlist estÃ¡ vazia.', 'imania-store') . '</p>';
@@ -578,7 +831,22 @@ add_action('woocommerce_account_profile_endpoint', 'imania_store_render_profile_
  */
 function imania_store_render_account_endpoint_to_string($endpoint)
 {
-	$endpoint = sanitize_key((string) $endpoint);
+	$endpoint = imania_store_sanitize_account_endpoint($endpoint);
+	$user_id = get_current_user_id();
+	$page = 1;
+	if ('orders' === $endpoint) {
+		$page = max(1, absint(get_query_var('orders')));
+	}
+
+	$cacheable_endpoints = array('orders', 'wishlist');
+	if ($user_id > 0 && in_array($endpoint, $cacheable_endpoints, true)) {
+		$cache_key = imania_store_get_account_endpoint_cache_key($user_id, $endpoint, $page);
+		$cached = get_transient($cache_key);
+		if (is_string($cached) && '' !== $cached) {
+			return $cached;
+		}
+	}
+
 	ob_start();
 
 	switch ($endpoint) {
@@ -600,7 +868,12 @@ function imania_store_render_account_endpoint_to_string($endpoint)
 			break;
 	}
 
-	return (string) ob_get_clean();
+	$html = (string) ob_get_clean();
+	if (isset($cache_key) && '' !== $html) {
+		set_transient($cache_key, $html, MINUTE_IN_SECONDS);
+	}
+
+	return $html;
 }
 
 /**
@@ -608,27 +881,38 @@ function imania_store_render_account_endpoint_to_string($endpoint)
  */
 function imania_store_handle_account_endpoint_ajax()
 {
-	check_ajax_referer('imania_account_nonce', 'nonce');
+	if ('POST' !== strtoupper((string) $_SERVER['REQUEST_METHOD'])) {
+		imania_store_send_account_json_error(__('Metodo invalido.', 'imania-store'), 405, 'invalid_method');
+	}
+
+	$is_valid_nonce = check_ajax_referer('imania_account_nonce', 'nonce', false);
+	if (false === $is_valid_nonce) {
+		imania_store_send_account_json_error(__('Falha de seguranca. Atualize a pagina e tente novamente.', 'imania-store'), 403, 'invalid_nonce');
+	}
 
 	if (!is_user_logged_in()) {
-		wp_send_json_error(
-			array(
-				'message' => __('FaÃ§a login para acessar esta Ã¡rea.', 'imania-store'),
-			),
-			401
-		);
+		imania_store_send_account_json_error(__('FaÃ§a login para acessar esta Ã¡rea.', 'imania-store'), 401, 'not_authenticated');
+	}
+
+	$user_id = get_current_user_id();
+	if (!current_user_can('read', $user_id)) {
+		imania_store_send_account_json_error(__('VocÃª nao tem permissao para acessar esta Ã¡rea.', 'imania-store'), 403, 'forbidden');
 	}
 
 	$endpoint = isset($_POST['endpoint']) ? sanitize_key(wp_unslash($_POST['endpoint'])) : 'profile';
-	$allowed = array('profile', 'orders', 'wishlist', 'payment-methods');
-	if (!in_array($endpoint, $allowed, true)) {
-		$endpoint = 'profile';
+	$endpoint = imania_store_sanitize_account_endpoint($endpoint);
+	$page = isset($_POST['page']) ? absint(wp_unslash($_POST['page'])) : 1;
+	$page = max(1, $page);
+
+	if ('orders' === $endpoint) {
+		set_query_var('orders', $page);
 	}
 
 	$html = imania_store_render_account_endpoint_to_string($endpoint);
-	wp_send_json_success(
+	imania_store_send_account_json_success(
 		array(
 			'endpoint' => $endpoint,
+			'page' => $page,
 			'html' => $html,
 		)
 	);
@@ -636,34 +920,164 @@ function imania_store_handle_account_endpoint_ajax()
 add_action('wp_ajax_imania_account_endpoint', 'imania_store_handle_account_endpoint_ajax');
 
 /**
+ * Handle account profile save via AJAX.
+ */
+function imania_store_handle_account_profile_save_ajax()
+{
+	if ('POST' !== strtoupper((string) $_SERVER['REQUEST_METHOD'])) {
+		imania_store_send_account_json_error(__('Metodo invalido.', 'imania-store'), 405, 'invalid_method');
+	}
+
+	$is_valid_nonce = check_ajax_referer('imania_account_profile_nonce', 'nonce', false);
+	if (false === $is_valid_nonce) {
+		imania_store_send_account_json_error(__('Falha de seguranca. Atualize a pagina e tente novamente.', 'imania-store'), 403, 'invalid_nonce');
+	}
+
+	$user_id = get_current_user_id();
+	if ($user_id <= 0) {
+		imania_store_send_account_json_error(__('FaÃ§a login para editar seu perfil.', 'imania-store'), 401, 'not_authenticated');
+	}
+
+	if (!current_user_can('edit_user', $user_id)) {
+		imania_store_send_account_json_error(__('VocÃª nao tem permissao para editar este perfil.', 'imania-store'), 403, 'forbidden');
+	}
+
+	$first_name = isset($_POST['account_first_name']) ? sanitize_text_field(wp_unslash($_POST['account_first_name'])) : '';
+	$last_name = isset($_POST['account_last_name']) ? sanitize_text_field(wp_unslash($_POST['account_last_name'])) : '';
+	$email = isset($_POST['account_email']) ? sanitize_email(wp_unslash($_POST['account_email'])) : '';
+	$password = isset($_POST['password_1']) ? (string) wp_unslash($_POST['password_1']) : '';
+	$phone = isset($_POST['billing_phone']) ? sanitize_text_field(wp_unslash($_POST['billing_phone'])) : '';
+	$address_1 = isset($_POST['billing_address_1']) ? sanitize_text_field(wp_unslash($_POST['billing_address_1'])) : '';
+	$address_2 = isset($_POST['billing_address_2']) ? sanitize_text_field(wp_unslash($_POST['billing_address_2'])) : '';
+	$number = isset($_POST['billing_number']) ? sanitize_text_field(wp_unslash($_POST['billing_number'])) : '';
+	$neighborhood = isset($_POST['billing_neighborhood']) ? sanitize_text_field(wp_unslash($_POST['billing_neighborhood'])) : '';
+	$postcode = isset($_POST['billing_postcode']) ? sanitize_text_field(wp_unslash($_POST['billing_postcode'])) : '';
+	$city = isset($_POST['billing_city']) ? sanitize_text_field(wp_unslash($_POST['billing_city'])) : '';
+	$state = isset($_POST['billing_state']) ? sanitize_text_field(wp_unslash($_POST['billing_state'])) : '';
+	$document = isset($_POST['imania_document']) ? sanitize_text_field(wp_unslash($_POST['imania_document'])) : '';
+
+	if ('' === $email || !is_email($email)) {
+		imania_store_send_account_json_error(__('Informe um e-mail valido.', 'imania-store'), 422, 'invalid_email');
+	}
+
+	$email_owner_id = email_exists($email);
+	if ($email_owner_id && (int) $email_owner_id !== $user_id) {
+		imania_store_send_account_json_error(__('Este e-mail ja esta em uso por outra conta.', 'imania-store'), 422, 'email_in_use');
+	}
+
+	$customer_type = imania_store_resolve_customer_type($user_id);
+	if (!in_array($customer_type, array('pf', 'pj'), true)) {
+		imania_store_send_account_json_error(__('Tipo de cliente invalido para esta conta.', 'imania-store'), 422, 'invalid_customer_type');
+	}
+
+	$document_validation = imania_store_validate_customer_document($customer_type, $document);
+	if (empty($document_validation['valid'])) {
+		$message = 'pf' === $customer_type ? __('CPF invalido.', 'imania-store') : __('CNPJ invalido.', 'imania-store');
+		imania_store_send_account_json_error($message, 422, (string) $document_validation['error']);
+	}
+
+	$normalized_document = (string) $document_validation['normalized'];
+	if (imania_store_document_exists_for_another_user($normalized_document, $user_id)) {
+		imania_store_send_account_json_error(__('Este documento ja esta vinculado a outra conta.', 'imania-store'), 422, 'duplicated_document');
+	}
+
+	$updated_user = wp_update_user(
+		array(
+			'ID' => $user_id,
+			'first_name' => $first_name,
+			'last_name' => $last_name,
+			'user_email' => $email,
+		)
+	);
+
+	if (is_wp_error($updated_user)) {
+		imania_store_send_account_json_error(__('Nao foi possivel atualizar seus dados de conta.', 'imania-store'), 500, 'user_update_failed');
+	}
+
+	if ('' !== $password) {
+		if (strlen($password) < 8) {
+			imania_store_send_account_json_error(__('A senha deve ter no minimo 8 caracteres.', 'imania-store'), 422, 'weak_password');
+		}
+		wp_set_password($password, $user_id);
+		wp_set_current_user($user_id);
+		wp_set_auth_cookie($user_id, true);
+	}
+
+	update_user_meta($user_id, 'billing_phone', $phone);
+	update_user_meta($user_id, 'billing_address_1', $address_1);
+	update_user_meta($user_id, 'billing_address_2', $address_2);
+	update_user_meta($user_id, 'billing_number', $number);
+	update_user_meta($user_id, 'billing_neighborhood', $neighborhood);
+	update_user_meta($user_id, 'billing_postcode', $postcode);
+	update_user_meta($user_id, 'billing_city', $city);
+	update_user_meta($user_id, 'billing_state', strtoupper($state));
+	update_user_meta($user_id, 'imania_document', $normalized_document);
+	update_user_meta($user_id, 'imania_document_type', 'pf' === $customer_type ? 'cpf' : 'cnpj');
+	update_user_meta($user_id, 'imania_customer_type', $customer_type);
+
+	if ('pf' === $customer_type) {
+		update_user_meta($user_id, 'billing_persontype', '1');
+		update_user_meta($user_id, 'billing_cpf', $normalized_document);
+		delete_user_meta($user_id, 'billing_cnpj');
+	} else {
+		update_user_meta($user_id, 'billing_persontype', '2');
+		update_user_meta($user_id, 'billing_cnpj', $normalized_document);
+		delete_user_meta($user_id, 'billing_cpf');
+	}
+
+	imania_store_invalidate_account_cache($user_id);
+
+	imania_store_send_account_json_success(
+		array(
+			'message' => __('Perfil atualizado com sucesso.', 'imania-store'),
+			'user' => array(
+				'firstName' => $first_name,
+				'lastName' => $last_name,
+				'email' => $email,
+			),
+		)
+	);
+}
+add_action('wp_ajax_imania_account_profile_save', 'imania_store_handle_account_profile_save_ajax');
+
+/**
  * Handle wishlist AJAX toggle.
  */
 function imania_store_handle_wishlist_ajax()
 {
-	check_ajax_referer('imania_wishlist_nonce', 'nonce');
+	if ('POST' !== strtoupper((string) $_SERVER['REQUEST_METHOD'])) {
+		imania_store_send_account_json_error(__('Metodo invalido.', 'imania-store'), 405, 'invalid_method');
+	}
+
+	$is_valid_nonce = check_ajax_referer('imania_wishlist_nonce', 'nonce', false);
+	if (false === $is_valid_nonce) {
+		imania_store_send_account_json_error(__('Falha de seguranca. Atualize a pagina e tente novamente.', 'imania-store'), 403, 'invalid_nonce');
+	}
 
 	if (!is_user_logged_in()) {
-		wp_send_json_error(
-			array('message' => __('FaÃ§a login para adicionar Ã  wishlist.', 'imania-store')),
-			401
-		);
+		imania_store_send_account_json_error(__('FaÃ§a login para adicionar Ã  wishlist.', 'imania-store'), 401, 'not_authenticated');
 	}
 
 	$product_id = isset($_POST['product_id']) ? absint(wp_unslash($_POST['product_id'])) : 0;
 	$mode = isset($_POST['mode']) ? sanitize_key(wp_unslash($_POST['mode'])) : 'toggle';
 	if ($product_id <= 0 || !in_array($mode, array('toggle', 'add', 'remove'), true)) {
-		wp_send_json_error(array('message' => __('Produto invÃ¡lido.', 'imania-store')), 400);
+		imania_store_send_account_json_error(__('Produto invÃ¡lido.', 'imania-store'), 400, 'invalid_product');
 	}
 
 	$product = wc_get_product($product_id);
 	if (!$product instanceof WC_Product) {
-		wp_send_json_error(array('message' => __('Produto nÃ£o encontrado.', 'imania-store')), 404);
+		imania_store_send_account_json_error(__('Produto nÃ£o encontrado.', 'imania-store'), 404, 'product_not_found');
 	}
 
-	$is_favorited = imania_store_update_wishlist_item(get_current_user_id(), $product_id, $mode);
-	$count = count(imania_store_get_wishlist_ids());
+	$user_id = get_current_user_id();
+	if (!current_user_can('read', $user_id)) {
+		imania_store_send_account_json_error(__('VocÃª nao tem permissao para esta acao.', 'imania-store'), 403, 'forbidden');
+	}
 
-	wp_send_json_success(
+	$is_favorited = imania_store_update_wishlist_item($user_id, $product_id, $mode);
+	$count = count(imania_store_get_wishlist_ids($user_id));
+
+	imania_store_send_account_json_success(
 		array(
 			'productId' => $product_id,
 			'isFavorited' => $is_favorited,
