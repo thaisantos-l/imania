@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * Imania Store functions and definitions
  *
@@ -179,16 +179,26 @@ add_action('widgets_init', 'imania_store_widgets_init');
  */
 function imania_store_scripts()
 {
+	$theme_js_path = get_template_directory() . '/assets/js/imania-theme.js';
+	$account_orders_js_path = get_template_directory() . '/assets/js/account-orders.js';
+	$theme_css_path = get_template_directory() . '/assets/css/main.css';
+	$theme_js_ver = file_exists($theme_js_path) ? (string) filemtime($theme_js_path) : _S_VERSION;
+	$account_orders_js_ver = file_exists($account_orders_js_path) ? (string) filemtime($account_orders_js_path) : _S_VERSION;
+	$theme_css_ver = file_exists($theme_css_path) ? (string) filemtime($theme_css_path) : _S_VERSION;
+
 	wp_enqueue_style('imania-store-fonts', 'https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600;700;800&display=swap', array(), null);
 	wp_enqueue_style('imania-store-bootstrap-grid', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap-grid.min.css', array(), '5.3.3');
 	wp_enqueue_style('imania-store-swiper', 'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css', array(), '11.2.8');
 	wp_enqueue_style('imania-store-style', get_stylesheet_uri(), array(), _S_VERSION);
-	wp_enqueue_style('imania-store-theme', get_template_directory_uri() . '/assets/css/main.css', array('imania-store-style', 'imania-store-bootstrap-grid', 'imania-store-swiper'), _S_VERSION);
+	wp_enqueue_style('imania-store-theme', get_template_directory_uri() . '/assets/css/main.css', array('imania-store-style', 'imania-store-bootstrap-grid', 'imania-store-swiper'), $theme_css_ver);
 	wp_style_add_data('imania-store-style', 'rtl', 'replace');
 
 	wp_enqueue_script('imania-store-navigation', get_template_directory_uri() . '/js/navigation.js', array(), _S_VERSION, true);
 	wp_enqueue_script('imania-store-swiper', 'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js', array(), '11.2.8', true);
-	wp_enqueue_script('imania-store-theme', get_template_directory_uri() . '/assets/js/imania-theme.js', array('imania-store-swiper'), _S_VERSION, true);
+	wp_enqueue_script('imania-store-theme', get_template_directory_uri() . '/assets/js/imania-theme.js', array('imania-store-swiper'), $theme_js_ver, true);
+	if (function_exists('is_account_page') && is_account_page()) {
+		wp_enqueue_script('imania-account-orders', get_template_directory_uri() . '/assets/js/account-orders.js', array('imania-store-theme'), $account_orders_js_ver, true);
+	}
 
 	$login_url = function_exists('imania_store_get_login_to_price_url') ? imania_store_get_login_to_price_url() : wp_login_url();
 	$wishlist_url = function_exists('wc_get_account_endpoint_url') ? wc_get_account_endpoint_url('wishlist') : home_url('/');
@@ -202,12 +212,34 @@ function imania_store_scripts()
 			'loginUrl' => $login_url,
 			'wishlistUrl' => $wishlist_url,
 			'messages' => array(
-				'genericError' => __('Não foi possível atualizar sua wishlist. Tente novamente.', 'imania-store'),
-				'added' => __('Produto adicionado à wishlist.', 'imania-store'),
+				'genericError' => __('NÃ£o foi possÃ­vel atualizar sua wishlist. Tente novamente.', 'imania-store'),
+				'added' => __('Produto adicionado Ã  wishlist.', 'imania-store'),
 				'removed' => __('Produto removido da wishlist.', 'imania-store'),
 			),
 		)
 	);
+
+	if (function_exists('is_account_page') && is_account_page()) {
+		$account_base_url = function_exists('wc_get_page_permalink') ? wc_get_page_permalink('myaccount') : home_url('/');
+		wp_localize_script(
+			'imania-store-theme',
+			'imaniaAccount',
+			array(
+				'ajaxUrl' => admin_url('admin-ajax.php'),
+				'nonce' => wp_create_nonce('imania_account_nonce'),
+				'baseUrl' => trailingslashit($account_base_url),
+				'endpoints' => array(
+					'profile' => function_exists('wc_get_account_endpoint_url') ? wc_get_account_endpoint_url('profile') : trailingslashit($account_base_url),
+					'orders' => function_exists('wc_get_account_endpoint_url') ? wc_get_account_endpoint_url('orders') : trailingslashit($account_base_url),
+					'wishlist' => function_exists('wc_get_account_endpoint_url') ? wc_get_account_endpoint_url('wishlist') : trailingslashit($account_base_url),
+					'payment-methods' => function_exists('wc_get_account_endpoint_url') ? wc_get_account_endpoint_url('payment-methods') : trailingslashit($account_base_url),
+				),
+				'messages' => array(
+					'genericError' => __('NÃ£o foi possÃ­vel carregar esta seÃ§Ã£o agora. Tente novamente.', 'imania-store'),
+				),
+			)
+		);
+	}
 
 	if (is_singular() && comments_open() && get_option('thread_comments')) {
 		wp_enqueue_script('comment-reply');
@@ -326,6 +358,7 @@ function imania_store_update_wishlist_item($user_id, $product_id, $mode = 'toggl
 function imania_store_register_wishlist_endpoint()
 {
 	add_rewrite_endpoint('wishlist', EP_ROOT | EP_PAGES);
+	add_rewrite_endpoint('profile', EP_ROOT | EP_PAGES);
 }
 add_action('init', 'imania_store_register_wishlist_endpoint');
 
@@ -344,13 +377,13 @@ add_action('after_switch_theme', 'imania_store_flush_rewrite_on_switch');
  */
 function imania_store_maybe_flush_wishlist_endpoint()
 {
-	if ('1' === get_option('imania_wishlist_endpoint_flushed')) {
+	if ('1' === get_option('imania_account_endpoints_flushed')) {
 		return;
 	}
 
 	imania_store_register_wishlist_endpoint();
 	flush_rewrite_rules(false);
-	update_option('imania_wishlist_endpoint_flushed', '1', true);
+	update_option('imania_account_endpoints_flushed', '1', true);
 }
 add_action('init', 'imania_store_maybe_flush_wishlist_endpoint', 20);
 
@@ -363,22 +396,27 @@ add_action('init', 'imania_store_maybe_flush_wishlist_endpoint', 20);
  */
 function imania_store_add_wishlist_to_account_menu($items)
 {
-	$new_items = array();
-
-	foreach ($items as $key => $label) {
-		if ('customer-logout' === $key) {
-			$new_items['wishlist'] = __('Wishlist', 'imania-store');
-		}
-		$new_items[$key] = $label;
-	}
-
-	if (!isset($new_items['wishlist'])) {
-		$new_items['wishlist'] = __('Wishlist', 'imania-store');
-	}
-
-	return $new_items;
+	return array(
+		'profile' => __('InformaÃ§Ãµes do perfil', 'imania-store'),
+		'orders' => __('Compras', 'imania-store'),
+		'wishlist' => __('Wishlist', 'imania-store'),
+		'payment-methods' => __('Pagamento', 'imania-store'),
+	);
 }
 add_filter('woocommerce_account_menu_items', 'imania_store_add_wishlist_to_account_menu');
+
+/**
+ * Profile endpoint page title.
+ *
+ * @param string $title Default title.
+ *
+ * @return string
+ */
+function imania_store_profile_endpoint_title($title)
+{
+	return __('InformaÃ§Ãµes do perfil', 'imania-store');
+}
+add_filter('woocommerce_endpoint_profile_title', 'imania_store_profile_endpoint_title');
 
 /**
  * Wishlist endpoint page title.
@@ -399,13 +437,13 @@ add_filter('woocommerce_endpoint_wishlist_title', 'imania_store_wishlist_endpoin
 function imania_store_render_wishlist_endpoint_content()
 {
 	if (!is_user_logged_in()) {
-		echo '<p>' . esc_html__('Faça login para acessar sua wishlist.', 'imania-store') . '</p>';
+		echo '<p>' . esc_html__('FaÃ§a login para acessar sua wishlist.', 'imania-store') . '</p>';
 		return;
 	}
 
 	$ids = imania_store_get_wishlist_ids();
 	if (empty($ids)) {
-		echo '<p>' . esc_html__('Sua wishlist está vazia.', 'imania-store') . '</p>';
+		echo '<p>' . esc_html__('Sua wishlist estÃ¡ vazia.', 'imania-store') . '</p>';
 		return;
 	}
 
@@ -420,14 +458,14 @@ function imania_store_render_wishlist_endpoint_content()
 	);
 
 	if (empty($products)) {
-		echo '<p>' . esc_html__('Sua wishlist está vazia.', 'imania-store') . '</p>';
+		echo '<p>' . esc_html__('Sua wishlist estÃ¡ vazia.', 'imania-store') . '</p>';
 		return;
 	}
 	?>
-	<div class="imania-wishlist-account">
-		<div class="row g-3">
+	<div class="imania-wishlist-account" data-imania-wishlist-endpoint data-empty-text="<?php echo esc_attr__('Sua wishlist está vazia.', 'imania-store'); ?>">
+		<div class="row g-3" data-imania-wishlist-grid>
 			<?php foreach ($products as $product) : ?>
-				<div class="col-12 col-md-6">
+				<div class="col-12 col-md-6" data-wishlist-account-col>
 					<div class="imania-wishlist-account__item" data-wishlist-account-item="<?php echo esc_attr($product->get_id()); ?>">
 						<a class="imania-wishlist-account__thumb" href="<?php echo esc_url(get_permalink($product->get_id())); ?>">
 							<?php echo wp_kses_post($product->get_image('woocommerce_thumbnail', array('loading' => 'lazy'))); ?>
@@ -452,6 +490,152 @@ function imania_store_render_wishlist_endpoint_content()
 add_action('woocommerce_account_wishlist_endpoint', 'imania_store_render_wishlist_endpoint_content');
 
 /**
+ * Resolve customer document label.
+ *
+ * @param int $user_id User id.
+ *
+ * @return string
+ */
+function imania_store_get_customer_document_label($user_id)
+{
+	$type = (string) get_user_meta($user_id, 'imania_customer_type', true);
+	if ('pj' === $type || '2' === (string) get_user_meta($user_id, 'billing_persontype', true)) {
+		return 'CNPJ';
+	}
+
+	return 'CPF';
+}
+
+/**
+ * Resolve customer document value.
+ *
+ * @param int $user_id User id.
+ *
+ * @return string
+ */
+function imania_store_get_customer_document_value($user_id)
+{
+	$label = imania_store_get_customer_document_label($user_id);
+	if ('CNPJ' === $label) {
+		return (string) get_user_meta($user_id, 'billing_cnpj', true);
+	}
+
+	return (string) get_user_meta($user_id, 'billing_cpf', true);
+}
+
+/**
+ * Render profile endpoint content.
+ */
+function imania_store_render_profile_endpoint_content()
+{
+	$user_id = get_current_user_id();
+	if ($user_id <= 0) {
+		echo '<p>' . esc_html__('FaÃ§a login para acessar seu perfil.', 'imania-store') . '</p>';
+		return;
+	}
+
+	$user = get_userdata($user_id);
+	if (!$user instanceof WP_User) {
+		echo '<p>' . esc_html__('NÃ£o foi possÃ­vel carregar os dados do perfil.', 'imania-store') . '</p>';
+		return;
+	}
+
+	$document_label = imania_store_get_customer_document_label($user_id);
+	$document_value = imania_store_get_customer_document_value($user_id);
+
+	$billing_country = (string) get_user_meta($user_id, 'billing_country', true);
+	$countries = function_exists('WC') ? WC()->countries : null;
+	$country_name = $billing_country;
+	if ($countries instanceof WC_Countries && isset($countries->countries[$billing_country])) {
+		$country_name = (string) $countries->countries[$billing_country];
+	}
+
+	$template_args = array(
+		'user' => $user,
+		'document_label' => $document_label,
+		'document_value' => $document_value,
+		'phone' => (string) get_user_meta($user_id, 'billing_phone', true),
+		'address_1' => (string) get_user_meta($user_id, 'billing_address_1', true),
+		'address_2' => (string) get_user_meta($user_id, 'billing_address_2', true),
+		'number' => (string) get_user_meta($user_id, 'billing_number', true),
+		'neighborhood' => (string) get_user_meta($user_id, 'billing_neighborhood', true),
+		'postcode' => (string) get_user_meta($user_id, 'billing_postcode', true),
+		'city' => (string) get_user_meta($user_id, 'billing_city', true),
+		'state' => (string) get_user_meta($user_id, 'billing_state', true),
+		'country' => $country_name,
+	);
+
+	wc_get_template('myaccount/profile.php', $template_args, '', get_template_directory() . '/woocommerce/');
+}
+add_action('woocommerce_account_profile_endpoint', 'imania_store_render_profile_endpoint_content');
+
+/**
+ * Render account endpoint content to string.
+ *
+ * @param string $endpoint Endpoint slug.
+ *
+ * @return string
+ */
+function imania_store_render_account_endpoint_to_string($endpoint)
+{
+	$endpoint = sanitize_key((string) $endpoint);
+	ob_start();
+
+	switch ($endpoint) {
+		case 'profile':
+			do_action('woocommerce_account_profile_endpoint');
+			break;
+		case 'orders':
+			do_action('woocommerce_account_orders_endpoint', 1);
+			break;
+		case 'wishlist':
+			do_action('woocommerce_account_wishlist_endpoint');
+			break;
+		case 'payment-methods':
+			do_action('woocommerce_account_payment-methods_endpoint');
+			break;
+		default:
+			do_action('woocommerce_account_profile_endpoint');
+			$endpoint = 'profile';
+			break;
+	}
+
+	return (string) ob_get_clean();
+}
+
+/**
+ * Handle account endpoint AJAX load.
+ */
+function imania_store_handle_account_endpoint_ajax()
+{
+	check_ajax_referer('imania_account_nonce', 'nonce');
+
+	if (!is_user_logged_in()) {
+		wp_send_json_error(
+			array(
+				'message' => __('FaÃ§a login para acessar esta Ã¡rea.', 'imania-store'),
+			),
+			401
+		);
+	}
+
+	$endpoint = isset($_POST['endpoint']) ? sanitize_key(wp_unslash($_POST['endpoint'])) : 'profile';
+	$allowed = array('profile', 'orders', 'wishlist', 'payment-methods');
+	if (!in_array($endpoint, $allowed, true)) {
+		$endpoint = 'profile';
+	}
+
+	$html = imania_store_render_account_endpoint_to_string($endpoint);
+	wp_send_json_success(
+		array(
+			'endpoint' => $endpoint,
+			'html' => $html,
+		)
+	);
+}
+add_action('wp_ajax_imania_account_endpoint', 'imania_store_handle_account_endpoint_ajax');
+
+/**
  * Handle wishlist AJAX toggle.
  */
 function imania_store_handle_wishlist_ajax()
@@ -460,7 +644,7 @@ function imania_store_handle_wishlist_ajax()
 
 	if (!is_user_logged_in()) {
 		wp_send_json_error(
-			array('message' => __('Faça login para adicionar à wishlist.', 'imania-store')),
+			array('message' => __('FaÃ§a login para adicionar Ã  wishlist.', 'imania-store')),
 			401
 		);
 	}
@@ -468,12 +652,12 @@ function imania_store_handle_wishlist_ajax()
 	$product_id = isset($_POST['product_id']) ? absint(wp_unslash($_POST['product_id'])) : 0;
 	$mode = isset($_POST['mode']) ? sanitize_key(wp_unslash($_POST['mode'])) : 'toggle';
 	if ($product_id <= 0 || !in_array($mode, array('toggle', 'add', 'remove'), true)) {
-		wp_send_json_error(array('message' => __('Produto inválido.', 'imania-store')), 400);
+		wp_send_json_error(array('message' => __('Produto invÃ¡lido.', 'imania-store')), 400);
 	}
 
 	$product = wc_get_product($product_id);
 	if (!$product instanceof WC_Product) {
-		wp_send_json_error(array('message' => __('Produto não encontrado.', 'imania-store')), 404);
+		wp_send_json_error(array('message' => __('Produto nÃ£o encontrado.', 'imania-store')), 404);
 	}
 
 	$is_favorited = imania_store_update_wishlist_item(get_current_user_id(), $product_id, $mode);
@@ -528,3 +712,4 @@ if (defined('JETPACK__VERSION')) {
 if (class_exists('WooCommerce')) {
 	require get_template_directory() . '/inc/woocommerce.php';
 }
+

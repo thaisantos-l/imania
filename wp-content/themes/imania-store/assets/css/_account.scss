@@ -1,0 +1,290 @@
+/* Minha Conta - layout Figma desktop. */
+.woocommerce-account {
+	background: #efefef;
+}
+
+.woocommerce-account .imania-header {
+	background: #f7cf26;
+	border-bottom: 0;
+}
+
+.woocommerce-account .imania-header-topbar {
+	display: none;
+}
+
+.woocommerce-account .imania-navigation .menu-item a,
+.woocommerce-account .imania-branding__name {
+	color: #000;
+}
+
+.woocommerce-account .imania-header-actions a img,
+.woocommerce-account .imania-header-actions__btn img {
+	filter: grayscale(1) brightness(0);
+}
+
+.imania-account {
+	background: #efefef;
+	margin: 0 auto;
+	max-width: 1232px;
+	min-height: 88vh;
+}
+
+.imania-account__top-strip {
+	align-items: center;
+	background: #f7cf26;
+	border-bottom: 2px solid #098fcb;
+	display: flex;
+	height: 20px;
+	padding: 0 14px;
+}
+
+.imania-account__top-logo {
+	background: radial-gradient(circle at 55% 45%, #ffd84b 28%, #006caa 30% 55%, #e11928 56%);
+	border-radius: 999px;
+	display: inline-block;
+	height: 10px;
+	position: relative;
+	width: 10px;
+}
+
+.imania-account__viewport {
+	padding-bottom: 42px;
+	padding-top: 38px;
+}
+
+.imania-account__layout {
+	display: grid;
+	gap: 26px;
+	grid-template-columns: 170px 1px minmax(0, 1fr);
+}
+
+.imania-account__left {
+	padding-left: 10px;
+}
+
+.imania-account__top {
+	margin-bottom: 28px;
+}
+
+.imania-account__avatar {
+	background: #d6d6d6;
+	border-radius: 999px;
+	height: 58px;
+	margin-bottom: 12px;
+	width: 58px;
+}
+
+.imania-account__name,
+.imania-account__email {
+	color: #979797;
+	font-size: 7px;
+	font-weight: 400;
+	line-height: 1.45;
+	margin: 0;
+}
+
+.imania-account__nav ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.imania-account__nav li + li {
+	margin-top: 5px;
+}
+
+.imania-account__nav a {
+	color: #777;
+	display: inline-block;
+	font-size: 8px;
+	font-weight: 400;
+	line-height: 1.2;
+}
+
+.imania-account__nav li.is-active a,
+.imania-account__nav a:hover {
+	color: #f03434;
+}
+
+.imania-account__divider {
+	background: #f7cf26;
+	min-height: 468px;
+}
+
+.imania-account__content {
+	max-width: 760px;
+	min-height: 468px;
+	padding-top: 6px;
+}
+
+.imania-account__skeleton-title {
+	background: #e3e3e3;
+	border-radius: 7px;
+	height: 34px;
+	margin-bottom: 18px;
+	width: 240px;
+}
+
+.imania-account__skeleton-grid {
+	display: grid;
+	gap: 14px 18px;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	margin-bottom: 14px;
+}
+
+.imania-account__skeleton-grid span,
+.imania-account__skeleton-line {
+	background: #e3e3e3;
+	border-radius: 7px;
+	display: block;
+	height: 32px;
+}
+
+.imania-account__skeleton-line {
+	margin-bottom: 10px;
+	width: 100%;
+}
+
+.imania-account__skeleton-line--sm {
+	margin-left: auto;
+	width: 140px;
+}
+
+.imania-account-profile h2 {
+	color: #2d2d2d;
+	font-size: 35px;
+	font-weight: 400;
+	letter-spacing: 0;
+	line-height: 1.1;
+	margin: 0 0 24px;
+}
+
+.imania-account-profile__form {
+	display: grid;
+	gap: 14px;
+	max-width: 640px;
+}
+
+.imania-account-profile__grid {
+	display: grid;
+	gap: 12px 16px;
+}
+
+.imania-account-profile__grid--2 {
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.imania-account-profile__grid--3 {
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.imania-account-profile__grid--address {
+	grid-template-columns: minmax(0, 1fr) 112px;
+}
+
+.imania-account-profile__field label {
+	color: #2f2f2f;
+	display: block;
+	font-size: 11px;
+	font-weight: 400;
+	line-height: 1.2;
+	margin-bottom: 6px;
+}
+
+.imania-account-profile__field input {
+	background: #e4e4e4;
+	border: 1px solid #e4e4e4;
+	border-radius: 8px;
+	color: #2f2f2f;
+	font-size: 12px;
+	height: 32px;
+	line-height: 1.2;
+	padding: 8px 11px;
+	width: 100%;
+}
+
+.imania-account-profile__field input:focus {
+	border-color: #1197d6;
+	outline: none;
+}
+
+.imania-account-profile__field a {
+	color: #1697d9;
+	display: inline-block;
+	font-size: 10px;
+	line-height: 1.2;
+	margin-top: 6px;
+	text-decoration: underline;
+}
+
+.imania-account-profile__actions {
+	align-items: center;
+	display: flex;
+	gap: 12px;
+	justify-content: flex-end;
+	padding-top: 2px;
+}
+
+.imania-account-profile__actions .imania-btn--ghost {
+	color: #2d2d2d;
+	font-size: 11px;
+	font-weight: 400;
+	padding: 0;
+}
+
+.imania-account-profile__actions .imania-btn--primary {
+	background: #1392d5;
+	border-radius: 999px;
+	color: #fff;
+	font-size: 11px;
+	font-weight: 500;
+	line-height: 1;
+	min-height: 24px;
+	min-width: 54px;
+	padding: 6px 12px;
+}
+
+@media (max-width: 991.98px) {
+	.imania-account {
+		max-width: none;
+	}
+
+	.imania-account__viewport {
+		padding-top: 24px;
+	}
+
+	.imania-account__layout {
+		gap: 16px;
+		grid-template-columns: 1fr;
+	}
+
+	.imania-account__divider {
+		display: none;
+	}
+
+	.imania-account__left {
+		padding-left: 0;
+	}
+
+	.imania-account__top {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 10px 14px;
+	}
+
+	.imania-account__nav ul {
+		display: grid;
+		gap: 8px;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.imania-account-profile h2 {
+		font-size: 30px;
+	}
+
+	.imania-account-profile__grid--2,
+	.imania-account-profile__grid--3,
+	.imania-account-profile__grid--address {
+		grid-template-columns: 1fr;
+	}
+}

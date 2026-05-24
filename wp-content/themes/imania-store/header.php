@@ -80,13 +80,13 @@
 							<img src="<?php echo esc_url( $header_icon_uri . 'busca.png' ); ?>" alt="" aria-hidden="true" />
 						</a>
 						<?php if ( is_user_logged_in() ) : ?>
-							<a href="<?php echo esc_url( $favorites_url ); ?>" aria-label="<?php esc_attr_e( 'Favoritos', 'imania-store' ); ?>">
+							<a href="<?php echo esc_url( $favorites_url ); ?>" aria-label="<?php esc_attr_e( 'Favoritos', 'imania-store' ); ?>" data-imania-wishlist-link>
 								<img src="<?php echo esc_url( $header_icon_uri . 'favorito.png' ); ?>" alt="" aria-hidden="true" />
 								<?php
 								$wishlist_count = count( imania_store_get_wishlist_ids() );
 								if ( $wishlist_count > 0 ) :
 									?>
-									<span class="imania-cart-count"><?php echo esc_html( $wishlist_count ); ?></span>
+									<span class="imania-cart-count" data-imania-wishlist-count><?php echo esc_html( $wishlist_count ); ?></span>
 								<?php endif; ?>
 							</a>
 						<?php else : ?>
