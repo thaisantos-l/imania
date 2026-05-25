@@ -43,6 +43,120 @@
 })();
 
 (function () {
+	var cards = document.querySelectorAll('[data-imania-product-card-gallery]');
+	if (!cards.length) {
+		return;
+	}
+
+	function normalizeIndex(index, total) {
+		if (total <= 0) {
+			return 0;
+		}
+		if (index < 0) {
+			return total - 1;
+		}
+		if (index >= total) {
+			return 0;
+		}
+		return index;
+	}
+
+	cards.forEach(function (card) {
+		var image = card.querySelector('[data-imania-product-card-image]');
+		var dots = Array.prototype.slice.call(card.querySelectorAll('[data-imania-product-card-dot]'));
+		if (!image || !dots.length) {
+			return;
+		}
+
+		var rawGallery = card.getAttribute('data-imania-product-card-gallery') || '[]';
+		var gallery = [];
+		try {
+			gallery = JSON.parse(rawGallery);
+		} catch (error) {
+			gallery = [];
+		}
+
+		if (!Array.isArray(gallery) || gallery.length <= 1) {
+			return;
+		}
+
+		var activeIndex = 0;
+		var transitionTimer = null;
+
+		function setActiveSlide(nextIndex) {
+			activeIndex = normalizeIndex(nextIndex, gallery.length);
+			var nextImage = gallery[activeIndex] || {};
+			if (transitionTimer) {
+				window.clearTimeout(transitionTimer);
+			}
+
+			image.classList.add('is-switching');
+			transitionTimer = window.setTimeout(function () {
+				if (nextImage.src) {
+					image.setAttribute('src', nextImage.src);
+				}
+				if (nextImage.srcset) {
+					image.setAttribute('srcset', nextImage.srcset);
+				} else {
+					image.removeAttribute('srcset');
+				}
+				if (nextImage.sizes) {
+					image.setAttribute('sizes', nextImage.sizes);
+				} else {
+					image.removeAttribute('sizes');
+				}
+				if (nextImage.alt) {
+					image.setAttribute('alt', nextImage.alt);
+				}
+
+				window.requestAnimationFrame(function () {
+					image.classList.remove('is-switching');
+				});
+			}, 110);
+
+			dots.forEach(function (dot, index) {
+				var isActive = index === activeIndex;
+				dot.classList.toggle('is-active', isActive);
+				dot.setAttribute('aria-current', isActive ? 'true' : 'false');
+			});
+		}
+
+		dots.forEach(function (dot) {
+			dot.addEventListener('click', function () {
+				var index = parseInt(dot.getAttribute('data-slide-index'), 10);
+				if (Number.isNaN(index)) {
+					return;
+				}
+				setActiveSlide(index);
+			});
+		});
+
+		var startX = null;
+		card.addEventListener('touchstart', function (event) {
+			if (!event.touches || !event.touches.length) {
+				return;
+			}
+			startX = event.touches[0].clientX;
+		}, { passive: true });
+
+		card.addEventListener('touchend', function (event) {
+			if (startX === null || !event.changedTouches || !event.changedTouches.length) {
+				startX = null;
+				return;
+			}
+
+			var deltaX = event.changedTouches[0].clientX - startX;
+			startX = null;
+			if (Math.abs(deltaX) < 30) {
+				return;
+			}
+
+			setActiveSlide(activeIndex + (deltaX < 0 ? 1 : -1));
+		}, { passive: true });
+	});
+})();
+
+(function () {
 	var modal = document.querySelector('[data-imania-login-modal]');
 	if (!modal) {
 		return;
