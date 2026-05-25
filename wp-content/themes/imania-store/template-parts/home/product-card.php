@@ -19,19 +19,77 @@ $name      = $product->get_name();
 $product_id = $product->get_id();
 $is_favorited = imania_store_is_in_wishlist( $product_id );
 
-$gallery_ids = $product->get_gallery_image_ids();
-$media_count = 1 + count( $gallery_ids );
-$dot_count   = min( 3, max( 1, $media_count ) );
+$card_image_ids = array_merge(
+	array( (int) $product->get_image_id() ),
+	array_map( 'absint', (array) $product->get_gallery_image_ids() )
+);
+$card_image_ids = array_values( array_unique( array_filter( $card_image_ids ) ) );
+$card_image_ids = array_slice( $card_image_ids, 0, 3 );
+$gallery_items  = array();
+
+foreach ( $card_image_ids as $image_id ) {
+	$image_url = wp_get_attachment_image_url( $image_id, 'woocommerce_thumbnail' );
+	if ( ! $image_url ) {
+		continue;
+	}
+
+	$image_alt = (string) get_post_meta( $image_id, '_wp_attachment_image_alt', true );
+	if ( '' === $image_alt ) {
+		$image_alt = $name;
+	}
+
+	$gallery_items[] = array(
+		'src'    => esc_url_raw( $image_url ),
+		'srcset' => (string) wp_get_attachment_image_srcset( $image_id, 'woocommerce_thumbnail' ),
+		'sizes'  => (string) wp_get_attachment_image_sizes( $image_id, 'woocommerce_thumbnail' ),
+		'alt'    => $image_alt,
+	);
+}
+
+if ( empty( $gallery_items ) ) {
+	$gallery_items[] = array(
+		'src'    => esc_url_raw( wc_placeholder_img_src( 'woocommerce_thumbnail' ) ),
+		'srcset' => '',
+		'sizes'  => '',
+		'alt'    => $name,
+	);
+}
+
+$active_image = $gallery_items[0];
+$dot_count    = count( $gallery_items );
 
 if ( 'showcase' === $variant ) :
 	?>
-	<article class="imania-product-card imania-product-card--showcase" aria-label="<?php echo esc_attr( $name ); ?>">
+	<article
+		class="imania-product-card imania-product-card--showcase"
+		aria-label="<?php echo esc_attr( $name ); ?>"
+		data-imania-product-card-gallery="<?php echo esc_attr( wp_json_encode( $gallery_items ) ); ?>"
+	>
 		<a class="imania-product-card__thumb" href="<?php echo esc_url( $permalink ); ?>">
-			<?php echo wp_kses_post( $product->get_image( 'woocommerce_thumbnail', array( 'loading' => 'lazy' ) ) ); ?>
+			<img
+				src="<?php echo esc_url( $active_image['src'] ); ?>"
+				alt="<?php echo esc_attr( $active_image['alt'] ); ?>"
+				loading="lazy"
+				decoding="async"
+				data-imania-product-card-image
+				<?php if ( '' !== $active_image['srcset'] ) : ?>
+					srcset="<?php echo esc_attr( $active_image['srcset'] ); ?>"
+				<?php endif; ?>
+				<?php if ( '' !== $active_image['sizes'] ) : ?>
+					sizes="<?php echo esc_attr( $active_image['sizes'] ); ?>"
+				<?php endif; ?>
+			/>
 		</a>
-		<div class="imania-product-card__dots" aria-hidden="true">
+		<div class="imania-product-card__dots" role="tablist" aria-label="<?php esc_attr_e( 'Galeria do produto', 'imania-store' ); ?>">
 			<?php for ( $i = 0; $i < $dot_count; $i++ ) : ?>
-				<span class="<?php echo 0 === $i ? 'is-active' : ''; ?>"></span>
+				<button
+					type="button"
+					class="<?php echo 0 === $i ? 'is-active' : ''; ?>"
+					data-imania-product-card-dot
+					data-slide-index="<?php echo esc_attr( $i ); ?>"
+					aria-label="<?php echo esc_attr( sprintf( __( 'Ver imagem %d', 'imania-store' ), $i + 1 ) ); ?>"
+					aria-current="<?php echo 0 === $i ? 'true' : 'false'; ?>"
+				></button>
 			<?php endfor; ?>
 		</div>
 		<div class="imania-product-card__meta-line">

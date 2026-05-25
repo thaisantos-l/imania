@@ -612,7 +612,13 @@ img {
 .imania-product-card--showcase .imania-product-card__thumb img {
   height: 100%;
   object-fit: contain;
+  transition: opacity 0.26s ease, transform 0.26s ease;
   width: 100%;
+}
+
+.imania-product-card--showcase .imania-product-card__thumb img.is-switching {
+  opacity: 0.38;
+  transform: scale(0.985);
 }
 
 .imania-product-card__dots {
@@ -623,15 +629,19 @@ img {
   position: relative;
 }
 
-.imania-product-card__dots span {
+.imania-product-card__dots button {
+  appearance: none;
   background: #9a9a9a;
+  border: 0;
   border-radius: 999px;
   display: inline-block;
   height: 10px;
+  padding: 0;
+  cursor: pointer;
   width: 10px;
 }
 
-.imania-product-card__dots span.is-active {
+.imania-product-card__dots button.is-active {
   background: #000;
 }
 
