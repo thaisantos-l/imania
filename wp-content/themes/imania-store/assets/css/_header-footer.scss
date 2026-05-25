@@ -15,9 +15,9 @@
 
 .imania-header-topbar p {
 	color: #000;
-	font-size: 1.9rem;
+	font-size: 1rem;
 	font-weight: 500;
-	line-height: 1.1;
+	line-height: 1.25;
 	margin: 0;
 }
 
@@ -26,12 +26,12 @@
 }
 
 .imania-header .container {
-	padding-bottom: 18px;
-	padding-top: 18px;
+	padding-bottom: 14px;
+	padding-top: 14px;
 }
 
 .imania-header-main {
-	min-height: 78px;
+	min-height: 68px;
 }
 
 .imania-branding img {
@@ -48,26 +48,118 @@
 	align-items: center;
 	display: flex;
 	flex-wrap: wrap;
-	gap: 10px 26px;
+	gap: 8px 18px;
 	justify-content: center;
 	list-style: none;
 	margin: 0;
 	padding: 0;
 }
 
+.imania-navigation .menu > .menu-item {
+	position: relative;
+}
+
 .imania-navigation .menu-item a {
 	color: var(--im-color-text);
 	display: inline-block;
-	font-size: 1.7rem;
+	font-size: 1rem;
 	font-weight: 500;
-	line-height: 1.2;
-	padding: 6px 0;
+	line-height: 1.25;
+	padding: 6px 0 8px;
 	white-space: nowrap;
+}
+
+.imania-navigation .menu-item-has-children > a {
+	padding-right: 18px;
+	position: relative;
+}
+
+.imania-navigation .menu-item-has-children > a::after {
+	border-left: 4px solid transparent;
+	border-right: 4px solid transparent;
+	border-top: 5px solid currentColor;
+	content: '';
+	position: absolute;
+	right: 0;
+	top: 50%;
+	transform: translateY(-35%);
 }
 
 .imania-navigation .current-menu-item > a,
 .imania-navigation .menu-item a:hover {
 	color: var(--im-color-primary);
+}
+
+.imania-navigation .sub-menu {
+	background: #fff;
+	border: 1px solid rgba(0, 0, 0, 0.12);
+	border-radius: 12px;
+	box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+	display: grid;
+	gap: 2px;
+	left: 0;
+	list-style: none;
+	margin: 0;
+	min-width: 230px;
+	opacity: 0;
+	padding: 8px 0;
+	position: absolute;
+	top: calc(100% + 8px);
+	transform: translateY(6px);
+	transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s ease;
+	visibility: hidden;
+	z-index: 150;
+}
+
+.imania-navigation .sub-menu li {
+	position: relative;
+}
+
+.imania-navigation .sub-menu a {
+	display: block;
+	font-size: 0.92rem;
+	font-weight: 500;
+	line-height: 1.35;
+	padding: 8px 14px;
+	white-space: normal;
+}
+
+.imania-navigation .menu-item-has-children:hover > .sub-menu,
+.imania-navigation .menu-item-has-children:focus-within > .sub-menu,
+.imania-navigation .menu-item-has-children.is-open-submenu > .sub-menu {
+	opacity: 1;
+	transform: translateY(0);
+	visibility: visible;
+}
+
+.imania-submenu-toggle {
+	background: transparent;
+	border: 0;
+	border-radius: 6px;
+	cursor: pointer;
+	display: none;
+	height: 24px;
+	padding: 0;
+	position: absolute;
+	right: 0;
+	top: 50%;
+	transform: translateY(-50%);
+	width: 18px;
+}
+
+.imania-submenu-toggle::before {
+	border-left: 4px solid transparent;
+	border-right: 4px solid transparent;
+	border-top: 5px solid currentColor;
+	content: '';
+	display: block;
+	margin: 0 auto;
+	transition: transform 0.18s ease;
+	width: 0;
+}
+
+.imania-navigation .menu-item-has-children.is-open-submenu > .imania-submenu-toggle::before {
+	transform: rotate(180deg);
 }
 
 .imania-header-actions {
@@ -223,7 +315,7 @@
 
 @media (max-width: 991.98px) {
 	.imania-header-topbar p {
-		font-size: 1.25rem;
+		font-size: 0.92rem;
 	}
 
 	.imania-header .container {
@@ -240,7 +332,51 @@
 	}
 
 	.imania-navigation .menu-item a {
-		font-size: 1.3rem;
+		font-size: 0.98rem;
+		padding: 6px 0;
+	}
+
+	.imania-navigation .menu-item-has-children > a {
+		padding-right: 30px;
+	}
+
+	.imania-navigation .menu-item-has-children > a::after {
+		display: none;
+	}
+
+	.imania-submenu-toggle {
+		display: inline-flex;
+	}
+
+	.imania-navigation .sub-menu {
+		border: 0;
+		border-left: 2px solid rgba(0, 0, 0, 0.14);
+		border-radius: 0;
+		box-shadow: none;
+		display: none;
+		gap: 0;
+		margin: 4px 0 0;
+		min-width: 0;
+		opacity: 1;
+		padding: 2px 0 2px 12px;
+		position: static;
+		transform: none;
+		transition: none;
+		visibility: visible;
+	}
+
+	.imania-navigation .menu-item-has-children:hover > .sub-menu,
+	.imania-navigation .menu-item-has-children:focus-within > .sub-menu {
+		display: none;
+	}
+
+	.imania-navigation .menu-item-has-children.is-open-submenu > .sub-menu {
+		display: grid;
+	}
+
+	.imania-navigation .sub-menu a {
+		font-size: 0.9rem;
+		padding: 7px 0;
 	}
 }
 

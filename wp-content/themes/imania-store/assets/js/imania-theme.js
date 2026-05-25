@@ -14,6 +14,93 @@
 })();
 
 (function () {
+	var nav = document.querySelector('.imania-navigation[data-imania-menu]');
+	if (!nav) {
+		return;
+	}
+
+	var menuItems = Array.prototype.slice.call(nav.querySelectorAll('.menu-item-has-children'));
+	if (!menuItems.length) {
+		return;
+	}
+
+	var mobileQuery = window.matchMedia('(max-width: 991.98px)');
+
+	function closeAllSubmenus(exceptItem) {
+		menuItems.forEach(function (item) {
+			if (exceptItem && item === exceptItem) {
+				return;
+			}
+			item.classList.remove('is-open-submenu');
+			var control = item.querySelector('.imania-submenu-toggle');
+			if (control) {
+				control.setAttribute('aria-expanded', 'false');
+			}
+		});
+	}
+
+	function bindDropdown(item, index) {
+		var submenu = item.querySelector(':scope > .sub-menu');
+		var link = item.querySelector(':scope > a');
+		if (!submenu || !link) {
+			return;
+		}
+
+		var button = document.createElement('button');
+		button.className = 'imania-submenu-toggle';
+		button.type = 'button';
+		button.setAttribute('aria-expanded', 'false');
+		button.setAttribute('aria-label', 'Abrir submenu');
+
+		var submenuId = 'imania-submenu-' + index;
+		submenu.id = submenu.id || submenuId;
+		button.setAttribute('aria-controls', submenu.id);
+
+		item.appendChild(button);
+
+		button.addEventListener('click', function (event) {
+			event.preventDefault();
+			event.stopPropagation();
+			var willOpen = !item.classList.contains('is-open-submenu');
+			closeAllSubmenus(item);
+			item.classList.toggle('is-open-submenu', willOpen);
+			button.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+		});
+
+		link.addEventListener('click', function (event) {
+			if (!mobileQuery.matches) {
+				return;
+			}
+			if (item.classList.contains('is-open-submenu')) {
+				return;
+			}
+			event.preventDefault();
+			closeAllSubmenus(item);
+			item.classList.add('is-open-submenu');
+			button.setAttribute('aria-expanded', 'true');
+		});
+	}
+
+	menuItems.forEach(bindDropdown);
+
+	document.addEventListener('click', function (event) {
+		if (!nav.contains(event.target)) {
+			closeAllSubmenus();
+		}
+	});
+
+	document.addEventListener('keydown', function (event) {
+		if (event.key === 'Escape') {
+			closeAllSubmenus();
+		}
+	});
+
+	mobileQuery.addEventListener('change', function () {
+		closeAllSubmenus();
+	});
+})();
+
+(function () {
 	var sliders = document.querySelectorAll('[data-imania-banner-swiper]');
 	if (!sliders.length || typeof window.Swiper !== 'function') {
 		return;
