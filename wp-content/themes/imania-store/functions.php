@@ -26,6 +26,7 @@ $imania_theme_core_files = array(
 	'single-product-ajax.php',
 	'wishlist-ajax.php',
 	'cart-drawer-ajax.php',
+	'cart-page-ajax.php',
 );
 
 foreach ($imania_theme_core_files as $imania_theme_core_file) {
