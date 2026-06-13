@@ -69,7 +69,7 @@ $testimonials_title_b = __('COS PELO MUNDO', 'imania-store');
 		</div>
 	</section>
 
-	<section class="imania-promo-split" aria-label="<?php esc_attr_e('Destaque institucional', 'imania-store'); ?>">
+	<section class="imania-promo-split imania-promo-split--section-3" aria-label="<?php esc_attr_e('Destaque institucional', 'imania-store'); ?>">
 		<div class="container-fluid px-0">
 			<div class="row g-0">
 				<div class="col-12 col-lg-6">
@@ -130,7 +130,7 @@ $testimonials_title_b = __('COS PELO MUNDO', 'imania-store');
 		</div>
 	</section>
 
-	<section class="imania-promo-split imania-promo-split--reverse"
+	<section class="imania-promo-split imania-promo-split--reverse imania-promo-split--section-5"
 		aria-label="<?php esc_attr_e('Destaque presenteáveis', 'imania-store'); ?>">
 		<div class="container-fluid px-0">
 			<div class="row g-0">
