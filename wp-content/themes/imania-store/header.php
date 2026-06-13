@@ -108,11 +108,14 @@
 										aria-hidden="true" />
 								</button>
 							<?php endif; ?>
-							<a href="<?php echo esc_url($cart_url); ?>"
-								aria-label="<?php esc_attr_e('Carrinho', 'imania-store'); ?>">
+							<button type="button" class="imania-header-actions__btn" data-imania-cart-drawer-trigger aria-controls="imania-cart-drawer" aria-expanded="false"
+								aria-label="<?php esc_attr_e('Abrir carrinho', 'imania-store'); ?>">
 								<img src="<?php echo esc_url($header_icon_uri . 'carrinho.png'); ?>" alt=""
 									aria-hidden="true" />
-							</a>
+								<?php if (function_exists('WC') && WC()->cart instanceof WC_Cart && WC()->cart->get_cart_contents_count() > 0): ?>
+									<span class="imania-cart-count" data-imania-cart-count><?php echo esc_html(WC()->cart->get_cart_contents_count()); ?></span>
+								<?php endif; ?>
+							</button>
 							<a href="<?php echo esc_url($my_account_url); ?>"
 								aria-label="<?php esc_attr_e('Minha conta', 'imania-store'); ?>">
 								<img src="<?php echo esc_url($header_icon_uri . 'conta.png'); ?>" alt=""
