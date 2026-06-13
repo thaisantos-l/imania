@@ -83,6 +83,21 @@ function imania_store_scripts()
 	$wishlist_url = function_exists('wc_get_account_endpoint_url') ? wc_get_account_endpoint_url('wishlist') : home_url('/');
 	wp_localize_script(
 		'imania-store-theme',
+		'imaniaCartDrawer',
+		array(
+			'ajaxUrl' => admin_url('admin-ajax.php'),
+			'nonce' => wp_create_nonce('imania_cart_drawer_nonce'),
+			'cartUrl' => function_exists('wc_get_cart_url') ? wc_get_cart_url() : home_url('/carrinho/'),
+			'shopUrl' => function_exists('wc_get_page_permalink') ? wc_get_page_permalink('shop') : home_url('/'),
+			'messages' => array(
+				'loading' => __('Carregando carrinho...', 'imania-store'),
+				'genericError' => __('Nao foi possivel carregar seu carrinho agora.', 'imania-store'),
+			),
+		)
+	);
+
+	wp_localize_script(
+		'imania-store-theme',
 		'imaniaWishlist',
 		array(
 			'ajaxUrl' => admin_url('admin-ajax.php'),

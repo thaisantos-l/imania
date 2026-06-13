@@ -389,3 +389,44 @@
 		font-size: 1.3rem;
 	}
 }
+
+/* Cart badge is scoped to the cart trigger so it does not affect wishlist count. */
+.imania-header-actions [data-imania-cart-drawer-trigger] {
+	position: relative;
+}
+
+.imania-header-actions [data-imania-cart-count] {
+	align-items: center;
+	background: var(--im-color-danger);
+	border: 2px solid #fff;
+	border-radius: 999px;
+	color: #fff;
+	display: inline-flex;
+	font-size: 0.62rem;
+	font-weight: 800;
+	height: 18px;
+	justify-content: center;
+	line-height: 1;
+	min-width: 18px;
+	padding: 0 4px;
+	position: absolute;
+	right: -4px;
+	top: -8px;
+	z-index: 2;
+}
+
+.imania-header-actions [data-imania-cart-drawer-trigger] {
+	background: #fff;
+	border: 1px solid rgba(0, 0, 0, 0.14);
+	border-radius: 999px;
+	height: 40px;
+	min-height: 40px;
+	min-width: 40px;
+	padding: 0;
+	width: 40px;
+}
+
+.imania-header-actions [data-imania-cart-drawer-trigger] img {
+	height: 24px;
+	width: 24px;
+}

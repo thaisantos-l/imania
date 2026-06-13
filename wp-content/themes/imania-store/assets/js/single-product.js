@@ -170,7 +170,7 @@
 	}
 
 	function updateCartBadge(count) {
-		var cartLink = document.querySelector('.imania-header-actions a[aria-label="Carrinho"]');
+		var cartLink = document.querySelector('[data-imania-cart-drawer-trigger]') || document.querySelector('.imania-header-actions a[aria-label="Carrinho"]');
 		if (!cartLink) {
 			return;
 		}
@@ -187,6 +187,7 @@
 		if (!badge) {
 			badge = document.createElement('span');
 			badge.className = 'imania-cart-count';
+			badge.setAttribute('data-imania-cart-count', '');
 			cartLink.appendChild(badge);
 		}
 		badge.textContent = String(value);
@@ -266,6 +267,12 @@
 			})
 			.then(function (result) {
 				updateCartBadge(result.data && result.data.count ? result.data.count : 0);
+				if (typeof window.imaniaUpdateCartBadge === 'function') {
+					window.imaniaUpdateCartBadge(result.data && result.data.count ? result.data.count : 0);
+				}
+				if (typeof window.imaniaRefreshCartDrawer === 'function') {
+					window.imaniaRefreshCartDrawer();
+				}
 				renderNotice('success', (result.data && result.data.message) ? result.data.message : ((config.messages && config.messages.added) ? config.messages.added : 'Produto adicionado ao carrinho.'));
 			})
 			.catch(function (error) {
