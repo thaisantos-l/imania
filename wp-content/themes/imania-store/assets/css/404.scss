@@ -1,0 +1,304 @@
+body.error404 {
+	background: #fff;
+}
+
+.error404 .site-main {
+	padding-bottom: 0;
+}
+
+.imania-not-found__section {
+	background:
+		linear-gradient(115deg, rgba(255, 204, 41, 0.12), transparent 42%),
+		linear-gradient(180deg, #fff 0%, #f7f7f7 100%);
+	overflow: hidden;
+	padding: clamp(48px, 7vw, 96px) 0;
+	position: relative;
+}
+
+.imania-not-found__section::after {
+	background: var(--im-color-accent);
+	bottom: 0;
+	content: "";
+	height: 5px;
+	left: 0;
+	position: absolute;
+	width: 100%;
+}
+
+.imania-not-found__container {
+	align-items: center;
+	display: grid;
+	gap: clamp(40px, 7vw, 100px);
+	grid-template-columns: minmax(340px, 0.9fr) minmax(440px, 1.1fr);
+	max-width: 1180px;
+	min-height: 470px;
+}
+
+.imania-not-found__visual {
+	align-items: center;
+	aspect-ratio: 1;
+	display: flex;
+	justify-content: center;
+	margin: 0 auto;
+	max-width: 430px;
+	position: relative;
+	width: 100%;
+}
+
+.imania-not-found__shape {
+	border-radius: 50%;
+	position: absolute;
+}
+
+.imania-not-found__shape--yellow {
+	background: var(--im-color-accent);
+	height: 86%;
+	left: 4%;
+	top: 4%;
+	width: 86%;
+}
+
+.imania-not-found__shape--blue {
+	background: var(--im-color-primary);
+	bottom: 4%;
+	height: 38%;
+	right: 1%;
+	width: 38%;
+}
+
+.imania-not-found__shape--red {
+	background: var(--im-color-danger);
+	height: 18%;
+	left: 0;
+	top: 8%;
+	width: 18%;
+}
+
+.imania-not-found__code {
+	color: #000;
+	font-size: clamp(7rem, 13vw, 11.5rem);
+	font-weight: 800;
+	letter-spacing: -0.09em;
+	line-height: 0.8;
+	margin: 0;
+	padding-right: 0.08em;
+	position: relative;
+	z-index: 1;
+}
+
+.imania-not-found__content {
+	max-width: 590px;
+}
+
+.imania-not-found__eyebrow {
+	color: var(--im-color-primary);
+	font-size: 0.82rem;
+	font-weight: 800;
+	letter-spacing: 0.1em;
+	margin: 0 0 10px;
+	text-transform: uppercase;
+}
+
+.imania-not-found__content h1 {
+	color: #000;
+	font-size: clamp(2.25rem, 4.1vw, 4.1rem);
+	font-weight: 800;
+	letter-spacing: -0.035em;
+	line-height: 0.98;
+	margin: 0;
+}
+
+.imania-not-found__content h1::after {
+	background: var(--im-color-accent);
+	content: "";
+	display: block;
+	height: 2px;
+	margin-top: 20px;
+	width: 88px;
+}
+
+.imania-not-found__description {
+	color: var(--im-color-muted);
+	font-size: clamp(0.95rem, 1.2vw, 1.08rem);
+	line-height: 1.65;
+	margin: 22px 0 26px;
+	max-width: 540px;
+}
+
+.imania-not-found__search {
+	display: grid;
+	gap: 10px;
+	grid-template-columns: minmax(0, 1fr) auto;
+	margin: 0;
+}
+
+.imania-not-found__search-field {
+	align-items: center;
+	background: #fff;
+	border: 1px solid rgba(0, 0, 0, 0.12);
+	border-radius: 10px;
+	display: flex;
+	gap: 10px;
+	min-height: 52px;
+	padding: 0 16px;
+	transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.imania-not-found__search-field:focus-within {
+	border-color: var(--im-color-primary);
+	box-shadow: 0 0 0 3px rgba(0, 135, 203, 0.1);
+}
+
+.imania-not-found__search-field svg {
+	color: var(--im-color-primary);
+	flex: 0 0 auto;
+}
+
+.imania-not-found__search-field input {
+	background: transparent;
+	border: 0;
+	color: #111;
+	font-size: 0.95rem;
+	height: 50px;
+	min-width: 0;
+	outline: 0;
+	padding: 0;
+	width: 100%;
+}
+
+.imania-not-found__search-field input::placeholder {
+	color: #888;
+}
+
+.imania-not-found__search > button {
+	background: var(--im-color-primary);
+	border: 0;
+	border-radius: 10px;
+	color: #fff;
+	cursor: pointer;
+	font-size: 0.9rem;
+	font-weight: 800;
+	min-width: 112px;
+	padding: 13px 20px;
+	transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.imania-not-found__search > button:hover {
+	background: var(--im-color-primary-dark);
+	transform: translateY(-1px);
+}
+
+.imania-not-found__separator {
+	align-items: center;
+	display: grid;
+	gap: 12px;
+	grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+	margin: 20px 0;
+	max-width: 420px;
+}
+
+.imania-not-found__separator span {
+	background: rgba(0, 0, 0, 0.12);
+	height: 1px;
+}
+
+.imania-not-found__separator small {
+	color: #777;
+	font-size: 0.76rem;
+	font-weight: 700;
+	text-transform: uppercase;
+}
+
+.imania-not-found__shop-link {
+	align-items: center;
+	background: var(--im-color-danger);
+	border-radius: 10px;
+	color: #fff;
+	display: inline-flex;
+	font-size: 0.92rem;
+	font-weight: 800;
+	gap: 10px;
+	justify-content: center;
+	min-height: 50px;
+	padding: 13px 22px;
+	transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.imania-not-found__shop-link:hover {
+	background: #d90000;
+	color: #fff;
+	transform: translateY(-1px);
+}
+
+.imania-not-found__search > button:focus-visible,
+.imania-not-found__shop-link:focus-visible {
+	outline: 3px solid var(--im-color-accent);
+	outline-offset: 3px;
+}
+
+@media (max-width: 991.98px) {
+	.imania-not-found__section {
+		padding: 48px 0 64px;
+	}
+
+	.imania-not-found__container {
+		gap: 30px;
+		grid-template-columns: minmax(240px, 0.8fr) minmax(0, 1.2fr);
+		min-height: 410px;
+	}
+
+	.imania-not-found__visual {
+		max-width: 320px;
+	}
+}
+
+@media (max-width: 767.98px) {
+	.imania-not-found__section {
+		padding: 32px 0 52px;
+	}
+
+	.imania-not-found__container {
+		gap: 24px;
+		grid-template-columns: 1fr;
+		text-align: center;
+	}
+
+	.imania-not-found__visual {
+		max-width: 235px;
+	}
+
+	.imania-not-found__content {
+		margin: 0 auto;
+		max-width: 560px;
+	}
+
+	.imania-not-found__content h1::after,
+	.imania-not-found__description,
+	.imania-not-found__separator {
+		margin-left: auto;
+		margin-right: auto;
+	}
+}
+
+@media (max-width: 479.98px) {
+	.imania-not-found__visual {
+		max-width: 190px;
+	}
+
+	.imania-not-found__code {
+		font-size: 6.2rem;
+	}
+
+	.imania-not-found__search {
+		grid-template-columns: 1fr;
+	}
+
+	.imania-not-found__search > button,
+	.imania-not-found__shop-link {
+		width: 100%;
+	}
+
+	.imania-not-found__separator {
+		max-width: none;
+	}
+}
