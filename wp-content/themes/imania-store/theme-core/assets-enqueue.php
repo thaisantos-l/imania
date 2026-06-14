@@ -10,19 +10,23 @@ function imania_store_scripts()
 	$conta_js_path = get_template_directory() . '/assets/js/conta.js';
 	$single_product_js_path = get_template_directory() . '/assets/js/single-product.js';
 	$cart_js_path = get_template_directory() . '/assets/js/cart.js';
+	$checkout_js_path = get_template_directory() . '/assets/js/checkout.js';
 	$theme_css_path = get_template_directory() . '/assets/css/main.css';
 	$conta_css_path = get_template_directory() . '/assets/css/conta.css';
 	$single_product_css_path = get_template_directory() . '/assets/css/single-product.css';
 	$cart_css_path = get_template_directory() . '/assets/css/cart.css';
+	$checkout_css_path = get_template_directory() . '/assets/css/checkout.css';
 	$theme_js_ver = file_exists($theme_js_path) ? (string) filemtime($theme_js_path) : _S_VERSION;
 	$account_orders_js_ver = file_exists($account_orders_js_path) ? (string) filemtime($account_orders_js_path) : _S_VERSION;
 	$conta_js_ver = file_exists($conta_js_path) ? (string) filemtime($conta_js_path) : _S_VERSION;
 	$single_product_js_ver = file_exists($single_product_js_path) ? (string) filemtime($single_product_js_path) : _S_VERSION;
 	$cart_js_ver = file_exists($cart_js_path) ? (string) filemtime($cart_js_path) : _S_VERSION;
+	$checkout_js_ver = file_exists($checkout_js_path) ? (string) filemtime($checkout_js_path) : _S_VERSION;
 	$theme_css_ver = file_exists($theme_css_path) ? (string) filemtime($theme_css_path) : _S_VERSION;
 	$conta_css_ver = file_exists($conta_css_path) ? (string) filemtime($conta_css_path) : _S_VERSION;
 	$single_product_css_ver = file_exists($single_product_css_path) ? (string) filemtime($single_product_css_path) : _S_VERSION;
 	$cart_css_ver = file_exists($cart_css_path) ? (string) filemtime($cart_css_path) : _S_VERSION;
+	$checkout_css_ver = file_exists($checkout_css_path) ? (string) filemtime($checkout_css_path) : _S_VERSION;
 
 	wp_enqueue_style('imania-store-fonts', 'https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600;700;800&display=swap', array(), null);
 	wp_enqueue_style('imania-store-bootstrap-grid', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap-grid.min.css', array(), '5.3.3');
@@ -97,6 +101,11 @@ function imania_store_scripts()
 				),
 			)
 		);
+	}
+
+	if (function_exists('is_checkout') && is_checkout() && !(function_exists('is_wc_endpoint_url') && (is_wc_endpoint_url('order-pay') || is_wc_endpoint_url('order-received')))) {
+		wp_enqueue_style('imania-store-checkout', get_template_directory_uri() . '/assets/css/checkout.css', array('imania-store-theme'), $checkout_css_ver);
+		wp_enqueue_script('imania-store-checkout', get_template_directory_uri() . '/assets/js/checkout.js', array('jquery', 'wc-checkout'), $checkout_js_ver, true);
 	}
 
 	$login_url = function_exists('imania_store_get_login_to_price_url') ? imania_store_get_login_to_price_url() : wp_login_url();
