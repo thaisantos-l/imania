@@ -1509,7 +1509,8 @@ img {
   margin-bottom: 6px;
 }
 
-.imania-account-profile__field input {
+.imania-account-profile__field input,
+.imania-account-profile__field select {
   background: #e4e4e4;
   border: 1px solid #e4e4e4;
   border-radius: 8px;
@@ -1521,7 +1522,8 @@ img {
   width: 100%;
 }
 
-.imania-account-profile__field input:focus {
+.imania-account-profile__field input:focus,
+.imania-account-profile__field select:focus {
   border-color: #1197d6;
   outline: none;
 }

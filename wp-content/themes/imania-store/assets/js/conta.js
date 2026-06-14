@@ -121,11 +121,44 @@
 					var message = (json && json.data && json.data.message)
 						? json.data.message
 						: ((config.messages && config.messages.genericError) ? config.messages.genericError : 'Erro inesperado.');
-					throw new Error(message);
+					var error = new Error(message);
+					error.code = (json && json.data && json.data.code) ? json.data.code : '';
+					throw error;
 				}
 				return json;
 			});
 		});
+	}
+
+	function refreshAuthNonces() {
+		return requestAuth({
+			action: 'imania_account_auth_nonces'
+		}).then(function (result) {
+			if (result.data && result.data.loginNonce) {
+				config.loginNonce = result.data.loginNonce;
+			}
+			if (result.data && result.data.registerNonce) {
+				config.registerNonce = result.data.registerNonce;
+			}
+			return result;
+		});
+	}
+
+	function requestWithFreshNonce(payload, formType) {
+		function send() {
+			payload.nonce = formType === 'register' ? config.registerNonce : config.loginNonce;
+			return requestAuth(payload);
+		}
+
+		return refreshAuthNonces()
+			.then(send)
+			.catch(function (error) {
+				if (!error || error.code !== 'invalid_nonce') {
+					throw error;
+				}
+
+				return refreshAuthNonces().then(send);
+			});
 	}
 
 	root.addEventListener('click', function (event) {
@@ -171,7 +204,7 @@
 		setFormLoading(form, true);
 		renderNotice(formType, 'info', (config.messages && config.messages.loading) ? config.messages.loading : 'Processando...');
 
-		requestAuth(payload)
+		requestWithFreshNonce(payload, formType)
 			.then(function (result) {
 				var successMessage = (result.data && result.data.message)
 					? result.data.message

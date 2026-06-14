@@ -748,6 +748,18 @@
 		saveProfileForm(form);
 	});
 
+	document.addEventListener('change', function (event) {
+		if (!event.target.matches('#imania_profile_customer_type')) {
+			return;
+		}
+
+		var form = event.target.closest('.imania-account-profile__form');
+		var label = form ? form.querySelector('[data-imania-profile-document-label]') : null;
+		if (label) {
+			label.textContent = event.target.value === 'pj' ? 'CNPJ' : (event.target.value === 'pf' ? 'CPF' : 'CPF/CNPJ');
+		}
+	});
+
 	window.addEventListener('popstate', function () {
 		var endpoint = parseEndpointFromUrl(window.location.pathname);
 		loadEndpoint(endpoint, false);

@@ -177,6 +177,12 @@ function imania_store_render_profile_endpoint_content()
 
 	$document_label = imania_store_get_customer_document_label($user_id);
 	$document_value = imania_store_get_customer_document_value($user_id);
+	$customer_type = imania_store_resolve_customer_type($user_id);
+	$is_administrator = in_array('administrator', (array) $user->roles, true);
+	$can_define_customer_type = $is_administrator && !in_array($customer_type, array('pf', 'pj'), true);
+	if ($can_define_customer_type) {
+		$document_label = 'CPF/CNPJ';
+	}
 
 	$billing_country = (string) get_user_meta($user_id, 'billing_country', true);
 	$countries = function_exists('WC') ? WC()->countries : null;
@@ -189,6 +195,7 @@ function imania_store_render_profile_endpoint_content()
 		'user' => $user,
 		'document_label' => $document_label,
 		'document_value' => $document_value,
+		'can_define_customer_type' => $can_define_customer_type,
 		'phone' => (string) get_user_meta($user_id, 'billing_phone', true),
 		'address_1' => (string) get_user_meta($user_id, 'billing_address_1', true),
 		'address_2' => (string) get_user_meta($user_id, 'billing_address_2', true),
@@ -320,10 +327,6 @@ function imania_store_handle_account_profile_save_ajax()
 		imania_store_send_account_json_error(__('FaÃ§a login para editar seu perfil.', 'imania-store'), 401, 'not_authenticated');
 	}
 
-	if (!current_user_can('edit_user', $user_id)) {
-		imania_store_send_account_json_error(__('VocÃª nao tem permissao para editar este perfil.', 'imania-store'), 403, 'forbidden');
-	}
-
 	$first_name = isset($_POST['account_first_name']) ? sanitize_text_field(wp_unslash($_POST['account_first_name'])) : '';
 	$last_name = isset($_POST['account_last_name']) ? sanitize_text_field(wp_unslash($_POST['account_last_name'])) : '';
 	$email = isset($_POST['account_email']) ? sanitize_email(wp_unslash($_POST['account_email'])) : '';
@@ -337,6 +340,7 @@ function imania_store_handle_account_profile_save_ajax()
 	$city = isset($_POST['billing_city']) ? sanitize_text_field(wp_unslash($_POST['billing_city'])) : '';
 	$state = isset($_POST['billing_state']) ? sanitize_text_field(wp_unslash($_POST['billing_state'])) : '';
 	$document = isset($_POST['imania_document']) ? sanitize_text_field(wp_unslash($_POST['imania_document'])) : '';
+	$posted_customer_type = isset($_POST['imania_customer_type']) ? sanitize_key(wp_unslash($_POST['imania_customer_type'])) : '';
 
 	if ('' === $email || !is_email($email)) {
 		imania_store_send_account_json_error(__('Informe um e-mail valido.', 'imania-store'), 422, 'invalid_email');
@@ -349,7 +353,13 @@ function imania_store_handle_account_profile_save_ajax()
 
 	$customer_type = imania_store_resolve_customer_type($user_id);
 	if (!in_array($customer_type, array('pf', 'pj'), true)) {
-		imania_store_send_account_json_error(__('Tipo de cliente invalido para esta conta.', 'imania-store'), 422, 'invalid_customer_type');
+		$user = get_userdata($user_id);
+		$is_administrator = $user instanceof WP_User && in_array('administrator', (array) $user->roles, true);
+		if ($is_administrator && in_array($posted_customer_type, array('pf', 'pj'), true)) {
+			$customer_type = $posted_customer_type;
+		} else {
+			imania_store_send_account_json_error(__('Selecione o tipo de pessoa desta conta.', 'imania-store'), 422, 'invalid_customer_type');
+		}
 	}
 
 	$document_validation = imania_store_validate_customer_document($customer_type, $document);
@@ -409,6 +419,10 @@ function imania_store_handle_account_profile_save_ajax()
 	imania_store_assign_customer_typed_role($user_id, $customer_type);
 
 	imania_store_invalidate_account_cache($user_id);
+	if (function_exists('WC') && WC()->cart instanceof WC_Cart) {
+		WC()->cart->calculate_totals();
+		WC()->cart->set_session();
+	}
 
 	imania_store_send_account_json_success(
 		array(

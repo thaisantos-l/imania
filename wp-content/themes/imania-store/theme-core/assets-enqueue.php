@@ -38,11 +38,13 @@ function imania_store_scripts()
 	wp_enqueue_script('imania-store-navigation', get_template_directory_uri() . '/js/navigation.js', array(), _S_VERSION, true);
 	wp_enqueue_script('imania-store-swiper', 'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js', array(), '11.2.8', true);
 	wp_enqueue_script('imania-store-theme', get_template_directory_uri() . '/assets/js/imania-theme.js', array('imania-store-swiper'), $theme_js_ver, true);
-	if (function_exists('is_account_page') && is_account_page()) {
+	$is_account_page = function_exists('is_account_page') && is_account_page();
+	$is_logged_conta_page = imania_store_is_conta_page() && is_user_logged_in();
+	if ($is_account_page || $is_logged_conta_page) {
 		wp_enqueue_script('imania-account-orders', get_template_directory_uri() . '/assets/js/account-orders.js', array('imania-store-theme'), $account_orders_js_ver, true);
 	}
 
-	if (function_exists('is_page') && is_page('conta')) {
+	if (imania_store_should_render_auth_form()) {
 		wp_enqueue_style('imania-store-conta', get_template_directory_uri() . '/assets/css/conta.css', array('imania-store-theme'), $conta_css_ver);
 		wp_enqueue_script('imania-store-conta', get_template_directory_uri() . '/assets/js/conta.js', array(), $conta_js_ver, true);
 
@@ -142,7 +144,7 @@ function imania_store_scripts()
 		)
 	);
 
-	if (function_exists('is_account_page') && is_account_page()) {
+	if ($is_account_page || $is_logged_conta_page) {
 		$account_base_url = function_exists('wc_get_page_permalink') ? wc_get_page_permalink('myaccount') : home_url('/');
 		wp_localize_script(
 			'imania-store-theme',
