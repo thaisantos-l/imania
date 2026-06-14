@@ -400,49 +400,50 @@ img {
   gap: 10px;
 }
 
-.imania-header-actions a {
+.imania-header-actions a,
+.imania-header-actions__btn {
   align-items: center;
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.14);
+  border-radius: 999px;
   display: inline-flex;
+  height: 40px;
   justify-content: center;
-  min-height: 28px;
-  min-width: 28px;
+  min-height: 40px;
+  min-width: 40px;
+  padding: 0;
+  position: relative;
+  width: 40px;
 }
 
 .imania-header-actions__btn {
-  align-items: center;
-  background: transparent;
-  border: 0;
   cursor: pointer;
-  display: inline-flex;
-  justify-content: center;
-  min-height: 28px;
-  min-width: 28px;
-  padding: 0;
 }
 
-.imania-header-actions a img {
-  display: block;
-  height: 28px;
-  width: 28px;
-}
-
+.imania-header-actions a img,
 .imania-header-actions__btn img {
   display: block;
-  height: 28px;
-  width: 28px;
+  height: 24px;
+  width: 24px;
 }
 
 .imania-cart-count {
   background: var(--im-color-danger);
+  border: 2px solid #fff;
   border-radius: 999px;
   color: #fff;
-  font-size: 0.67rem;
-  font-weight: 700;
+  display: inline-flex;
+  font-size: 0.62rem;
+  font-weight: 800;
+  height: 18px;
+  justify-content: center;
   line-height: 1;
-  padding: 4px 6px;
+  min-width: 18px;
+  padding: 0 4px;
   position: absolute;
-  right: -6px;
-  top: -7px;
+  right: -4px;
+  top: -8px;
+  z-index: 2;
 }
 
 .imania-menu-toggle {
@@ -2101,20 +2102,4 @@ img {
 		margin: 0 -20px;
 		padding: 16px 20px 22px;
 	}
-}
-
-.imania-header-actions [data-imania-cart-drawer-trigger] {
-	background: #fff;
-	border: 1px solid rgba(0, 0, 0, 0.14);
-	border-radius: 999px;
-	height: 40px;
-	min-height: 40px;
-	min-width: 40px;
-	padding: 0;
-	width: 40px;
-}
-
-.imania-header-actions [data-imania-cart-drawer-trigger] img {
-	height: 24px;
-	width: 24px;
 }
