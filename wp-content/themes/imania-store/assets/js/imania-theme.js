@@ -129,12 +129,9 @@
 	});
 })();
 
-(function () {
-	var cards = document.querySelectorAll('[data-imania-product-card-gallery]');
-	if (!cards.length) {
-		return;
-	}
-
+window.imaniaInitProductCards = function (root) {
+	var scope = root && root.querySelectorAll ? root : document;
+	var cards = scope.querySelectorAll('[data-imania-product-card-gallery]:not([data-imania-product-card-ready])');
 	function normalizeIndex(index, total) {
 		if (total <= 0) {
 			return 0;
@@ -149,6 +146,7 @@
 	}
 
 	cards.forEach(function (card) {
+		card.setAttribute('data-imania-product-card-ready', 'true');
 		var image = card.querySelector('[data-imania-product-card-image]');
 		var dots = Array.prototype.slice.call(card.querySelectorAll('[data-imania-product-card-dot]'));
 		if (!image || !dots.length) {
@@ -241,6 +239,10 @@
 			setActiveSlide(activeIndex + (deltaX < 0 ? 1 : -1));
 		}, { passive: true });
 	});
+};
+
+(function () {
+	window.imaniaInitProductCards(document);
 })();
 
 (function () {

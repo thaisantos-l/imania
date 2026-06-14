@@ -1,9 +1,5 @@
 @charset "UTF-8";
 /* Arquivo principal compilável: centraliza base + módulos do tema. */
-@import url("./_header-footer");
-@import url("./_home");
-@import url("./_product-section.scss");
-@import url("./_product-card.scss");
 @import url("https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap");
 :root {
   --im-color-bg: #ffffff;

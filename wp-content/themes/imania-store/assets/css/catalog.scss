@@ -1,0 +1,456 @@
+.post-type-archive-product,
+.tax-product_cat {
+	background: #fff;
+}
+
+.imania-catalog {
+	padding: 30px 0 64px;
+}
+
+.post-type-archive-product .woocommerce-breadcrumb,
+.tax-product_cat .woocommerce-breadcrumb {
+	display: none;
+}
+
+.imania-catalog__container {
+	max-width: 1320px;
+}
+
+.imania-catalog__header {
+	align-items: flex-end;
+	display: flex;
+	gap: 24px;
+	justify-content: space-between;
+}
+
+.imania-catalog__header h1 {
+	color: var(--im-color-text);
+	font-size: clamp(1.9rem, 3vw, 3rem);
+	font-weight: 700;
+	line-height: 1.05;
+	margin: 0;
+}
+
+.imania-catalog__description {
+	color: var(--im-color-muted);
+	font-size: 0.95rem;
+	margin-top: 10px;
+	max-width: 760px;
+}
+
+.imania-catalog__description p {
+	margin: 0;
+}
+
+.imania-catalog__line {
+	background: var(--im-color-accent);
+	height: 1px;
+	margin: 14px 0 28px;
+}
+
+.imania-catalog__layout {
+	align-items: start;
+	display: grid;
+	gap: 28px;
+	grid-template-columns: minmax(220px, 260px) minmax(0, 1fr);
+}
+
+.imania-catalog-filter {
+	border-right: 1px solid rgba(0, 0, 0, 0.08);
+	padding-right: 24px;
+}
+
+.imania-catalog-filter__mobile-head,
+.imania-catalog__filter-toggle {
+	display: none;
+}
+
+.imania-catalog-filter__group {
+	border: 0;
+	margin: 0;
+	padding: 0 0 24px;
+}
+
+.imania-catalog-filter__group + .imania-catalog-filter__group {
+	border-top: 1px solid rgba(0, 0, 0, 0.08);
+	padding-top: 22px;
+}
+
+.imania-catalog-filter__group legend {
+	color: #111;
+	font-size: 1rem;
+	font-weight: 800;
+	margin-bottom: 14px;
+	padding: 0;
+	width: 100%;
+}
+
+.imania-catalog-filter__price {
+	align-items: flex-end;
+	display: grid;
+	gap: 8px;
+	grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+}
+
+.imania-catalog-filter__price label span {
+	color: var(--im-color-muted);
+	display: block;
+	font-size: 0.72rem;
+	font-weight: 600;
+	margin-bottom: 5px;
+}
+
+.imania-catalog-filter__price input {
+	background: #f3f3f3;
+	border: 1px solid transparent;
+	border-radius: 8px;
+	color: #111;
+	font-size: 0.82rem;
+	height: 40px;
+	padding: 8px 10px;
+	width: 100%;
+}
+
+.imania-catalog-filter__price input:focus {
+	border-color: var(--im-color-primary);
+	outline: none;
+}
+
+.imania-catalog-filter__category-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.imania-catalog-filter__category-list .imania-catalog-filter__category-list {
+	border-left: 1px solid rgba(0, 0, 0, 0.08);
+	margin: 5px 0 7px 8px;
+	padding-left: 12px;
+}
+
+.imania-catalog-filter__category-list label {
+	align-items: center;
+	color: #242424;
+	cursor: pointer;
+	display: grid;
+	font-size: 0.78rem;
+	gap: 8px;
+	grid-template-columns: 17px minmax(0, 1fr) auto;
+	padding: 5px 0;
+}
+
+.imania-catalog-filter__category-list input {
+	accent-color: var(--im-color-primary);
+	height: 16px;
+	margin: 0;
+	width: 16px;
+}
+
+.imania-catalog-filter__category-list small {
+	color: #8b8b8b;
+	font-size: 0.68rem;
+}
+
+.imania-catalog-filter__actions {
+	display: grid;
+	gap: 10px;
+}
+
+.imania-catalog-filter__apply {
+	background: var(--im-color-primary);
+	border: 0;
+	border-radius: 10px;
+	color: #fff;
+	cursor: pointer;
+	font-size: 0.84rem;
+	font-weight: 800;
+	min-height: 42px;
+	padding: 10px 14px;
+}
+
+.imania-catalog-filter__apply:hover {
+	background: var(--im-color-primary-dark);
+}
+
+.imania-catalog-filter__actions a {
+	color: var(--im-color-muted);
+	font-size: 0.76rem;
+	font-weight: 600;
+	justify-self: center;
+	text-decoration: underline;
+}
+
+.imania-catalog__summary {
+	align-items: center;
+	display: flex;
+	justify-content: flex-end;
+	min-height: 24px;
+}
+
+.imania-catalog__summary p {
+	color: var(--im-color-muted);
+	font-size: 0.78rem;
+	margin: 0 0 14px;
+}
+
+.imania-catalog-grid {
+	display: grid;
+	gap: 34px 20px;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.imania-catalog-grid__item {
+	min-width: 0;
+}
+
+.imania-product-card--catalog .imania-product-card__thumb {
+	border-radius: 10px;
+	height: clamp(190px, 18vw, 250px);
+	padding: 10px;
+}
+
+.imania-product-card--catalog .imania-product-card__dots {
+	gap: 5px;
+	margin: -12px 0 7px;
+}
+
+.imania-product-card--catalog .imania-product-card__dots button {
+	height: 6px;
+	width: 6px;
+}
+
+.imania-product-card--catalog .imania-product-card__meta-line {
+	gap: 6px;
+	margin-bottom: 7px;
+}
+
+.imania-product-card--catalog .imania-product-card__title,
+.imania-product-card--catalog .imania-price,
+.imania-product-card--catalog .imania-price .imania-login-to-price {
+	font-size: clamp(0.68rem, 0.72vw, 0.82rem);
+	line-height: 1.2;
+}
+
+.imania-product-card--catalog .imania-product-card__title {
+	max-width: 65%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.imania-product-card--catalog .imania-price {
+	flex: 0 0 auto;
+	max-width: 48%;
+	overflow: hidden;
+	text-align: right;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.imania-product-card--catalog .imania-price .imania-login-to-price {
+	display: block;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.imania-product-card--catalog .imania-product-card__actions {
+	gap: 8px;
+	grid-template-columns: 24px minmax(0, 1fr);
+}
+
+.imania-product-card--catalog .imania-product-card__wishlist {
+	height: 24px;
+	width: 24px;
+}
+
+.imania-product-card--catalog .imania-product-card__wishlist svg {
+	height: 20px;
+	width: 20px;
+}
+
+.imania-product-card--catalog .imania-product-card__buy {
+	border-radius: 8px;
+	font-size: 0.72rem;
+	min-height: 32px;
+	padding: 7px 10px;
+}
+
+.imania-catalog__load {
+	display: flex;
+	justify-content: center;
+	padding-top: 42px;
+}
+
+.imania-catalog__load-more {
+	align-items: center;
+	background: var(--im-color-primary);
+	border-radius: 999px;
+	color: #fff;
+	display: inline-flex;
+	font-size: 0.86rem;
+	font-weight: 800;
+	justify-content: center;
+	min-height: 44px;
+	min-width: 180px;
+	padding: 11px 24px;
+}
+
+.imania-catalog__load-more:hover {
+	background: var(--im-color-primary-dark);
+	color: #fff;
+}
+
+.imania-catalog__load-more.is-loading {
+	opacity: 0.7;
+	pointer-events: none;
+}
+
+.imania-catalog__end {
+	color: var(--im-color-muted);
+	font-size: 0.82rem;
+	margin: 0;
+}
+
+.imania-catalog__empty {
+	background: var(--im-color-surface);
+	border-radius: 12px;
+	padding: 40px 24px;
+	text-align: center;
+}
+
+.imania-catalog__empty h2 {
+	font-size: 1.25rem;
+	margin: 0 0 8px;
+}
+
+.imania-catalog__empty p {
+	color: var(--im-color-muted);
+	margin: 0;
+}
+
+@media (max-width: 1199.98px) {
+	.imania-catalog-grid {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
+}
+
+@media (max-width: 991.98px) {
+	.imania-catalog {
+		padding-top: 22px;
+	}
+
+	.imania-catalog__layout {
+		display: block;
+	}
+
+	.imania-catalog__filter-toggle {
+		align-items: center;
+		background: var(--im-color-primary);
+		border: 0;
+		border-radius: 9px;
+		color: #fff;
+		display: inline-flex;
+		font-size: 0.82rem;
+		font-weight: 800;
+		gap: 7px;
+		padding: 10px 14px;
+	}
+
+	.imania-catalog-filter {
+		background: #fff;
+		border: 0;
+		box-shadow: 18px 0 42px rgba(0, 0, 0, 0.16);
+		height: 100vh;
+		left: 0;
+		max-width: 360px;
+		overflow-y: auto;
+		padding: 20px;
+		position: fixed;
+		top: 0;
+		transform: translateX(-105%);
+		transition: transform 0.25s ease;
+		width: min(88vw, 360px);
+		z-index: 10002;
+	}
+
+	.imania-catalog.is-filter-open .imania-catalog-filter {
+		transform: translateX(0);
+	}
+
+	.imania-catalog__backdrop {
+		background: rgba(0, 0, 0, 0.28);
+		border: 0;
+		display: none;
+		inset: 0;
+		padding: 0;
+		position: fixed;
+		z-index: 10001;
+	}
+
+	.imania-catalog.is-filter-open .imania-catalog__backdrop {
+		display: block;
+	}
+
+	.imania-catalog-filter__mobile-head {
+		align-items: center;
+		border-bottom: 1px solid var(--im-color-accent);
+		display: flex;
+		justify-content: space-between;
+		margin-bottom: 22px;
+		padding-bottom: 14px;
+	}
+
+	.imania-catalog-filter__mobile-head button {
+		background: transparent;
+		border: 0;
+		font-size: 1.7rem;
+		line-height: 1;
+		padding: 0;
+	}
+
+	body.imania-catalog-filter-open {
+		overflow: hidden;
+	}
+
+	.imania-catalog__summary {
+		justify-content: flex-start;
+	}
+}
+
+@media (max-width: 575.98px) {
+	.imania-catalog__header {
+		align-items: center;
+	}
+
+	.imania-catalog__header h1 {
+		font-size: 1.75rem;
+	}
+
+	.imania-catalog__line {
+		margin-bottom: 20px;
+	}
+
+	.imania-catalog-grid {
+		gap: 28px 12px;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.imania-product-card--catalog .imania-product-card__thumb {
+		height: clamp(170px, 54vw, 230px);
+	}
+
+	.imania-product-card--catalog .imania-product-card__meta-line {
+		align-items: flex-start;
+		display: block;
+	}
+
+	.imania-product-card--catalog .imania-product-card__title {
+		margin-bottom: 3px;
+		max-width: 100%;
+	}
+
+	.imania-product-card--catalog .imania-product-card__buy {
+		font-size: 0.68rem;
+	}
+}
