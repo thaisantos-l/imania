@@ -127,14 +127,17 @@ function imania_store_scripts()
 
 		$filters = imania_store_get_catalog_filters();
 		$current_term = function_exists('is_product_category') && is_product_category() ? get_queried_object() : null;
+		$is_product_search = function_exists('imania_store_is_product_search') && imania_store_is_product_search();
 		wp_localize_script(
 			'imania-store-catalog',
 			'imaniaCatalog',
 			array(
 				'ajaxUrl' => class_exists('WC_AJAX') ? WC_AJAX::get_endpoint('imania_load_catalog') : '',
-				'context' => function_exists('is_shop') && is_shop() ? 'shop' : 'category',
+				'context' => $is_product_search ? 'search' : (function_exists('is_shop') && is_shop() ? 'shop' : 'category'),
 				'category' => $current_term instanceof WP_Term ? $current_term->slug : '',
 				'filters' => $filters,
+				'search' => $is_product_search ? get_search_query(false) : '',
+				'order' => $is_product_search ? imania_store_get_search_order() : '',
 				'perPage' => imania_store_catalog_per_page(),
 				'messages' => array(
 					'loading' => __('Carregando produtos...', 'imania-store'),
