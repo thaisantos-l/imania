@@ -16,6 +16,7 @@ function imania_store_scripts()
 	$single_product_css_path = get_template_directory() . '/assets/css/single-product.css';
 	$cart_css_path = get_template_directory() . '/assets/css/cart.css';
 	$checkout_css_path = get_template_directory() . '/assets/css/checkout.css';
+	$not_found_css_path = get_template_directory() . '/assets/css/404.css';
 	$theme_js_ver = file_exists($theme_js_path) ? (string) filemtime($theme_js_path) : _S_VERSION;
 	$account_orders_js_ver = file_exists($account_orders_js_path) ? (string) filemtime($account_orders_js_path) : _S_VERSION;
 	$conta_js_ver = file_exists($conta_js_path) ? (string) filemtime($conta_js_path) : _S_VERSION;
@@ -27,6 +28,7 @@ function imania_store_scripts()
 	$single_product_css_ver = file_exists($single_product_css_path) ? (string) filemtime($single_product_css_path) : _S_VERSION;
 	$cart_css_ver = file_exists($cart_css_path) ? (string) filemtime($cart_css_path) : _S_VERSION;
 	$checkout_css_ver = file_exists($checkout_css_path) ? (string) filemtime($checkout_css_path) : _S_VERSION;
+	$not_found_css_ver = file_exists($not_found_css_path) ? (string) filemtime($not_found_css_path) : _S_VERSION;
 
 	wp_enqueue_style('imania-store-fonts', 'https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600;700;800&display=swap', array(), null);
 	wp_enqueue_style('imania-store-bootstrap-grid', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap-grid.min.css', array(), '5.3.3');
@@ -38,6 +40,11 @@ function imania_store_scripts()
 	wp_enqueue_script('imania-store-navigation', get_template_directory_uri() . '/js/navigation.js', array(), _S_VERSION, true);
 	wp_enqueue_script('imania-store-swiper', 'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js', array(), '11.2.8', true);
 	wp_enqueue_script('imania-store-theme', get_template_directory_uri() . '/assets/js/imania-theme.js', array('imania-store-swiper'), $theme_js_ver, true);
+
+	if (is_404()) {
+		wp_enqueue_style('imania-store-not-found', get_template_directory_uri() . '/assets/css/404.css', array('imania-store-theme'), $not_found_css_ver);
+	}
+
 	if (function_exists('is_account_page') && is_account_page()) {
 		wp_enqueue_script('imania-account-orders', get_template_directory_uri() . '/assets/js/account-orders.js', array('imania-store-theme'), $account_orders_js_ver, true);
 	}
