@@ -107,20 +107,170 @@
 }
 
 .imania-footer {
-  background: #0f0f0f;
-  color: #fff;
-  padding: var(--im-space-6) 0;
+	background: var(--im-color-accent);
+	color: var(--im-color-text);
+	padding: 48px 0 0;
 }
 
-.imania-footer__brand {
-  font-size: 1.2rem;
-  font-weight: 800;
-  margin: 0 0 8px;
+.imania-footer__container {
+	max-width: 1320px;
 }
 
-.imania-footer__text {
-  color: rgba(255, 255, 255, 0.74);
-  margin: 0;
+.imania-footer__grid {
+	align-items: start;
+	display: grid;
+	gap: 34px 44px;
+	grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+	padding-bottom: 40px;
+}
+
+.imania-footer__brand-column {
+	min-width: 0;
+}
+
+.imania-footer__logo {
+	margin-bottom: 18px;
+}
+
+.imania-footer__logo .custom-logo-link {
+	display: inline-flex;
+}
+
+.imania-footer__logo img {
+	display: block;
+	height: auto;
+	max-height: 104px;
+	width: auto;
+}
+
+.imania-footer__logo > a:not(.custom-logo-link) {
+	font-size: 1.5rem;
+	font-weight: 800;
+}
+
+.imania-footer__socials,
+.imania-footer__menu,
+.imania-footer__security ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.imania-footer__socials {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+}
+
+.imania-footer__socials a,
+.imania-footer__socials span {
+	align-items: center;
+	border: 1px solid rgba(0, 0, 0, 0.7);
+	border-radius: 999px;
+	color: #000;
+	display: inline-flex;
+	height: 38px;
+	justify-content: center;
+	transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+	width: 38px;
+}
+
+.imania-footer__socials span {
+	cursor: default;
+	opacity: 0.72;
+}
+
+.imania-footer__socials a:hover,
+.imania-footer__socials a:focus-visible {
+	background: #000;
+	color: var(--im-color-accent);
+	outline: none;
+	transform: translateY(-2px);
+}
+
+.imania-footer__socials svg {
+	fill: none;
+	height: 20px;
+	stroke: currentColor;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+	stroke-width: 1.7;
+	width: 20px;
+}
+
+.imania-footer__menu {
+	display: grid;
+	gap: 10px;
+}
+
+.imania-footer__menu a {
+	color: #111;
+	display: inline-block;
+	font-size: 0.9rem;
+	font-weight: 600;
+	line-height: 1.3;
+}
+
+.imania-footer__menu a:hover,
+.imania-footer__menu a:focus-visible {
+	color: var(--im-color-primary-dark);
+	outline: none;
+	text-decoration: underline;
+	text-underline-offset: 3px;
+}
+
+.imania-footer__security ul {
+	align-items: center;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px;
+}
+
+.imania-footer__security img {
+	display: block;
+	max-height: 48px;
+	max-width: 180px;
+	object-fit: contain;
+	width: auto;
+}
+
+.imania-footer__copyright {
+	border-top: 1px solid rgba(0, 0, 0, 0.22);
+	padding: 18px 0 20px;
+	text-align: center;
+}
+
+.imania-footer__copyright p {
+	font-size: 0.82rem;
+	font-weight: 600;
+	line-height: 1.3;
+	margin: 0;
+}
+
+@media (max-width: 767.98px) {
+	.imania-footer {
+		padding-top: 36px;
+	}
+
+	.imania-footer__grid {
+		gap: 30px 24px;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		padding-bottom: 32px;
+	}
+}
+
+@media (max-width: 479.98px) {
+	.imania-footer__grid {
+		grid-template-columns: 1fr;
+	}
+
+	.imania-footer__logo img {
+		max-height: 88px;
+	}
+
+	.imania-footer__copyright {
+		text-align: left;
+	}
 }
 
 /* Cart badge is scoped to the cart trigger so it does not affect wishlist count. */
