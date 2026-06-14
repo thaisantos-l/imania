@@ -1,6 +1,26 @@
 <?php
 
 /**
+ * Return fresh nonces for the public authentication forms.
+ */
+function imania_store_handle_auth_nonces_ajax()
+{
+	if ('POST' !== strtoupper((string) $_SERVER['REQUEST_METHOD'])) {
+		imania_store_send_account_json_error(__('Metodo invalido.', 'imania-store'), 405, 'invalid_method');
+	}
+
+	nocache_headers();
+	imania_store_send_account_json_success(
+		array(
+			'loginNonce' => wp_create_nonce('imania_account_login_nonce'),
+			'registerNonce' => wp_create_nonce('imania_account_register_nonce'),
+		)
+	);
+}
+add_action('wp_ajax_nopriv_imania_account_auth_nonces', 'imania_store_handle_auth_nonces_ajax');
+add_action('wp_ajax_imania_account_auth_nonces', 'imania_store_handle_auth_nonces_ajax');
+
+/**
  * Handle auth login via AJAX for /conta/.
  */
 function imania_store_handle_auth_login_ajax()
@@ -12,15 +32,6 @@ function imania_store_handle_auth_login_ajax()
 	$is_valid_nonce = check_ajax_referer('imania_account_login_nonce', 'nonce', false);
 	if (false === $is_valid_nonce) {
 		imania_store_send_account_json_error(__('Falha de seguranca. Atualize a pagina e tente novamente.', 'imania-store'), 403, 'invalid_nonce');
-	}
-
-	if (is_user_logged_in()) {
-		imania_store_send_account_json_success(
-			array(
-				'message' => __('Sessao ja autenticada.', 'imania-store'),
-				'redirect' => imania_store_get_safe_auth_redirect_url(imania_store_get_my_account_url()),
-			)
-		);
 	}
 
 	$customer_type = isset($_POST['customer_type']) ? sanitize_key(wp_unslash($_POST['customer_type'])) : '';
@@ -38,7 +49,13 @@ function imania_store_handle_auth_login_ajax()
 	}
 
 	$normalized_document = (string) $document_validation['normalized'];
-	$user = imania_store_get_user_by_document($normalized_document, $customer_type);
+	$user = null;
+	foreach (imania_store_get_users_by_document($normalized_document, $customer_type) as $candidate) {
+		if (wp_check_password($password, $candidate->user_pass, $candidate->ID)) {
+			$user = $candidate;
+			break;
+		}
+	}
 	if (!$user instanceof WP_User) {
 		imania_store_send_account_json_error(__('Documento ou senha invalidos.', 'imania-store'), 401, 'invalid_credentials');
 	}
@@ -57,6 +74,7 @@ function imania_store_handle_auth_login_ajax()
 	if (is_wp_error($signed_user)) {
 		imania_store_send_account_json_error(__('Documento ou senha invalidos.', 'imania-store'), 401, 'invalid_credentials');
 	}
+	wp_set_current_user($signed_user->ID);
 
 	imania_store_send_account_json_success(
 		array(
@@ -80,15 +98,6 @@ function imania_store_handle_auth_register_ajax()
 	$is_valid_nonce = check_ajax_referer('imania_account_register_nonce', 'nonce', false);
 	if (false === $is_valid_nonce) {
 		imania_store_send_account_json_error(__('Falha de seguranca. Atualize a pagina e tente novamente.', 'imania-store'), 403, 'invalid_nonce');
-	}
-
-	if (is_user_logged_in()) {
-		imania_store_send_account_json_success(
-			array(
-				'message' => __('Sessao ja autenticada.', 'imania-store'),
-				'redirect' => imania_store_get_safe_auth_redirect_url(imania_store_get_my_account_url()),
-			)
-		);
 	}
 
 	$customer_type = isset($_POST['customer_type']) ? sanitize_key(wp_unslash($_POST['customer_type'])) : '';
@@ -148,6 +157,8 @@ function imania_store_handle_auth_register_ajax()
 	if (is_wp_error($signed_user)) {
 		wp_set_current_user($user_id);
 		wp_set_auth_cookie($user_id, true, is_ssl());
+	} else {
+		wp_set_current_user($signed_user->ID);
 	}
 
 	imania_store_send_account_json_success(

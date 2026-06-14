@@ -9,8 +9,12 @@
  */
 function imania_store_add_conta_body_class($classes)
 {
-	if (imania_store_is_conta_page()) {
+	if (imania_store_should_render_auth_form()) {
 		$classes[] = 'imania-page-conta';
+	}
+	if (imania_store_is_conta_page() && is_user_logged_in()) {
+		$classes[] = 'woocommerce-account';
+		$classes[] = 'woocommerce-page';
 	}
 	if (function_exists('is_product') && is_product()) {
 		$classes[] = 'imania-page-single-product';
@@ -59,18 +63,58 @@ function imania_store_is_conta_page()
 }
 
 /**
- * Redirect logged users from /conta/ to /minha-conta/.
+ * Whether the current request should display the custom authentication forms.
+ *
+ * @return bool
  */
-function imania_store_redirect_logged_user_from_conta()
+function imania_store_should_render_auth_form()
 {
-	if (!imania_store_is_conta_page() || !is_user_logged_in()) {
+	if (is_user_logged_in()) {
+		return false;
+	}
+
+	$is_account_page = function_exists('is_account_page') && is_account_page();
+	if (!imania_store_is_conta_page() && !$is_account_page) {
+		return false;
+	}
+
+	return !(function_exists('is_wc_endpoint_url') && is_wc_endpoint_url('lost-password'));
+}
+
+/**
+ * Use the same account template for WooCommerce My Account.
+ *
+ * @param string $template Resolved template path.
+ *
+ * @return string
+ */
+function imania_store_use_unified_account_template($template)
+{
+	if (!(function_exists('is_account_page') && is_account_page())) {
+		return $template;
+	}
+
+	$account_template = get_template_directory() . '/page-account.php';
+	return file_exists($account_template) ? $account_template : $template;
+}
+add_filter('template_include', 'imania_store_use_unified_account_template', 999);
+
+/**
+ * Prevent account pages from serving stale authentication or profile nonces.
+ */
+function imania_store_disable_account_page_cache()
+{
+	$is_account_page = function_exists('is_account_page') && is_account_page();
+	if (!imania_store_is_conta_page() && !$is_account_page) {
 		return;
 	}
 
-	wp_safe_redirect(imania_store_get_my_account_url());
-	exit;
+	if (!defined('DONOTCACHEPAGE')) {
+		define('DONOTCACHEPAGE', true);
+	}
+	nocache_headers();
 }
-add_action('template_redirect', 'imania_store_redirect_logged_user_from_conta', 1);
+add_action('template_redirect', 'imania_store_disable_account_page_cache', 0);
 
 /**
  * Allowed custom account endpoints.

@@ -11,6 +11,7 @@ $user = isset($user) && $user instanceof WP_User ? $user : wp_get_current_user()
 
 $document_label = isset($document_label) ? (string) $document_label : 'CPF';
 $document_value = isset($document_value) ? (string) $document_value : '';
+$can_define_customer_type = !empty($can_define_customer_type);
 $phone = isset($phone) ? (string) $phone : '';
 $address_1 = isset($address_1) ? (string) $address_1 : '';
 $address_2 = isset($address_2) ? (string) $address_2 : '';
@@ -37,9 +38,20 @@ $country = isset($country) ? (string) $country : '';
 			</div>
 		</div>
 
+		<?php if ($can_define_customer_type) : ?>
+			<div class="imania-account-profile__field">
+				<label for="imania_profile_customer_type"><?php esc_html_e('Tipo de pessoa', 'imania-store'); ?></label>
+				<select id="imania_profile_customer_type" name="imania_customer_type" required>
+					<option value=""><?php esc_html_e('Selecione', 'imania-store'); ?></option>
+					<option value="pf"><?php esc_html_e('Pessoa Fisica', 'imania-store'); ?></option>
+					<option value="pj"><?php esc_html_e('Pessoa Juridica', 'imania-store'); ?></option>
+				</select>
+			</div>
+		<?php endif; ?>
+
 		<div class="imania-account-profile__grid imania-account-profile__grid--2">
 			<div class="imania-account-profile__field">
-				<label for="imania_profile_document"><?php echo esc_html($document_label); ?></label>
+				<label for="imania_profile_document" data-imania-profile-document-label><?php echo esc_html($document_label); ?></label>
 				<input type="text" id="imania_profile_document" name="imania_document" value="<?php echo esc_attr($document_value); ?>" />
 			</div>
 			<div class="imania-account-profile__field">

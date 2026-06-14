@@ -61,6 +61,12 @@ function imania_store_assign_customer_typed_role($user_id, $customer_type)
 		return;
 	}
 
+	$customer_roles = array('customer', 'customer_pf', 'customer_pj');
+	$protected_roles = array_diff((array) $user->roles, $customer_roles);
+	if (!empty($protected_roles)) {
+		return;
+	}
+
 	$user->set_role($role);
 }
 

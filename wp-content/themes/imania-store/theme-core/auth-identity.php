@@ -1,14 +1,14 @@
 <?php
 
 /**
- * Resolve user by normalized document.
+ * Resolve users by normalized document.
  *
  * @param string $normalized_document Digits only document.
  * @param string $customer_type       Optional pf|pj.
  *
- * @return WP_User|null
+ * @return WP_User[]
  */
-function imania_store_get_user_by_document($normalized_document, $customer_type = '')
+function imania_store_get_users_by_document($normalized_document, $customer_type = '')
 {
 	static $request_cache = array();
 
@@ -18,12 +18,26 @@ function imania_store_get_user_by_document($normalized_document, $customer_type 
 	$cache_key = $normalized_document . ':' . $customer_type;
 
 	if (isset($request_cache[$cache_key])) {
-		return $request_cache[$cache_key] instanceof WP_User ? $request_cache[$cache_key] : null;
+		return $request_cache[$cache_key];
 	}
 
 	if ('' === $normalized_document) {
-		$request_cache[$cache_key] = null;
-		return null;
+		$request_cache[$cache_key] = array();
+		return array();
+	}
+
+	$document_values = array($normalized_document);
+	if (11 === strlen($normalized_document)) {
+		$document_values[] = substr($normalized_document, 0, 3)
+			. '.' . substr($normalized_document, 3, 3)
+			. '.' . substr($normalized_document, 6, 3)
+			. '-' . substr($normalized_document, 9, 2);
+	} elseif (14 === strlen($normalized_document)) {
+		$document_values[] = substr($normalized_document, 0, 2)
+			. '.' . substr($normalized_document, 2, 3)
+			. '.' . substr($normalized_document, 5, 3)
+			. '/' . substr($normalized_document, 8, 4)
+			. '-' . substr($normalized_document, 12, 2);
 	}
 
 	$keys = array('imania_document');
@@ -40,24 +54,46 @@ function imania_store_get_user_by_document($normalized_document, $customer_type 
 	foreach (array_unique($keys) as $key) {
 		$meta_query[] = array(
 			'key' => $key,
-			'value' => $normalized_document,
+			'value' => array_unique($document_values),
+			'compare' => 'IN',
 		);
 	}
 
 	$query = new WP_User_Query(
 		array(
 			'fields' => 'all',
-			'number' => 1,
+			'number' => 20,
 			'count_total' => false,
 			'meta_query' => $meta_query,
 		)
 	);
 
 	$results = $query->get_results();
-	$user = (!empty($results) && $results[0] instanceof WP_User) ? $results[0] : null;
-	$request_cache[$cache_key] = $user;
+	$users = array_values(
+		array_filter(
+			$results,
+			static function ($user) {
+				return $user instanceof WP_User;
+			}
+		)
+	);
+	$request_cache[$cache_key] = $users;
 
-	return $user;
+	return $users;
+}
+
+/**
+ * Resolve the first user matching a normalized document.
+ *
+ * @param string $normalized_document Digits only document.
+ * @param string $customer_type       Optional pf|pj.
+ *
+ * @return WP_User|null
+ */
+function imania_store_get_user_by_document($normalized_document, $customer_type = '')
+{
+	$users = imania_store_get_users_by_document($normalized_document, $customer_type);
+	return !empty($users) ? $users[0] : null;
 }
 
 /**

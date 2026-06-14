@@ -1,6 +1,6 @@
 <?php
 /**
- * Custom auth page template (/conta/).
+ * Unified account page template.
  *
  * @package Imania_Store
  */
