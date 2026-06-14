@@ -7,14 +7,14 @@
 
 $product = isset( $args['product'] ) && $args['product'] instanceof WC_Product ? $args['product'] : null;
 $variant = isset( $args['variant'] ) ? sanitize_key( $args['variant'] ) : 'default';
+$image_loading = isset( $args['image_loading'] ) && 'eager' === $args['image_loading'] ? 'eager' : 'lazy';
+$image_priority = isset( $args['image_priority'] ) && 'high' === $args['image_priority'] ? 'high' : 'auto';
 
 if ( ! $product ) {
 	return;
 }
 
 $permalink = get_permalink( $product->get_id() );
-$terms     = get_the_terms( $product->get_id(), 'product_cat' );
-$cat_name  = ! is_wp_error( $terms ) && ! empty( $terms ) ? $terms[0]->name : '';
 $name      = $product->get_name();
 $product_id = $product->get_id();
 $is_favorited = imania_store_is_in_wishlist( $product_id );
@@ -24,12 +24,12 @@ $card_image_ids = array_merge(
 	array_map( 'absint', (array) $product->get_gallery_image_ids() )
 );
 $card_image_ids = array_values( array_unique( array_filter( $card_image_ids ) ) );
-$card_image_ids = array_slice( $card_image_ids, 0, 3 );
+$card_image_ids = array_slice( $card_image_ids, 0, 'catalog' === $variant ? 2 : 3 );
 $gallery_items  = array();
 
 foreach ( $card_image_ids as $image_id ) {
-	$image_url = wp_get_attachment_image_url( $image_id, 'woocommerce_thumbnail' );
-	if ( ! $image_url ) {
+	$image_data = wp_get_attachment_image_src( $image_id, 'woocommerce_thumbnail' );
+	if ( ! is_array( $image_data ) || empty( $image_data[0] ) ) {
 		continue;
 	}
 
@@ -39,10 +39,12 @@ foreach ( $card_image_ids as $image_id ) {
 	}
 
 	$gallery_items[] = array(
-		'src'    => esc_url_raw( $image_url ),
+		'src'    => esc_url_raw( $image_data[0] ),
 		'srcset' => (string) wp_get_attachment_image_srcset( $image_id, 'woocommerce_thumbnail' ),
 		'sizes'  => (string) wp_get_attachment_image_sizes( $image_id, 'woocommerce_thumbnail' ),
 		'alt'    => $image_alt,
+		'width'  => isset( $image_data[1] ) ? absint( $image_data[1] ) : 300,
+		'height' => isset( $image_data[2] ) ? absint( $image_data[2] ) : 300,
 	);
 }
 
@@ -52,16 +54,19 @@ if ( empty( $gallery_items ) ) {
 		'srcset' => '',
 		'sizes'  => '',
 		'alt'    => $name,
+		'width'  => 300,
+		'height' => 300,
 	);
 }
 
 $active_image = $gallery_items[0];
 $dot_count    = count( $gallery_items );
 
-if ( 'showcase' === $variant ) :
+if ( in_array( $variant, array( 'showcase', 'catalog' ), true ) ) :
+	$variant_class = 'catalog' === $variant ? ' imania-product-card--catalog' : '';
 	?>
 	<article
-		class="imania-product-card imania-product-card--showcase"
+		class="imania-product-card imania-product-card--showcase<?php echo esc_attr( $variant_class ); ?>"
 		aria-label="<?php echo esc_attr( $name ); ?>"
 		data-imania-product-card-gallery="<?php echo esc_attr( wp_json_encode( $gallery_items ) ); ?>"
 	>
@@ -69,7 +74,10 @@ if ( 'showcase' === $variant ) :
 			<img
 				src="<?php echo esc_url( $active_image['src'] ); ?>"
 				alt="<?php echo esc_attr( $active_image['alt'] ); ?>"
-				loading="lazy"
+				width="<?php echo esc_attr( (string) $active_image['width'] ); ?>"
+				height="<?php echo esc_attr( (string) $active_image['height'] ); ?>"
+				loading="<?php echo esc_attr( $image_loading ); ?>"
+				fetchpriority="<?php echo esc_attr( $image_priority ); ?>"
 				decoding="async"
 				data-imania-product-card-image
 				<?php if ( '' !== $active_image['srcset'] ) : ?>
@@ -110,6 +118,9 @@ if ( 'showcase' === $variant ) :
 	<?php
 	return;
 endif;
+
+$terms     = get_the_terms( $product->get_id(), 'product_cat' );
+$cat_name  = ! is_wp_error( $terms ) && ! empty( $terms ) ? $terms[0]->name : '';
 ?>
 <article class="imania-product-card" aria-label="<?php echo esc_attr( $product->get_name() ); ?>">
 	<a class="imania-product-card__thumb" href="<?php echo esc_url( $permalink ); ?>">
