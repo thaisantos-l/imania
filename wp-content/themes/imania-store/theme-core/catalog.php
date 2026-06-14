@@ -33,6 +33,19 @@ function imania_store_catalog_per_page()
 }
 
 /**
+ * Whether the current request is a WooCommerce product search.
+ *
+ * @return bool
+ */
+function imania_store_is_product_search()
+{
+	return function_exists('is_search')
+		&& is_search()
+		&& function_exists('is_post_type_archive')
+		&& is_post_type_archive('product');
+}
+
+/**
  * Whether the current request uses the custom catalog.
  *
  * @return bool
@@ -40,7 +53,52 @@ function imania_store_catalog_per_page()
 function imania_store_is_catalog_request()
 {
 	return function_exists('is_shop')
-		&& (is_shop() || (function_exists('is_product_category') && is_product_category()));
+		&& (
+			imania_store_is_product_search()
+			|| is_shop()
+			|| (function_exists('is_product_category') && is_product_category())
+		);
+}
+
+/**
+ * Return the selected product search ordering.
+ *
+ * @return string
+ */
+function imania_store_get_search_order()
+{
+	// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+	$order = isset($_GET['catalog_order']) ? sanitize_key(wp_unslash($_GET['catalog_order'])) : 'popularity';
+	$allowed = array('popularity', 'title', 'price');
+
+	return in_array($order, $allowed, true) ? $order : 'popularity';
+}
+
+/**
+ * Return safe WooCommerce ordering arguments for product search results.
+ *
+ * @param string $order Selected catalog order.
+ *
+ * @return array{orderby:string,order:string,meta_key:string}
+ */
+function imania_store_get_search_ordering_args($order)
+{
+	$mapping = array(
+		'popularity' => array('popularity', 'DESC'),
+		'title' => array('title', 'ASC'),
+		'price' => array('price', 'ASC'),
+	);
+	$selected = isset($mapping[$order]) ? $mapping[$order] : $mapping['popularity'];
+
+	if (function_exists('WC') && WC()->query instanceof WC_Query) {
+		return WC()->query->get_catalog_ordering_args($selected[0], $selected[1]);
+	}
+
+	return array(
+		'orderby' => 'title' === $order ? 'title' : 'date',
+		'order' => 'title' === $order ? 'ASC' : 'DESC',
+		'meta_key' => '',
+	);
 }
 
 /**
@@ -117,6 +175,17 @@ function imania_store_configure_catalog_query($query)
 	}
 
 	$query->set('posts_per_page', imania_store_catalog_per_page());
+
+	if (imania_store_is_product_search()) {
+		$ordering_args = imania_store_get_search_ordering_args(imania_store_get_search_order());
+		$query->set('orderby', $ordering_args['orderby']);
+		$query->set('order', $ordering_args['order']);
+		if (!empty($ordering_args['meta_key'])) {
+			$query->set('meta_key', $ordering_args['meta_key']);
+		}
+		return;
+	}
+
 	$query->set(
 		'orderby',
 		array(
@@ -157,6 +226,10 @@ add_action('woocommerce_product_query', 'imania_store_configure_catalog_query', 
 function imania_store_catalog_ordering_args($args)
 {
 	if (!imania_store_is_catalog_request()) {
+		return $args;
+	}
+
+	if (imania_store_is_product_search()) {
 		return $args;
 	}
 
@@ -347,17 +420,21 @@ add_filter('posts_clauses', 'imania_store_catalog_price_clauses', 20, 2);
 /**
  * Build a native catalog page URL for progressive enhancement.
  *
- * @param string $context Shop or category.
+ * @param string $context Shop, category or search.
  * @param string $category_slug Current archive category.
  * @param int    $page Page number.
  * @param array  $filters Active filters.
+ * @param string $search_term Product search term.
+ * @param string $search_order Product search ordering.
  *
  * @return string
  */
-function imania_store_get_catalog_page_url($context, $category_slug, $page, $filters)
+function imania_store_get_catalog_page_url($context, $category_slug, $page, $filters, $search_term = '', $search_order = '')
 {
 	$base_url = wc_get_page_permalink('shop');
-	if ('category' === $context && '' !== $category_slug) {
+	if ('search' === $context) {
+		$base_url = home_url('/');
+	} elseif ('category' === $context && '' !== $category_slug) {
 		$term = get_term_by('slug', $category_slug, 'product_cat');
 		$term_url = $term instanceof WP_Term ? get_term_link($term) : '';
 		if (!is_wp_error($term_url) && '' !== $term_url) {
@@ -379,6 +456,13 @@ function imania_store_get_catalog_page_url($context, $category_slug, $page, $fil
 	if ('' !== $filters['max_price']) {
 		$query_args['max_price'] = $filters['max_price'];
 	}
+	if ('search' === $context) {
+		$query_args['s'] = $search_term;
+		$query_args['post_type'] = 'product';
+		$query_args['catalog_order'] = in_array($search_order, array('popularity', 'title', 'price'), true)
+			? $search_order
+			: 'popularity';
+	}
 
 	return empty($query_args) ? $base_url : add_query_arg($query_args, $base_url);
 }
@@ -396,9 +480,14 @@ function imania_store_handle_catalog_load()
 		: array();
 	$min_price = isset($_POST['min_price']) ? wc_format_decimal(wp_unslash($_POST['min_price'])) : '';
 	$max_price = isset($_POST['max_price']) ? wc_format_decimal(wp_unslash($_POST['max_price'])) : '';
+	$search_term = isset($_POST['search']) ? sanitize_text_field(wp_unslash($_POST['search'])) : '';
+	$search_order = isset($_POST['order']) ? sanitize_key(wp_unslash($_POST['order'])) : 'popularity';
 
-	if (!in_array($context, array('shop', 'category'), true)) {
+	if (!in_array($context, array('shop', 'category', 'search'), true)) {
 		$context = 'shop';
+	}
+	if (!in_array($search_order, array('popularity', 'title', 'price'), true)) {
+		$search_order = 'popularity';
 	}
 
 	$tax_query = array('relation' => 'AND');
@@ -438,24 +527,34 @@ function imania_store_handle_catalog_load()
 		);
 	}
 
-	$query = new WP_Query(
-		array(
-			'post_type' => 'product',
-			'post_status' => 'publish',
-			'posts_per_page' => imania_store_catalog_per_page(),
-			'paged' => $page,
-			'orderby' => array(
-				'date' => 'DESC',
-				'ID' => 'DESC',
-			),
-			'order' => 'DESC',
-			'ignore_sticky_posts' => true,
-			'tax_query' => $tax_query,
-			'imania_catalog_query' => true,
-			'imania_min_price' => $min_price,
-			'imania_max_price' => $max_price,
-		)
+	$query_args = array(
+		'post_type' => 'product',
+		'post_status' => 'publish',
+		'posts_per_page' => imania_store_catalog_per_page(),
+		'paged' => $page,
+		'orderby' => array(
+			'date' => 'DESC',
+			'ID' => 'DESC',
+		),
+		'order' => 'DESC',
+		'ignore_sticky_posts' => true,
+		'tax_query' => $tax_query,
+		'imania_catalog_query' => true,
+		'imania_min_price' => $min_price,
+		'imania_max_price' => $max_price,
 	);
+
+	if ('search' === $context) {
+		$ordering_args = imania_store_get_search_ordering_args($search_order);
+		$query_args['s'] = $search_term;
+		$query_args['orderby'] = $ordering_args['orderby'];
+		$query_args['order'] = $ordering_args['order'];
+		if (!empty($ordering_args['meta_key'])) {
+			$query_args['meta_key'] = $ordering_args['meta_key'];
+		}
+	}
+
+	$query = new WP_Query($query_args);
 
 	$filters = array(
 		'categories' => $categories,
@@ -471,7 +570,14 @@ function imania_store_handle_catalog_load()
 			'maxPages' => (int) $query->max_num_pages,
 			'hasMore' => $has_more,
 			'nextUrl' => $has_more
-				? imania_store_get_catalog_page_url($context, $category_slug, $page + 1, $filters)
+				? imania_store_get_catalog_page_url(
+					$context,
+					$category_slug,
+					$page + 1,
+					$filters,
+					$search_term,
+					$search_order
+				)
 				: '',
 		)
 	);

@@ -11,6 +11,7 @@
 	var filterToggle = root.querySelector('[data-imania-catalog-filter-toggle]');
 	var filterCloseButtons = root.querySelectorAll('[data-imania-catalog-filter-close]');
 	var filterForm = filter ? filter.querySelector('form') : null;
+	var orderSelect = root.querySelector('[data-imania-catalog-order]');
 	var grid = root.querySelector('[data-imania-catalog-grid]');
 	var summary = root.querySelector('.imania-catalog__summary p');
 	var loadContainer = root.querySelector('.imania-catalog__load');
@@ -54,6 +55,14 @@
 					input.disabled = true;
 				}
 			});
+		});
+	}
+
+	if (orderSelect) {
+		orderSelect.addEventListener('change', function () {
+			if (orderSelect.form) {
+				orderSelect.form.submit();
+			}
 		});
 	}
 
@@ -104,7 +113,9 @@
 			context: config.context || root.getAttribute('data-context') || 'shop',
 			category: config.category || root.getAttribute('data-category') || '',
 			min_price: filters.min_price || '',
-			max_price: filters.max_price || ''
+			max_price: filters.max_price || '',
+			search: config.search || '',
+			order: config.order || ''
 		});
 
 		(filters.categories || []).forEach(function (category) {

@@ -55,6 +55,10 @@
 	grid-template-columns: minmax(220px, 260px) minmax(0, 1fr);
 }
 
+.imania-catalog__layout--search {
+	display: block;
+}
+
 .imania-catalog-filter {
 	border-right: 1px solid rgba(0, 0, 0, 0.08);
 	padding-right: 24px;
@@ -180,17 +184,70 @@
 	text-decoration: underline;
 }
 
-.imania-catalog__summary {
+.imania-catalog__toolbar {
 	align-items: center;
 	display: flex;
 	justify-content: flex-end;
 	min-height: 24px;
 }
 
+.imania-catalog--search .imania-catalog__toolbar {
+	gap: 24px;
+	justify-content: space-between;
+	margin-bottom: 18px;
+}
+
+.imania-catalog__summary {
+	align-items: center;
+	display: flex;
+}
+
 .imania-catalog__summary p {
 	color: var(--im-color-muted);
 	font-size: 0.78rem;
 	margin: 0 0 14px;
+}
+
+.imania-catalog--search .imania-catalog__summary p {
+	margin: 0;
+}
+
+.imania-catalog-order {
+	align-items: center;
+	display: flex;
+	gap: 10px;
+}
+
+.imania-catalog-order label {
+	color: var(--im-color-muted);
+	font-size: 0.78rem;
+	font-weight: 600;
+	white-space: nowrap;
+}
+
+.imania-catalog-order select {
+	appearance: none;
+	background-color: #fff;
+	background-image: linear-gradient(45deg, transparent 50%, #222 50%),
+		linear-gradient(135deg, #222 50%, transparent 50%);
+	background-position: calc(100% - 16px) calc(50% - 2px), calc(100% - 11px) calc(50% - 2px);
+	background-repeat: no-repeat;
+	background-size: 5px 5px, 5px 5px;
+	border: 1px solid rgba(0, 0, 0, 0.16);
+	border-radius: 8px;
+	color: var(--im-color-text);
+	cursor: pointer;
+	font-family: inherit;
+	font-size: 0.8rem;
+	min-height: 40px;
+	min-width: 220px;
+	padding: 8px 38px 8px 12px;
+}
+
+.imania-catalog-order select:focus {
+	border-color: var(--im-color-primary);
+	outline: 2px solid rgba(0, 148, 211, 0.16);
+	outline-offset: 1px;
 }
 
 .imania-catalog-grid {
@@ -416,6 +473,12 @@
 	.imania-catalog__summary {
 		justify-content: flex-start;
 	}
+
+	.imania-catalog--search .imania-catalog__toolbar {
+		align-items: flex-start;
+		flex-direction: column;
+		gap: 12px;
+	}
 }
 
 @media (max-width: 575.98px) {
@@ -434,6 +497,17 @@
 	.imania-catalog-grid {
 		gap: 28px 12px;
 		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.imania-catalog-order {
+		align-items: flex-start;
+		flex-direction: column;
+		width: 100%;
+	}
+
+	.imania-catalog-order select {
+		min-width: 0;
+		width: 100%;
 	}
 
 	.imania-product-card--catalog .imania-product-card__thumb {

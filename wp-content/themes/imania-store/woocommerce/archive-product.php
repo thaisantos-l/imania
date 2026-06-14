@@ -11,23 +11,33 @@ defined('ABSPATH') || exit;
 get_header('shop');
 do_action('woocommerce_before_main_content');
 
+$is_product_search = imania_store_is_product_search();
 $filters = imania_store_get_catalog_filters();
-$price_bounds = imania_store_get_catalog_price_bounds();
-$is_shop_catalog = is_shop();
-$current_term = is_product_category() ? get_queried_object() : null;
+$price_bounds = $is_product_search ? array('min' => 0, 'max' => 0) : imania_store_get_catalog_price_bounds();
+$is_shop_catalog = !$is_product_search && is_shop();
+$current_term = !$is_product_search && is_product_category() ? get_queried_object() : null;
 $category_slug = $current_term instanceof WP_Term ? $current_term->slug : '';
-$catalog_context = $is_shop_catalog ? 'shop' : 'category';
+$catalog_context = $is_product_search ? 'search' : ($is_shop_catalog ? 'shop' : 'category');
 $catalog_title = woocommerce_page_title(false);
 $catalog_description = $current_term instanceof WP_Term ? term_description($current_term) : '';
+$search_term = $is_product_search ? get_search_query(false) : '';
+$search_order = $is_product_search ? imania_store_get_search_order() : '';
 $current_page = max(1, (int) get_query_var('paged'));
 $total_products = (int) $GLOBALS['wp_query']->found_posts;
 $shown_products = min($total_products, $current_page * imania_store_catalog_per_page());
 $next_page_url = $current_page < (int) $GLOBALS['wp_query']->max_num_pages
-	? imania_store_get_catalog_page_url($catalog_context, $category_slug, $current_page + 1, $filters)
+	? imania_store_get_catalog_page_url(
+		$catalog_context,
+		$category_slug,
+		$current_page + 1,
+		$filters,
+		$search_term,
+		$search_order
+	)
 	: '';
 ?>
 <section
-	class="imania-catalog"
+	class="imania-catalog<?php echo $is_product_search ? ' imania-catalog--search' : ''; ?>"
 	data-imania-catalog
 	data-context="<?php echo esc_attr($catalog_context); ?>"
 	data-category="<?php echo esc_attr($category_slug); ?>"
@@ -44,24 +54,27 @@ $next_page_url = $current_page < (int) $GLOBALS['wp_query']->max_num_pages
 					</div>
 				<?php endif; ?>
 			</div>
-			<button
-				class="imania-catalog__filter-toggle"
-				type="button"
-				aria-expanded="false"
-				aria-controls="imania-catalog-filters"
-				data-imania-catalog-filter-toggle
-			>
-				<span><?php esc_html_e('Filtros', 'imania-store'); ?></span>
-				<svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-					<path d="M4 6h16M7 12h10M10 18h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-				</svg>
-			</button>
+			<?php if (!$is_product_search) : ?>
+				<button
+					class="imania-catalog__filter-toggle"
+					type="button"
+					aria-expanded="false"
+					aria-controls="imania-catalog-filters"
+					data-imania-catalog-filter-toggle
+				>
+					<span><?php esc_html_e('Filtros', 'imania-store'); ?></span>
+					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+						<path d="M4 6h16M7 12h10M10 18h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+					</svg>
+				</button>
+			<?php endif; ?>
 		</header>
 
 		<div class="imania-catalog__line"></div>
 		<?php woocommerce_output_all_notices(); ?>
 
-		<div class="imania-catalog__layout">
+		<div class="imania-catalog__layout<?php echo $is_product_search ? ' imania-catalog__layout--search' : ''; ?>">
+			<?php if (!$is_product_search) : ?>
 			<button
 				class="imania-catalog__backdrop"
 				type="button"
@@ -123,21 +136,46 @@ $next_page_url = $current_page < (int) $GLOBALS['wp_query']->max_num_pages
 					</div>
 				</form>
 			</aside>
+			<?php endif; ?>
 
 			<div class="imania-catalog__results">
-				<div class="imania-catalog__summary" role="status" aria-live="polite">
-					<p>
-						<?php
-						echo esc_html(
-							sprintf(
-								/* translators: 1: shown products, 2: total products. */
-								__('Exibindo %1$d de %2$d produtos', 'imania-store'),
-								$shown_products,
-								$total_products
-							)
-						);
-						?>
-					</p>
+				<div class="imania-catalog__toolbar">
+					<div class="imania-catalog__summary" role="status" aria-live="polite">
+						<p>
+							<?php
+							echo esc_html(
+								sprintf(
+									/* translators: 1: shown products, 2: total products. */
+									__('Exibindo %1$d de %2$d produtos', 'imania-store'),
+									$shown_products,
+									$total_products
+								)
+							);
+							?>
+						</p>
+					</div>
+
+					<?php if ($is_product_search) : ?>
+						<form class="imania-catalog-order" method="get" action="<?php echo esc_url(home_url('/')); ?>">
+							<input type="hidden" name="s" value="<?php echo esc_attr($search_term); ?>" />
+							<input type="hidden" name="post_type" value="product" />
+							<label for="imania-catalog-order"><?php esc_html_e('Ordenar por', 'imania-store'); ?></label>
+							<select id="imania-catalog-order" name="catalog_order" data-imania-catalog-order>
+								<option value="popularity" <?php selected($search_order, 'popularity'); ?>>
+									<?php esc_html_e('Mais relevantes', 'imania-store'); ?>
+								</option>
+								<option value="title" <?php selected($search_order, 'title'); ?>>
+									<?php esc_html_e('A - Z', 'imania-store'); ?>
+								</option>
+								<option value="price" <?php selected($search_order, 'price'); ?>>
+									<?php esc_html_e('Mais barato para mais caro', 'imania-store'); ?>
+								</option>
+							</select>
+							<noscript>
+								<button type="submit"><?php esc_html_e('Ordenar', 'imania-store'); ?></button>
+							</noscript>
+						</form>
+					<?php endif; ?>
 				</div>
 
 				<?php if (woocommerce_product_loop()) : ?>
@@ -187,7 +225,15 @@ $next_page_url = $current_page < (int) $GLOBALS['wp_query']->max_num_pages
 				<?php else : ?>
 					<div class="imania-catalog__empty">
 						<h2><?php esc_html_e('Nenhum produto encontrado', 'imania-store'); ?></h2>
-						<p><?php esc_html_e('Tente ajustar ou limpar os filtros da busca.', 'imania-store'); ?></p>
+						<p>
+							<?php
+							echo esc_html(
+								$is_product_search
+									? __('Tente buscar por outro termo.', 'imania-store')
+									: __('Tente ajustar ou limpar os filtros da busca.', 'imania-store')
+							);
+							?>
+						</p>
 					</div>
 				<?php endif; ?>
 			</div>
