@@ -1,0 +1,2107 @@
+@charset "UTF-8";
+/* Arquivo principal compilável: centraliza base + módulos do tema. */
+@import url("./_header-footer");
+@import url("./_home");
+@import url("./_product-section.scss");
+@import url("./_product-card.scss");
+@import url("https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap");
+:root {
+  --im-color-bg: #ffffff;
+  --im-color-white: #ffffff;
+  --im-color-surface: #f5f5f5;
+  --im-color-text: #000000;
+  --im-color-muted: #3f3f3f;
+  --im-color-primary: #0087CB;
+  --im-color-primary-dark: #006ea5;
+  --im-color-accent: #ffcc29;
+  --im-color-danger: #ff0000;
+  --im-radius-sm: 8px;
+  --im-radius-md: 14px;
+  --im-radius-lg: 22px;
+  --im-shadow-card: 0 12px 30px rgba(18, 18, 18, 0.09);
+  --im-space-1: 8px;
+  --im-space-2: 12px;
+  --im-space-3: 16px;
+  --im-space-4: 20px;
+  --im-space-5: 28px;
+  --im-space-6: 40px;
+  --im-space-7: 56px;
+}
+
+html,
+body {
+  background: var(--im-color-bg);
+  color: var(--im-color-text);
+  font-family: "Raleway", sans-serif;
+}
+
+body {
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img {
+  height: auto;
+  max-width: 100%;
+}
+
+.site-main {
+  padding-bottom: var(--im-space-7);
+}
+
+.imania-btn {
+  align-items: center;
+  border: 0;
+  border-radius: 10px;
+  display: inline-flex;
+  font-size: 0.95rem;
+  font-weight: 700;
+  gap: 8px;
+  justify-content: center;
+  line-height: 1;
+  padding: 13px 20px;
+  transition: all 0.2s ease;
+}
+
+.imania-btn:focus-visible {
+  outline: 2px solid var(--im-color-primary);
+  outline-offset: 2px;
+}
+
+.imania-btn--primary {
+  background: var(--im-color-primary);
+  color: var(--im-color-white);
+}
+
+.imania-btn--primary:hover {
+  background: var(--im-color-primary-dark);
+  color: var(--im-color-white);
+}
+
+.imania-btn--outline {
+  background: #fff;
+  border: 1px solid var(--im-color-primary);
+  color: var(--im-color-primary);
+}
+
+.imania-btn--outline:hover {
+  background: var(--im-color-primary);
+  color: var(--im-color-white);
+}
+
+.imania-btn--ghost {
+  background: transparent;
+  color: var(--im-color-primary);
+  font-weight: 700;
+  padding: 8px 0;
+}
+
+.imania-btn--sm {
+  font-size: 0.84rem;
+  padding: 10px 14px;
+}
+
+.imania-btn--with-icon svg {
+  display: block;
+}
+
+.imania-kicker {
+  color: var(--im-color-accent);
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  margin: 0 0 10px;
+  text-transform: uppercase;
+}
+
+.imania-price {
+  color: var(--im-color-text);
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 10px 0 14px;
+}
+
+.imania-price del {
+  color: var(--im-color-muted);
+  font-weight: 500;
+}
+
+.imania-price ins {
+  color: var(--im-color-danger);
+  text-decoration: none;
+}
+
+.imania-login-to-price {
+  color: var(--im-color-primary);
+  font-weight: 700;
+}
+
+.imania-empty-state {
+  background: var(--im-color-surface);
+  border-radius: var(--im-radius-md);
+  padding: var(--im-space-4);
+  text-align: center;
+}
+
+.imania-empty-state p {
+  color: var(--im-color-muted);
+  margin: 0;
+}
+
+.imania-wishlist-account__item {
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: var(--im-radius-md);
+  display: grid;
+  gap: 14px;
+  grid-template-columns: 110px minmax(0, 1fr);
+  padding: 12px;
+  transition: transform 0.24s ease, opacity 0.24s ease, box-shadow 0.24s ease;
+}
+
+.imania-wishlist-account__thumb {
+  background: var(--im-color-surface);
+  border-radius: 8px;
+  display: flex;
+  overflow: hidden;
+}
+
+.imania-wishlist-account__thumb img {
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
+}
+
+.imania-wishlist-account__content h3 {
+  font-size: 1rem;
+  margin: 0 0 6px;
+}
+
+.imania-wishlist-account__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+[data-wishlist-account-col] {
+  overflow: hidden;
+  transition: height 0.3s ease, opacity 0.24s ease, transform 0.28s ease, margin 0.3s ease, padding 0.3s ease;
+  will-change: height, opacity, transform;
+}
+
+[data-wishlist-account-col].is-removing {
+  opacity: 0;
+  transform: scale(0.97);
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+.imania-wishlist-feedback--added {
+  animation: imaniaWishlistFeedbackAdded 0.28s ease;
+}
+
+.imania-wishlist-feedback--removed {
+  animation: imaniaWishlistFeedbackRemoved 0.28s ease;
+}
+
+@keyframes imaniaWishlistFeedbackAdded {
+  0% {
+    transform: scale(1);
+  }
+  45% {
+    transform: scale(1.02);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes imaniaWishlistFeedbackRemoved {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.65;
+  }
+}
+/* Estrutura visual de header e footer. */
+.imania-header {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  position: sticky;
+  top: 0;
+  background: var(--im-color-bg);
+  z-index: 90;
+}
+
+.imania-header-topbar {
+  background: var(--im-color-accent);
+  padding: 8px 14px;
+  text-align: center;
+}
+
+.imania-header-topbar p {
+  color: #000;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.25;
+  margin: 0;
+}
+
+.imania-header-topbar p strong {
+  font-weight: 800;
+}
+
+.imania-header .container {
+  padding-bottom: 14px;
+  padding-top: 14px;
+}
+
+.imania-header-main {
+  min-height: 68px;
+}
+
+.imania-branding img {
+  max-height: 78px;
+  width: auto;
+}
+
+.imania-branding__name {
+  font-size: 2.4rem;
+  font-weight: 800;
+}
+
+.imania-navigation .menu {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  justify-content: center;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.imania-navigation .menu > .menu-item {
+  position: relative;
+}
+
+.imania-navigation .menu-item a {
+  color: var(--im-color-text);
+  display: inline-block;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.25;
+  padding: 6px 0 8px;
+  white-space: nowrap;
+}
+
+.imania-navigation .menu-item-has-children > a {
+  padding-right: 18px;
+  position: relative;
+}
+
+.imania-navigation .menu-item-has-children > a::after {
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 5px solid currentColor;
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-35%);
+}
+
+.imania-navigation .current-menu-item > a,
+.imania-navigation .menu-item a:hover {
+  color: var(--im-color-primary);
+}
+
+.imania-navigation .sub-menu {
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 12px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+  display: grid;
+  gap: 2px;
+  left: 0;
+  list-style: none;
+  margin: 0;
+  min-width: 230px;
+  opacity: 0;
+  padding: 8px 0;
+  position: absolute;
+  top: calc(100% + 8px);
+  transform: translateY(6px);
+  transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s ease;
+  visibility: hidden;
+  z-index: 150;
+}
+
+.imania-navigation .sub-menu li {
+  position: relative;
+}
+
+.imania-navigation .sub-menu a {
+  display: block;
+  font-size: 0.92rem;
+  font-weight: 500;
+  line-height: 1.35;
+  padding: 8px 14px;
+  white-space: normal;
+}
+
+.imania-navigation .menu-item-has-children:hover > .sub-menu,
+.imania-navigation .menu-item-has-children:focus-within > .sub-menu,
+.imania-navigation .menu-item-has-children.is-open-submenu > .sub-menu {
+  opacity: 1;
+  transform: translateY(0);
+  visibility: visible;
+}
+
+.imania-submenu-toggle {
+  background: transparent;
+  border: 0;
+  border-radius: 6px;
+  cursor: pointer;
+  display: none;
+  height: 24px;
+  padding: 0;
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18px;
+}
+
+.imania-submenu-toggle::before {
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 5px solid currentColor;
+  content: "";
+  display: block;
+  margin: 0 auto;
+  transition: transform 0.18s ease;
+  width: 0;
+}
+
+.imania-navigation .menu-item-has-children.is-open-submenu > .imania-submenu-toggle::before {
+  transform: rotate(180deg);
+}
+
+.imania-header-actions {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+}
+
+.imania-header-actions a,
+.imania-header-actions__btn {
+  align-items: center;
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.14);
+  border-radius: 999px;
+  display: inline-flex;
+  height: 40px;
+  justify-content: center;
+  min-height: 40px;
+  min-width: 40px;
+  padding: 0;
+  position: relative;
+  width: 40px;
+}
+
+.imania-header-actions__btn {
+  cursor: pointer;
+}
+
+.imania-header-actions a img,
+.imania-header-actions__btn img {
+  display: block;
+  height: 24px;
+  width: 24px;
+}
+
+.imania-cart-count {
+  background: var(--im-color-danger);
+  border: 2px solid #fff;
+  border-radius: 999px;
+  color: #fff;
+  display: inline-flex;
+  font-size: 0.62rem;
+  font-weight: 800;
+  height: 18px;
+  justify-content: center;
+  line-height: 1;
+  min-width: 18px;
+  padding: 0 4px;
+  position: absolute;
+  right: -4px;
+  top: -8px;
+  z-index: 2;
+}
+
+.imania-menu-toggle {
+  background: transparent;
+  border: 1px solid rgba(0, 0, 0, 0.16);
+  border-radius: 8px;
+  display: inline-flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px;
+}
+
+.imania-menu-toggle span {
+  background: var(--im-color-text);
+  border-radius: 999px;
+  display: block;
+  height: 2px;
+  width: 20px;
+}
+
+.imania-footer {
+  background: #0f0f0f;
+  color: #fff;
+  padding: var(--im-space-6) 0;
+}
+
+.imania-footer__brand {
+  font-size: 1.2rem;
+  font-weight: 800;
+  margin: 0 0 8px;
+}
+
+.imania-footer__text {
+  color: rgba(255, 255, 255, 0.74);
+  margin: 0;
+}
+
+.imania-modal-open {
+  overflow: hidden;
+}
+
+.imania-modal {
+  inset: 0;
+  position: fixed;
+  z-index: 9999;
+}
+
+.imania-modal[hidden] {
+  display: none;
+}
+
+.imania-modal__overlay {
+  background: rgba(0, 0, 0, 0.45);
+  inset: 0;
+  position: absolute;
+}
+
+.imania-modal__dialog {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 16px 50px rgba(0, 0, 0, 0.2);
+  left: 50%;
+  max-width: 520px;
+  padding: 26px 22px 22px;
+  position: relative;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: calc(100% - 24px);
+  z-index: 2;
+}
+
+.imania-modal__close {
+  background: transparent;
+  border: 0;
+  color: #000;
+  cursor: pointer;
+  font-size: 2.1rem;
+  line-height: 1;
+  padding: 0;
+  position: absolute;
+  right: 14px;
+  top: 8px;
+}
+
+.imania-modal__dialog h2 {
+  font-size: 1.6rem;
+  font-weight: 800;
+  margin: 0 0 8px;
+}
+
+.imania-modal__dialog p {
+  color: var(--im-color-muted);
+  font-size: 1rem;
+  margin: 0 0 18px;
+}
+
+.imania-modal__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+@media (max-width: 991.98px) {
+  .imania-header-topbar p {
+    font-size: 0.92rem;
+  }
+  .imania-header .container {
+    padding-bottom: 12px;
+    padding-top: 12px;
+  }
+  .imania-branding img {
+    max-height: 62px;
+  }
+  .imania-navigation .menu {
+    justify-content: flex-start;
+  }
+  .imania-navigation .menu-item a {
+    font-size: 0.98rem;
+    padding: 6px 0;
+  }
+  .imania-navigation .menu-item-has-children > a {
+    padding-right: 30px;
+  }
+  .imania-navigation .menu-item-has-children > a::after {
+    display: none;
+  }
+  .imania-submenu-toggle {
+    display: inline-flex;
+  }
+  .imania-navigation .sub-menu {
+    border: 0;
+    border-left: 2px solid rgba(0, 0, 0, 0.14);
+    border-radius: 0;
+    box-shadow: none;
+    display: none;
+    gap: 0;
+    margin: 4px 0 0;
+    min-width: 0;
+    opacity: 1;
+    padding: 2px 0 2px 12px;
+    position: static;
+    transform: none;
+    transition: none;
+    visibility: visible;
+  }
+  .imania-navigation .menu-item-has-children:hover > .sub-menu,
+  .imania-navigation .menu-item-has-children:focus-within > .sub-menu {
+    display: none;
+  }
+  .imania-navigation .menu-item-has-children.is-open-submenu > .sub-menu {
+    display: grid;
+  }
+  .imania-navigation .sub-menu a {
+    font-size: 0.9rem;
+    padding: 7px 0;
+  }
+}
+@media (max-width: 767.98px) {
+  .imania-header-topbar p {
+    font-size: 1rem;
+  }
+  .imania-modal__dialog h2 {
+    font-size: 1.3rem;
+  }
+}
+/* Layout e componentes da Home. */
+.imania-home {
+  background: linear-gradient(180deg, #fff 0%, #fbfbfb 100%);
+}
+
+.imania-hero {
+  padding: 0 0 var(--im-space-5);
+}
+
+.imania-home-banner {
+  background: #d9d9d9;
+  position: relative;
+}
+
+.imania-home-banner__swiper {
+  min-height: clamp(240px, 44vw, 560px);
+  position: relative;
+}
+
+.imania-home-banner__slide {
+  margin: 0;
+}
+
+.imania-home-banner__slide img {
+  display: block;
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
+}
+
+.imania-home-banner__pagination.swiper-pagination-bullets {
+  bottom: 18px;
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  left: 50%;
+  position: absolute;
+  transform: translateX(-50%);
+  z-index: 2;
+}
+
+.imania-home-banner__pagination .swiper-pagination-bullet {
+  background: rgba(255, 255, 255, 0.55);
+  border-radius: 999px;
+  height: 8px;
+  margin: 0 !important;
+  opacity: 1;
+  transition: all 0.2s ease;
+  width: 24px;
+}
+
+.imania-home-banner__pagination .swiper-pagination-bullet-active {
+  background: #fff;
+  width: 34px;
+}
+
+.imania-home-banner__empty {
+  align-items: center;
+  color: rgba(18, 18, 18, 0.72);
+  display: flex;
+  justify-content: center;
+  min-height: 320px;
+  padding: 16px;
+  text-align: center;
+}
+
+.imania-categories {
+  padding: var(--im-space-5) 0;
+}
+
+.imania-showcase {
+  padding: 18px 0 12px;
+}
+
+.imania-showcase__head {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+}
+
+.imania-showcase__head h2 {
+  color: #000;
+  font-size: clamp(2rem, 2.8vw, 2.9rem);
+  font-weight: 800;
+  line-height: 1;
+  margin: 0;
+}
+
+.imania-showcase__more {
+  align-items: center;
+  background: var(--im-color-primary);
+  border-radius: 10px;
+  color: var(--im-color-white);
+  display: inline-flex;
+  font-size: 1.05rem;
+  font-weight: 600;
+  gap: 8px;
+  line-height: 1;
+  padding: 9px 14px;
+}
+
+.imania-showcase__line {
+  background: var(--im-color-accent);
+  height: 1px;
+  margin: 10px 0 22px;
+  width: 100%;
+}
+
+.imania-product-card--showcase {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  overflow: visible;
+}
+
+.imania-product-card--showcase:hover {
+  box-shadow: none;
+  transform: none;
+}
+
+.imania-product-card--showcase .imania-product-card__thumb {
+  background: #cfcfcf;
+  height: clamp(210px, 22vw, 320px);
+  padding: 12px;
+}
+
+.imania-product-card--showcase .imania-product-card__thumb img {
+  height: 100%;
+  object-fit: contain;
+  transition: opacity 0.26s ease, transform 0.26s ease;
+  width: 100%;
+}
+
+.imania-product-card--showcase .imania-product-card__thumb img.is-switching {
+  opacity: 0.38;
+  transform: scale(0.985);
+}
+
+.imania-product-card__dots {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin: -14px 0 8px;
+  position: relative;
+}
+
+.imania-product-card__dots button {
+  appearance: none;
+  background: #9a9a9a;
+  border: 0;
+  border-radius: 999px;
+  display: inline-block;
+  height: 10px;
+  padding: 0;
+  cursor: pointer;
+  width: 10px;
+}
+
+.imania-product-card__dots button.is-active {
+  background: #000;
+}
+
+.imania-product-card__meta-line {
+  align-items: baseline;
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.imania-product-card--showcase .imania-product-card__title {
+  color: #000;
+  font-size: clamp(1.1rem, 1.3vw, 1.6rem);
+  font-weight: 500;
+  line-height: 1.05;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.imania-product-card--showcase .imania-price {
+  color: #000;
+  font-size: clamp(1rem, 1.2vw, 1.5rem);
+  font-weight: 500;
+  margin: 0;
+}
+
+.imania-product-card--showcase .imania-price .imania-login-to-price {
+  color: #000;
+  font-size: clamp(1rem, 1.2vw, 1.4rem);
+  font-weight: 500;
+}
+
+.imania-product-card__actions {
+  align-items: center;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: 28px minmax(0, 1fr);
+}
+
+.imania-product-card__wishlist {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  color: #000;
+  display: inline-flex;
+  height: 28px;
+  justify-content: center;
+  padding: 0;
+  width: 28px;
+}
+
+.imania-product-card__wishlist svg {
+  height: 26px;
+  width: 26px;
+}
+
+.imania-product-card__wishlist svg {
+  display: block;
+}
+
+.imania-product-card__wishlist.is-active {
+  color: var(--im-color-danger);
+}
+
+.imania-product-card__wishlist path {
+  transition: fill 0.2s ease, stroke 0.2s ease;
+}
+
+.imania-product-card__wishlist.is-active path {
+  fill: var(--im-color-danger);
+  stroke: var(--im-color-danger);
+}
+
+.imania-product-card__wishlist.is-loading {
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.imania-product-card__buy {
+  align-items: center;
+  background: var(--im-color-danger);
+  border-radius: 10px;
+  color: var(--im-color-white);
+  display: inline-flex;
+  font-size: clamp(1rem, 1.1vw, 1.4rem);
+  font-weight: 700;
+  justify-content: center;
+  line-height: 1;
+  min-height: 38px;
+  padding: 8px 14px;
+}
+
+.imania-promo-split {
+  margin: 12px 0 24px;
+}
+
+.imania-promo-split__content,
+.imania-promo-split__media {
+  align-items: center;
+  display: flex;
+  min-height: clamp(260px, 34vw, 420px);
+}
+
+.imania-promo-split__content {
+  background: var(--im-color-accent);
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  padding: clamp(28px, 4vw, 56px);
+}
+
+.imania-promo-split__content h2 {
+  color: var(--im-color-text);
+  font-size: clamp(2rem, 4vw, 3.6rem);
+  font-weight: 500;
+  line-height: 1.08;
+  margin: 0 0 12px;
+  max-width: 520px;
+}
+
+.imania-promo-split__content h2 strong {
+  font-weight: 800;
+}
+
+.imania-promo-split__content p {
+  color: var(--im-color-text);
+  font-size: clamp(1.15rem, 1.6vw, 2rem);
+  font-weight: 700;
+  line-height: 1.25;
+  margin: 0 0 18px;
+  max-width: 580px;
+}
+
+.imania-promo-split__media {
+  background: #d0d0d0;
+  color: var(--im-color-text);
+  font-size: clamp(2rem, 2.4vw, 3rem);
+  justify-content: center;
+}
+
+.imania-promo-split--reverse .imania-promo-split__media {
+  order: 1;
+}
+
+.imania-promo-split--reverse .imania-promo-split__content {
+  order: 2;
+}
+
+.imania-promo-split--section-3,
+.imania-promo-split--section-5 {
+  margin: 6px 0 14px;
+}
+
+.imania-promo-split--section-3 .imania-promo-split__content,
+.imania-promo-split--section-3 .imania-promo-split__media,
+.imania-promo-split--section-5 .imania-promo-split__content,
+.imania-promo-split--section-5 .imania-promo-split__media {
+  min-height: clamp(180px, 22vw, 260px);
+}
+
+.imania-promo-split--section-3 .imania-promo-split__content,
+.imania-promo-split--section-5 .imania-promo-split__content {
+  padding: clamp(14px, 1.8vw, 24px);
+}
+
+.imania-promo-split--section-3 .imania-promo-split__content h2,
+.imania-promo-split--section-5 .imania-promo-split__content h2 {
+  font-size: clamp(1.4rem, 2.2vw, 2.2rem);
+  line-height: 1.02;
+  margin-bottom: 6px;
+  max-width: 320px;
+}
+
+.imania-promo-split--section-3 .imania-promo-split__content p,
+.imania-promo-split--section-5 .imania-promo-split__content p {
+  font-size: clamp(0.88rem, 1.05vw, 1.1rem);
+  line-height: 1.14;
+  margin-bottom: 10px;
+  max-width: 320px;
+}
+
+.imania-promo-split--section-3 .imania-promo-split__content .imania-btn,
+.imania-promo-split--section-5 .imania-promo-split__content .imania-btn {
+  font-size: 0.85rem;
+  min-height: 30px;
+  padding: 6px 10px;
+}
+
+.imania-promo-split--section-3 .imania-promo-split__media,
+.imania-promo-split--section-5 .imania-promo-split__media {
+  font-size: clamp(1.3rem, 1.6vw, 1.8rem);
+}
+
+.imania-testimonials {
+  padding: 18px 0 26px;
+}
+
+.imania-testimonials__head {
+  margin-bottom: 18px;
+  text-align: center;
+}
+
+.imania-testimonials__head h2 {
+  color: #000;
+  font-size: clamp(2.2rem, 3.6vw, 3.5rem);
+  font-weight: 800;
+  line-height: 1;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.imania-testimonials__head h2 span {
+  color: var(--im-color-primary);
+}
+
+.imania-testimonial-card {
+  background: #d9d9d9;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 10px 10px 8px;
+}
+
+.imania-testimonial-card__top {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+  min-height: 28px;
+}
+
+.imania-testimonial-card__dot {
+  background: var(--im-color-danger);
+  border-radius: 999px;
+  display: block;
+  height: 28px;
+  width: 28px;
+}
+
+.imania-testimonial-card__client h3 {
+  color: #000;
+  font-size: 0.8rem;
+  font-weight: 700;
+  line-height: 1.1;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.imania-testimonial-card__client p {
+  color: #000;
+  font-size: 0.65rem;
+  line-height: 1;
+  margin: 2px 0 0;
+}
+
+.imania-testimonial-card__photo {
+  background: #787575;
+  height: clamp(220px, 24vw, 320px);
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+
+.imania-testimonial-card__photo img {
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
+}
+
+.imania-testimonial-card__bottom {
+  align-items: flex-end;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: 64px 1fr;
+}
+
+.imania-testimonial-card__product-thumb {
+  background: #f2f2f2;
+  height: 64px;
+  width: 64px;
+}
+
+.imania-testimonial-card__product-thumb img {
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
+}
+
+.imania-testimonial-card__meta {
+  display: grid;
+  gap: 4px;
+}
+
+.imania-testimonial-card__product-name {
+  color: #000;
+  font-size: 0.7rem;
+  font-weight: 700;
+  line-height: 1.15;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.imania-testimonial-card__product-price {
+  color: #000;
+  font-size: 0.85rem;
+  font-weight: 700;
+  line-height: 1;
+  margin: 0;
+}
+
+.imania-testimonial-card__cta {
+  color: #000;
+  font-size: 0.95rem;
+  font-weight: 800;
+  grid-column: 2;
+  justify-self: end;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.imania-chip {
+  align-items: center;
+  background: #fff;
+  border: 1px solid rgba(18, 18, 18, 0.08);
+  border-radius: 999px;
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+  padding: 11px 14px;
+  transition: all 0.2s ease;
+}
+
+.imania-chip:hover {
+  border-color: var(--im-color-primary);
+  color: var(--im-color-primary);
+}
+
+.imania-chip span {
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.imania-chip small {
+  color: var(--im-color-muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+@media (max-width: 991.98px) {
+  .imania-home-banner__swiper {
+    min-height: clamp(220px, 40vw, 420px);
+  }
+}
+@media (max-width: 767.98px) {
+  .imania-home-banner__swiper {
+    min-height: clamp(180px, 58vw, 320px);
+  }
+  .imania-home-banner__pagination.swiper-pagination-bullets {
+    bottom: 12px;
+  }
+  .imania-home-banner__pagination .swiper-pagination-bullet {
+    height: 7px;
+    width: 18px;
+  }
+  .imania-home-banner__pagination .swiper-pagination-bullet-active {
+    width: 28px;
+  }
+  .imania-showcase {
+    padding-top: 12px;
+  }
+  .imania-showcase__head h2 {
+    font-size: clamp(1.8rem, 6.8vw, 2.8rem);
+  }
+  .imania-showcase__more {
+    font-size: 0.95rem;
+    padding: 7px 10px;
+  }
+  .imania-product-card--showcase .imania-product-card__thumb {
+    height: clamp(190px, 64vw, 300px);
+  }
+  .imania-product-card--showcase .imania-product-card__title {
+    font-size: 1.05rem;
+  }
+  .imania-product-card--showcase .imania-price {
+    font-size: 1rem;
+  }
+  .imania-product-card__actions {
+    gap: 8px;
+    grid-template-columns: 24px minmax(0, 1fr);
+  }
+  .imania-product-card__wishlist {
+    height: 24px;
+    width: 24px;
+  }
+  .imania-product-card__wishlist svg {
+    height: 22px;
+    width: 22px;
+  }
+  .imania-product-card__buy {
+    font-size: 0.95rem;
+    min-height: 34px;
+    padding: 7px 10px;
+  }
+  .imania-promo-split {
+    margin-top: 8px;
+  }
+  .imania-promo-split__content,
+  .imania-promo-split__media {
+    min-height: 220px;
+  }
+  .imania-promo-split__content p {
+    font-size: 1.15rem;
+  }
+  .imania-promo-split--section-3 .imania-promo-split__content,
+  .imania-promo-split--section-3 .imania-promo-split__media,
+  .imania-promo-split--section-5 .imania-promo-split__content,
+  .imania-promo-split--section-5 .imania-promo-split__media {
+    min-height: 150px;
+  }
+  .imania-promo-split--section-3 .imania-promo-split__content h2,
+  .imania-promo-split--section-5 .imania-promo-split__content h2 {
+    font-size: 1.2rem;
+  }
+  .imania-promo-split--section-3 .imania-promo-split__content p,
+  .imania-promo-split--section-5 .imania-promo-split__content p {
+    font-size: 0.85rem;
+    max-width: 100%;
+  }
+  .imania-promo-split--section-3 .imania-promo-split__content .imania-btn,
+  .imania-promo-split--section-5 .imania-promo-split__content .imania-btn {
+    font-size: 0.8rem;
+    min-height: 28px;
+    padding: 5px 9px;
+  }
+  .imania-promo-split--reverse .imania-promo-split__media,
+  .imania-promo-split--reverse .imania-promo-split__content {
+    order: initial;
+  }
+  .imania-testimonials__head {
+    text-align: left;
+  }
+  .imania-testimonial-card__photo {
+    height: clamp(180px, 54vw, 300px);
+  }
+  .imania-testimonial-card__bottom {
+    grid-template-columns: 54px 1fr;
+  }
+  .imania-testimonial-card__product-thumb {
+    height: 54px;
+    width: 54px;
+  }
+  .imania-testimonial-card__cta {
+    font-size: 0.78rem;
+  }
+}
+/* Estrutura de seções de produtos. */
+.imania-product-section {
+  padding: var(--im-space-5) 0;
+  background: transparent;
+}
+
+.imania-section-head {
+  align-items: baseline;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.imania-section-head h2 {
+  font-size: clamp(1.4rem, 2.4vw, 2rem);
+  font-weight: 800;
+  color: var(--im-color-text);
+  margin: 0;
+}
+
+/* Card de produto reutilizável. */
+.imania-product-card {
+  background: #fff;
+  border: 1px solid rgba(18, 18, 18, 0.07);
+  border-radius: var(--im-radius-lg);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.imania-product-card:hover {
+  box-shadow: var(--im-shadow-card);
+  transform: translateY(-2px);
+}
+
+.imania-product-card__thumb {
+  align-items: center;
+  background: var(--im-color-surface);
+  display: flex;
+  height: 220px;
+  justify-content: center;
+  padding: var(--im-space-3);
+}
+
+.imania-product-card__thumb img {
+  height: 100%;
+  object-fit: contain;
+  width: 100%;
+}
+
+.imania-product-card__content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding: var(--im-space-3);
+}
+
+.imania-product-card__cat {
+  color: var(--im-color-primary);
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  margin: 0 0 4px;
+  text-transform: uppercase;
+}
+
+.imania-product-card__title {
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.35;
+  margin: 0;
+}
+
+.imania-product-card .imania-btn {
+  margin-top: auto;
+}
+
+.imania-product-card__footer-actions {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+  margin-top: auto;
+}
+
+.imania-product-card__footer-actions .imania-btn {
+  flex: 1;
+  margin-top: 0;
+}
+
+/* Minha Conta - layout Figma desktop. */
+.woocommerce-account {
+  background: #efefef;
+}
+
+.woocommerce-account .imania-header {
+  background: #f7cf26;
+  border-bottom: 0;
+}
+
+.woocommerce-account .imania-header-topbar {
+  display: none;
+}
+
+.woocommerce-account .imania-navigation .menu-item a,
+.woocommerce-account .imania-branding__name {
+  color: #000;
+}
+
+.woocommerce-account .imania-header-actions a img,
+.woocommerce-account .imania-header-actions__btn img {
+  filter: grayscale(1) brightness(0);
+}
+
+.imania-account {
+  background: #efefef;
+  margin: 0 auto;
+  max-width: 1232px;
+  min-height: 88vh;
+}
+
+.imania-account__top-strip {
+  align-items: center;
+  background: #f7cf26;
+  border-bottom: 2px solid #098fcb;
+  display: flex;
+  height: 20px;
+  padding: 0 14px;
+}
+
+.imania-account__top-logo {
+  background: radial-gradient(circle at 55% 45%, #ffd84b 28%, #006caa 30% 55%, #e11928 56%);
+  border-radius: 999px;
+  display: inline-block;
+  height: 10px;
+  position: relative;
+  width: 10px;
+}
+
+.imania-account__viewport {
+  padding-bottom: 42px;
+  padding-top: 38px;
+}
+
+.imania-account__layout {
+  display: grid;
+  gap: 26px;
+  grid-template-columns: 170px 1px minmax(0, 1fr);
+}
+
+.imania-account__left {
+  padding-left: 10px;
+}
+
+.imania-account__top {
+  margin-bottom: 28px;
+}
+
+.imania-account__avatar {
+  background: #d6d6d6;
+  border-radius: 999px;
+  height: 58px;
+  margin-bottom: 12px;
+  width: 58px;
+}
+
+.imania-account__name,
+.imania-account__email {
+  color: #979797;
+  font-size: 7px;
+  font-weight: 400;
+  line-height: 1.45;
+  margin: 0;
+}
+
+.imania-account__nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.imania-account__nav li + li {
+  margin-top: 5px;
+}
+
+.imania-account__nav a {
+  color: #777;
+  display: inline-block;
+  font-size: 8px;
+  font-weight: 400;
+  line-height: 1.2;
+}
+
+.imania-account__nav li.is-active a,
+.imania-account__nav a:hover {
+  color: #f03434;
+}
+
+.imania-account__divider {
+  background: #f7cf26;
+  min-height: 468px;
+}
+
+.imania-account__content {
+  max-width: 760px;
+  min-height: 468px;
+  padding-top: 6px;
+}
+
+.imania-account__skeleton-title {
+  background: #e3e3e3;
+  border-radius: 7px;
+  height: 34px;
+  margin-bottom: 18px;
+  width: 240px;
+}
+
+.imania-account__skeleton-grid {
+  display: grid;
+  gap: 14px 18px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-bottom: 14px;
+}
+
+.imania-account__skeleton-grid span,
+.imania-account__skeleton-line {
+  background: #e3e3e3;
+  border-radius: 7px;
+  display: block;
+  height: 32px;
+}
+
+.imania-account__skeleton-line {
+  margin-bottom: 10px;
+  width: 100%;
+}
+
+.imania-account__skeleton-line--sm {
+  margin-left: auto;
+  width: 140px;
+}
+
+.imania-account-profile h2 {
+  color: #2d2d2d;
+  font-size: 35px;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1.1;
+  margin: 0 0 24px;
+}
+
+.imania-account-profile__form {
+  display: grid;
+  gap: 14px;
+  max-width: 640px;
+}
+
+.imania-account-profile__grid {
+  display: grid;
+  gap: 12px 16px;
+}
+
+.imania-account-profile__grid--2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.imania-account-profile__grid--3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.imania-account-profile__grid--address {
+  grid-template-columns: minmax(0, 1fr) 112px;
+}
+
+.imania-account-profile__field label {
+  color: #2f2f2f;
+  display: block;
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1.2;
+  margin-bottom: 6px;
+}
+
+.imania-account-profile__field input,
+.imania-account-profile__field select {
+  background: #e4e4e4;
+  border: 1px solid #e4e4e4;
+  border-radius: 8px;
+  color: #2f2f2f;
+  font-size: 12px;
+  height: 32px;
+  line-height: 1.2;
+  padding: 8px 11px;
+  width: 100%;
+}
+
+.imania-account-profile__field input:focus,
+.imania-account-profile__field select:focus {
+  border-color: #1197d6;
+  outline: none;
+}
+
+.imania-account-profile__field a {
+  color: #1697d9;
+  display: inline-block;
+  font-size: 10px;
+  line-height: 1.2;
+  margin-top: 6px;
+  text-decoration: underline;
+}
+
+.imania-account-profile__actions {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  padding-top: 2px;
+}
+
+.imania-account-profile__actions .imania-btn--ghost {
+  color: #2d2d2d;
+  font-size: 11px;
+  font-weight: 400;
+  padding: 0;
+}
+
+.imania-account-profile__actions .imania-btn--primary {
+  background: #1392d5;
+  border-radius: 999px;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1;
+  min-height: 24px;
+  min-width: 54px;
+  padding: 6px 12px;
+}
+
+@media (max-width: 991.98px) {
+  .imania-account {
+    max-width: none;
+  }
+  .imania-account__viewport {
+    padding-top: 24px;
+  }
+  .imania-account__layout {
+    gap: 16px;
+    grid-template-columns: 1fr;
+  }
+  .imania-account__divider {
+    display: none;
+  }
+  .imania-account__left {
+    padding-left: 0;
+  }
+  .imania-account__top {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 14px;
+  }
+  .imania-account__nav ul {
+    display: grid;
+    gap: 8px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .imania-account-profile h2 {
+    font-size: 30px;
+  }
+  .imania-account-profile__grid--2,
+  .imania-account-profile__grid--3,
+  .imania-account-profile__grid--address {
+    grid-template-columns: 1fr;
+  }
+}
+/* Endpoint Compras - Minha Conta. */
+.imania-account-orders h2 {
+  color: #2d2d2d;
+  font-size: 35px;
+  font-weight: 400;
+  line-height: 1.1;
+  margin: 0 0 18px;
+}
+
+.imania-orders-list {
+  background: #e8e8e8;
+  border-radius: 4px;
+  padding: 10px;
+}
+
+.imania-order-item + .imania-order-item {
+  margin-top: 8px;
+}
+
+.imania-order-item__trigger {
+  align-items: center;
+  background: #f1f1f1;
+  border: 0;
+  border-radius: 4px;
+  color: #2d2d2d;
+  cursor: pointer;
+  display: flex;
+  font-size: 9px;
+  font-weight: 400;
+  justify-content: space-between;
+  line-height: 1.2;
+  padding: 8px 10px;
+  text-align: left;
+  width: 100%;
+}
+
+.imania-order-item__trigger:hover {
+  background: #ededed;
+}
+
+.imania-order-item__panel {
+  background: #ececec;
+  border-top: 1px solid #f7cf26;
+  margin-top: 2px;
+  padding: 8px 10px 4px;
+}
+
+.imania-order-item__table-head,
+.imania-order-item__row {
+  column-gap: 10px;
+  display: grid;
+  grid-template-columns: minmax(160px, 1.6fr) 0.8fr 0.8fr 0.8fr 1fr;
+}
+
+.imania-order-item__table-head {
+  border-bottom: 1px solid #f7cf26;
+  color: #303030;
+  font-size: 8px;
+  font-weight: 500;
+  padding-bottom: 4px;
+}
+
+.imania-order-item__table-body {
+  padding-top: 4px;
+}
+
+.imania-order-item__row {
+  color: #2d2d2d;
+  font-size: 8px;
+  padding: 5px 0;
+}
+
+.imania-order-item__cell {
+  line-height: 1.2;
+}
+
+.imania-order-item__cell a {
+  color: #e23a3a;
+  text-decoration: underline;
+}
+
+.imania-order-item__cell a:hover {
+  color: #c92222;
+}
+
+.imania-order-item__empty,
+.imania-order-item__empty-box p {
+  color: #2f2f2f;
+  font-size: 11px;
+  margin: 0;
+}
+
+.imania-order-item__empty-box {
+  background: #e8e8e8;
+  border-radius: 4px;
+  padding: 12px;
+}
+
+.imania-orders-pagination {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  padding-top: 10px;
+}
+
+.imania-orders-pagination a {
+  color: #e23a3a;
+  font-size: 10px;
+  text-decoration: underline;
+}
+
+@media (max-width: 991.98px) {
+  .imania-account-orders h2 {
+    font-size: 30px;
+  }
+  .imania-order-item__table-head {
+    display: none;
+  }
+  .imania-order-item__row {
+    border-bottom: 1px solid #dfdfdf;
+    display: grid;
+    gap: 5px;
+    grid-template-columns: 1fr;
+    padding: 8px 0;
+  }
+  .imania-order-item__cell {
+    font-size: 11px;
+  }
+}
+@media (max-width: 991.98px) {
+  .imania-navigation {
+    display: none;
+  }
+  .imania-navigation.is-open {
+    display: block;
+  }
+  .imania-navigation .menu {
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: var(--im-radius-md);
+    flex-direction: column;
+    padding: var(--im-space-3);
+  }
+  .imania-hero-product__image img {
+    max-height: 220px;
+  }
+}
+@media (max-width: 767.98px) {
+  .imania-hero {
+    padding-top: var(--im-space-5);
+  }
+  .imania-hero__actions .imania-btn {
+    width: 100%;
+  }
+  .imania-hero__stats {
+    grid-template-columns: 1fr;
+  }
+  .imania-product-card__thumb {
+    height: 170px;
+  }
+  .imania-section-head {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 6px;
+  }
+}
+
+/*# sourceMappingURL=main.css.map */
+
+.imania-cart-drawer {
+	inset: 0;
+	position: fixed;
+	z-index: 10000;
+}
+
+.imania-cart-drawer[hidden] {
+	display: none;
+}
+
+.imania-cart-drawer__overlay {
+	background: rgba(0, 0, 0, 0.18);
+	inset: 0;
+	opacity: 0;
+	position: absolute;
+	transition: opacity 0.28s ease;
+}
+
+.imania-cart-drawer__panel {
+	background: #fff;
+	box-shadow: -18px 0 42px rgba(18, 18, 18, 0.14);
+	display: flex;
+	flex-direction: column;
+	height: 100vh;
+	margin-left: auto;
+	max-width: min(450px, 100vw);
+	outline: none;
+	overflow: hidden;
+	position: relative;
+	transform: translateX(100%);
+	transition: transform 0.32s cubic-bezier(0.22, 0.61, 0.36, 1), opacity 0.28s ease;
+	width: 100%;
+}
+
+.imania-cart-drawer.is-open .imania-cart-drawer__overlay {
+	opacity: 1;
+}
+
+.imania-cart-drawer.is-open .imania-cart-drawer__panel {
+	opacity: 1;
+	transform: translateX(0);
+}
+
+.imania-cart-drawer__header {
+	align-items: flex-start;
+	border-bottom: 1px solid var(--im-color-accent);
+	display: flex;
+	gap: 18px;
+	justify-content: space-between;
+	padding: 30px 28px 22px;
+}
+
+.imania-cart-drawer__eyebrow {
+	color: var(--im-color-muted);
+	font-size: 0.78rem;
+	font-weight: 700;
+	letter-spacing: 0.02em;
+	margin: 0 0 6px;
+}
+
+.imania-cart-drawer__header h2 {
+	font-size: clamp(1.7rem, 4vw, 2.35rem);
+	font-weight: 500;
+	line-height: 1.1;
+	margin: 0;
+}
+
+.imania-cart-drawer__close {
+	align-items: center;
+	background: #fff;
+	border: 1px solid rgba(0, 0, 0, 0.12);
+	border-radius: 999px;
+	color: var(--im-color-text);
+	cursor: pointer;
+	display: inline-flex;
+	font-size: 1.7rem;
+	height: 42px;
+	justify-content: center;
+	line-height: 1;
+	transition: border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+	width: 42px;
+}
+
+.imania-cart-drawer__close:hover,
+.imania-cart-drawer__close:focus-visible {
+	border-color: var(--im-color-primary);
+	color: var(--im-color-primary);
+	transform: scale(1.04);
+}
+
+.imania-cart-drawer__body {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	min-height: 0;
+	overflow-y: auto;
+	padding: 22px 28px 28px;
+}
+
+.imania-cart-drawer__items {
+	display: grid;
+	gap: 0;
+}
+
+.imania-cart-drawer__item {
+	align-items: flex-start;
+	border-bottom: 1px solid var(--im-color-accent);
+	display: grid;
+	gap: 14px;
+	grid-template-columns: 96px minmax(0, 1fr);
+	padding: 16px 0;
+}
+
+.imania-cart-drawer__item:first-child {
+	padding-top: 0;
+}
+
+.imania-cart-drawer__thumb {
+	background: #d9d9d9;
+	border-radius: 8px;
+	display: block;
+	overflow: hidden;
+}
+
+.imania-cart-drawer__thumb img {
+	aspect-ratio: 1 / 1;
+	display: block;
+	height: 96px;
+	object-fit: cover;
+	width: 96px;
+}
+
+.imania-cart-drawer__item-title {
+	font-size: 0.92rem;
+	font-weight: 800;
+	line-height: 1.25;
+	margin: 0 0 12px;
+	text-transform: uppercase;
+}
+
+.imania-cart-drawer__item-title a:hover {
+	color: var(--im-color-primary);
+}
+
+.imania-cart-drawer__item-meta {
+	align-items: flex-start;
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.imania-cart-drawer__item-meta span {
+	color: var(--im-color-muted);
+	font-size: 0.82rem;
+}
+
+.imania-cart-drawer__item-meta strong {
+	font-size: 1rem;
+	font-weight: 800;
+}
+
+.imania-cart-drawer__summary {
+	background: #fff;
+	border-left: 1px solid var(--im-color-accent);
+	border-radius: 18px;
+	box-shadow: var(--im-shadow-card);
+	margin: 24px 0 18px;
+	padding: 20px;
+}
+
+.imania-cart-drawer__summary-row {
+	align-items: center;
+	display: flex;
+	font-size: 0.9rem;
+	justify-content: space-between;
+	margin-bottom: 10px;
+}
+
+.imania-cart-drawer__summary-row:last-child {
+	margin-bottom: 0;
+}
+
+.imania-cart-drawer__summary-row--total {
+	border-top: 1px solid rgba(0, 0, 0, 0.08);
+	font-weight: 800;
+	margin-top: 14px;
+	padding-top: 14px;
+}
+
+.imania-cart-drawer__footer {
+	display: grid;
+	gap: 10px;
+	margin-top: auto;
+	padding-top: 16px;
+}
+
+.imania-cart-drawer__cta,
+.imania-cart-drawer__continue {
+	width: 100%;
+}
+
+.imania-cart-drawer__empty,
+.imania-cart-drawer__loading {
+	align-items: center;
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	justify-content: center;
+	min-height: 280px;
+	padding: 30px 0;
+	text-align: center;
+}
+
+.imania-cart-drawer__empty-icon {
+	font-size: 2rem;
+	margin-bottom: 12px;
+}
+
+.imania-cart-drawer__empty h3 {
+	font-size: 1.45rem;
+	font-weight: 700;
+	margin: 0 0 8px;
+}
+
+.imania-cart-drawer__empty p,
+.imania-cart-drawer__loading p {
+	color: var(--im-color-muted);
+	margin: 0;
+	max-width: 300px;
+}
+
+.imania-cart-drawer__loading span {
+	animation: imaniaCartDrawerSpin 0.8s linear infinite;
+	border: 3px solid rgba(0, 135, 203, 0.18);
+	border-top-color: var(--im-color-primary);
+	border-radius: 999px;
+	height: 34px;
+	margin-bottom: 14px;
+	width: 34px;
+}
+
+.imania-cart-drawer-open {
+	overflow: hidden;
+}
+
+@keyframes imaniaCartDrawerSpin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+@media (max-width: 575.98px) {
+	.imania-cart-drawer__header {
+		padding: 24px 20px 18px;
+	}
+
+	.imania-cart-drawer__body {
+		padding: 20px;
+	}
+
+	.imania-cart-drawer__item {
+		grid-template-columns: 82px minmax(0, 1fr);
+	}
+
+	.imania-cart-drawer__thumb img {
+		height: 82px;
+		width: 82px;
+	}
+}
+
+/* Cart drawer usability refinements: keep summary and CTAs always visible. */
+.imania-header-actions [data-imania-cart-drawer-trigger] {
+	position: relative;
+}
+
+.imania-header-actions [data-imania-cart-count] {
+	align-items: center;
+	background: var(--im-color-danger);
+	border: 2px solid #fff;
+	border-radius: 999px;
+	color: #fff;
+	display: inline-flex;
+	font-size: 0.62rem;
+	font-weight: 800;
+	height: 18px;
+	justify-content: center;
+	line-height: 1;
+	min-width: 18px;
+	padding: 0 4px;
+	position: absolute;
+	right: -4px;
+	top: -8px;
+	z-index: 2;
+}
+
+.imania-cart-drawer__body {
+	overflow: hidden;
+	padding-bottom: 0;
+}
+
+.imania-cart-drawer__content {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	min-height: 0;
+}
+
+.imania-cart-drawer__items {
+	flex: 1 1 auto;
+	min-height: 0;
+	overflow-y: auto;
+	padding-right: 8px;
+}
+
+.imania-cart-drawer__bottom {
+	background: #fff;
+	box-shadow: 0 -14px 26px rgba(18, 18, 18, 0.07);
+	flex: 0 0 auto;
+	margin: 0 -28px;
+	padding: 18px 28px 28px;
+}
+
+.imania-cart-drawer__summary {
+	margin: 0 0 16px;
+}
+
+.imania-cart-drawer__footer {
+	padding-top: 0;
+}
+
+@media (max-width: 575.98px) {
+	.imania-cart-drawer__bottom {
+		margin: 0 -20px;
+		padding: 16px 20px 22px;
+	}
+}

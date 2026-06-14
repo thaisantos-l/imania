@@ -1,0 +1,27 @@
+{
+	"liveSassCompile.settings.includeItems": [
+		"/assets/css/main.scss" //comentario
+	],
+	"liveSassCompile.settings.partialsList": [
+		"/assets/css/**/_*.scss",
+		"/assets/css/**/!(main).scss"
+	],
+	"liveSassCompile.settings.excludeList": [
+		"**/node_modules/**",
+		".vscode/**",
+		"/assets/css/**/_*.scss"
+	],
+	"liveSassCompile.settings.formats": [
+		{
+			"format": "expanded",
+			"extensionName": ".css",
+			"savePath": "assets/css"
+		},
+		{
+			"format": "compressed",
+			"extensionName": ".min.css",
+			"savePath": "assets/css"
+		}
+	],
+	"liveSassCompile.settings.generateMap": false
+}

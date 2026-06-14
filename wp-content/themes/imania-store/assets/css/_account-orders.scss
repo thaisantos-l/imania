@@ -1,0 +1,132 @@
+/* Endpoint Compras - Minha Conta. */
+.imania-account-orders h2 {
+	color: #2d2d2d;
+	font-size: 35px;
+	font-weight: 400;
+	line-height: 1.1;
+	margin: 0 0 18px;
+}
+
+.imania-orders-list {
+	background: #e8e8e8;
+	border-radius: 4px;
+	padding: 10px;
+}
+
+.imania-order-item + .imania-order-item {
+	margin-top: 8px;
+}
+
+.imania-order-item__trigger {
+	align-items: center;
+	background: #f1f1f1;
+	border: 0;
+	border-radius: 4px;
+	color: #2d2d2d;
+	cursor: pointer;
+	display: flex;
+	font-size: 9px;
+	font-weight: 400;
+	justify-content: space-between;
+	line-height: 1.2;
+	padding: 8px 10px;
+	text-align: left;
+	width: 100%;
+}
+
+.imania-order-item__trigger:hover {
+	background: #ededed;
+}
+
+.imania-order-item__panel {
+	background: #ececec;
+	border-top: 1px solid #f7cf26;
+	margin-top: 2px;
+	padding: 8px 10px 4px;
+}
+
+.imania-order-item__table-head,
+.imania-order-item__row {
+	column-gap: 10px;
+	display: grid;
+	grid-template-columns: minmax(160px, 1.6fr) 0.8fr 0.8fr 0.8fr 1fr;
+}
+
+.imania-order-item__table-head {
+	border-bottom: 1px solid #f7cf26;
+	color: #303030;
+	font-size: 8px;
+	font-weight: 500;
+	padding-bottom: 4px;
+}
+
+.imania-order-item__table-body {
+	padding-top: 4px;
+}
+
+.imania-order-item__row {
+	color: #2d2d2d;
+	font-size: 8px;
+	padding: 5px 0;
+}
+
+.imania-order-item__cell {
+	line-height: 1.2;
+}
+
+.imania-order-item__cell a {
+	color: #e23a3a;
+	text-decoration: underline;
+}
+
+.imania-order-item__cell a:hover {
+	color: #c92222;
+}
+
+.imania-order-item__empty,
+.imania-order-item__empty-box p {
+	color: #2f2f2f;
+	font-size: 11px;
+	margin: 0;
+}
+
+.imania-order-item__empty-box {
+	background: #e8e8e8;
+	border-radius: 4px;
+	padding: 12px;
+}
+
+.imania-orders-pagination {
+	display: flex;
+	gap: 12px;
+	justify-content: flex-end;
+	padding-top: 10px;
+}
+
+.imania-orders-pagination a {
+	color: #e23a3a;
+	font-size: 10px;
+	text-decoration: underline;
+}
+
+@media (max-width: 991.98px) {
+	.imania-account-orders h2 {
+		font-size: 30px;
+	}
+
+	.imania-order-item__table-head {
+		display: none;
+	}
+
+	.imania-order-item__row {
+		border-bottom: 1px solid #dfdfdf;
+		display: grid;
+		gap: 5px;
+		grid-template-columns: 1fr;
+		padding: 8px 0;
+	}
+
+	.imania-order-item__cell {
+		font-size: 11px;
+	}
+}

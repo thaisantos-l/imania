@@ -1,0 +1,491 @@
+.woocommerce-checkout {
+	background: #efefef;
+}
+
+.woocommerce-checkout .site-main {
+	padding-bottom: 64px;
+}
+
+.woocommerce-checkout .woocommerce-notices-wrapper,
+.woocommerce-checkout .woocommerce-message,
+.woocommerce-checkout .woocommerce-info,
+.woocommerce-checkout .woocommerce-error {
+	margin-left: auto;
+	margin-right: auto;
+	max-width: 1140px;
+}
+
+.woocommerce-checkout .woocommerce-notices-wrapper {
+	padding: 0 18px;
+}
+
+.woocommerce-checkout .woocommerce-message,
+.woocommerce-checkout .woocommerce-info,
+.woocommerce-checkout .woocommerce-error {
+	align-items: center;
+	background: #fff;
+	border: 0;
+	border-left: 4px solid var(--im-color-primary);
+	border-radius: 8px;
+	box-shadow: 0 10px 26px rgba(18, 18, 18, 0.1);
+	color: #171717;
+	display: flex;
+	font-size: 13px;
+	font-weight: 600;
+	line-height: 1.35;
+	list-style: none;
+	margin-bottom: 22px;
+	min-height: 46px;
+	padding: 12px 16px;
+}
+
+.woocommerce-checkout .woocommerce-message {
+	border-left-color: var(--im-color-accent);
+}
+
+.woocommerce-checkout .woocommerce-error {
+	border-left-color: var(--im-color-danger);
+}
+
+.woocommerce-checkout .woocommerce-message a,
+.woocommerce-checkout .woocommerce-info a,
+.woocommerce-checkout .woocommerce-error a {
+	color: var(--im-color-primary);
+	font-weight: 800;
+	text-decoration: underline;
+	text-underline-offset: 2px;
+}
+
+.imania-checkout {
+	margin: 0 auto;
+	max-width: 1232px;
+	padding: 38px 18px 0;
+}
+
+.imania-checkout__header {
+	display: grid;
+	gap: 14px;
+	margin-bottom: 22px;
+}
+
+.imania-checkout__header h1 {
+	color: #2d2d2d;
+	font-size: 35px;
+	font-weight: 400;
+	letter-spacing: 0;
+	line-height: 1.1;
+	margin: 0;
+}
+
+.imania-checkout__steps-wrap {
+	width: 100%;
+}
+
+.imania-checkout__steps {
+	align-items: center;
+	display: flex;
+	gap: 10px;
+}
+
+.imania-checkout__step {
+	align-items: center;
+	background: transparent;
+	border: 0;
+	color: #777;
+	cursor: pointer;
+	display: inline-flex;
+	font-size: 11px;
+	font-weight: 600;
+	gap: 7px;
+	line-height: 1.2;
+	padding: 0;
+}
+
+.imania-checkout__step::after {
+	background: #d9d9d9;
+	content: "";
+	display: block;
+	height: 1px;
+	margin-left: 2px;
+	width: 24px;
+}
+
+.imania-checkout__step:last-child::after {
+	display: none;
+}
+
+.imania-checkout__step-index {
+	align-items: center;
+	background: #dcdcdc;
+	border-radius: 999px;
+	color: #555;
+	display: inline-flex;
+	font-size: 10px;
+	height: 22px;
+	justify-content: center;
+	width: 22px;
+}
+
+.imania-checkout__step.is-active {
+	color: #098fcb;
+}
+
+.imania-checkout__step.is-active .imania-checkout__step-index {
+	background: #098fcb;
+	color: #fff;
+}
+
+.imania-checkout__layout {
+	align-items: flex-start;
+	display: grid;
+	gap: 48px;
+	grid-template-columns: minmax(0, 1fr) 360px;
+}
+
+.imania-checkout__main {
+	border-left: 1px solid #f7cf26;
+	min-height: 520px;
+	padding-left: 26px;
+}
+
+.imania-checkout__panel {
+	max-width: 720px;
+}
+
+.imania-checkout__panel h2,
+.imania-checkout__aside-card h2 {
+	color: #2d2d2d;
+	font-size: 18px;
+	font-weight: 700;
+	letter-spacing: 0;
+	line-height: 1.2;
+	margin: 0 0 20px;
+}
+
+.imania-checkout__fields .woocommerce-billing-fields h3,
+.imania-checkout__fields .woocommerce-shipping-fields h3,
+.imania-checkout__fields .woocommerce-additional-fields h3 {
+	display: none;
+}
+
+.imania-checkout__fields .woocommerce-billing-fields__field-wrapper,
+.imania-checkout__fields .woocommerce-shipping-fields__field-wrapper {
+	display: grid;
+	gap: 8px 14px;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.imania-checkout__fields .form-row {
+	margin: 0;
+	padding: 0;
+	width: auto;
+}
+
+.imania-checkout__fields .imania-checkout-field--full {
+	grid-column: 1 / -1;
+}
+
+.imania-checkout__fields .imania-checkout-field--half {
+	grid-column: auto;
+}
+
+.imania-checkout__fields label,
+.imania-checkout .woocommerce-checkout-payment label {
+	color: #2f2f2f;
+	display: block;
+	font-size: 11px;
+	font-weight: 400;
+	line-height: 1.2;
+	margin-bottom: 4px;
+}
+
+.imania-checkout__fields .required {
+	color: #e11928;
+	text-decoration: none;
+}
+
+.imania-checkout__fields input.input-text,
+.imania-checkout__fields textarea,
+.imania-checkout__fields select,
+.imania-checkout__fields .select2-container .select2-selection--single,
+.imania-checkout .woocommerce-checkout-payment input.input-text,
+.imania-checkout .woocommerce-checkout-payment select {
+	background: #e4e4e4;
+	border: 1px solid #e4e4e4;
+	border-radius: 8px;
+	color: #2f2f2f;
+	font-size: 12px;
+	min-height: 28px;
+	padding: 6px 10px;
+	width: 100%;
+}
+
+.imania-checkout__fields textarea {
+	min-height: 90px;
+}
+
+.imania-checkout__fields input:focus,
+.imania-checkout__fields textarea:focus,
+.imania-checkout__fields select:focus,
+.imania-checkout__fields .select2-container--focus .select2-selection--single,
+.imania-checkout .woocommerce-checkout-payment input:focus,
+.imania-checkout .woocommerce-checkout-payment select:focus {
+	border-color: #1197d6;
+	outline: none;
+}
+
+.imania-checkout__fields .woocommerce-invalid input.input-text,
+.imania-checkout__fields .woocommerce-invalid textarea,
+.imania-checkout__fields .woocommerce-invalid select,
+.imania-checkout__fields .imania-checkout-field--document-warning input.input-text {
+	border-color: var(--im-color-danger);
+}
+
+.imania-checkout__document-notice {
+	background: #fff4f4;
+	border-left: 3px solid var(--im-color-danger);
+	border-radius: 5px;
+	color: #7c1f25;
+	display: block;
+	font-size: 11px;
+	line-height: 1.35;
+	margin-top: 6px;
+	padding: 7px 9px;
+}
+
+.imania-checkout__document-notice a {
+	color: #098fcb;
+	font-weight: 800;
+	text-decoration: underline;
+	text-underline-offset: 2px;
+}
+
+.imania-checkout__step-notice {
+	background: #fff4f4;
+	border-left: 3px solid var(--im-color-danger);
+	border-radius: 6px;
+	color: #7c1f25;
+	font-size: 12px;
+	font-weight: 600;
+	line-height: 1.4;
+	margin-top: 18px;
+	padding: 10px 12px;
+}
+
+.imania-checkout-field--hidden,
+.imania-checkout__fields .imania-checkout-field--hidden {
+	display: none !important;
+}
+
+.imania-checkout__actions {
+	align-items: center;
+	display: flex;
+	gap: 12px;
+	justify-content: flex-end;
+	margin-top: 24px;
+}
+
+.imania-checkout__button,
+.imania-checkout #place_order {
+	border: 0;
+	border-radius: 999px;
+	cursor: pointer;
+	font-size: 12px;
+	font-weight: 800;
+	line-height: 1;
+	min-height: 36px;
+	padding: 10px 22px;
+	text-transform: uppercase;
+}
+
+.imania-checkout__button--primary,
+.imania-checkout #place_order {
+	background: #098fcb;
+	color: #fff;
+}
+
+.imania-checkout__button--ghost {
+	background: transparent;
+	color: #2d2d2d;
+	padding-left: 0;
+	padding-right: 0;
+	text-transform: none;
+}
+
+.imania-checkout .woocommerce-checkout-payment {
+	background: transparent;
+	border-radius: 0;
+}
+
+.imania-checkout .woocommerce-checkout-payment ul.payment_methods {
+	border: 0;
+	display: grid;
+	gap: 12px;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.imania-checkout .woocommerce-checkout-payment li.wc_payment_method {
+	background: #fff;
+	border: 1px solid #e2e2e2;
+	border-radius: 8px;
+	box-shadow: 0 8px 22px rgba(18, 18, 18, 0.06);
+	margin: 0;
+	padding: 16px;
+}
+
+.imania-checkout .woocommerce-checkout-payment li.wc_payment_method > input {
+	accent-color: #098fcb;
+	margin: 1px 8px 0 0;
+}
+
+.imania-checkout .woocommerce-checkout-payment li.wc_payment_method > label {
+	display: inline;
+	font-size: 13px;
+	font-weight: 800;
+}
+
+.imania-checkout .woocommerce-checkout-payment .payment_box {
+	background: #f3f3f3;
+	border-radius: 8px;
+	color: #333;
+	font-size: 12px;
+	line-height: 1.45;
+	margin: 12px 0 0;
+	padding: 12px;
+}
+
+.imania-checkout .woocommerce-checkout-payment .payment_box::before {
+	display: none;
+}
+
+.imania-checkout .woocommerce-terms-and-conditions-wrapper {
+	color: #444;
+	font-size: 11px;
+	line-height: 1.4;
+	margin-top: 16px;
+}
+
+.imania-checkout__panel--summary .woocommerce-checkout-review-order-table,
+.imania-checkout__aside-card .woocommerce-checkout-review-order-table {
+	border: 0;
+	border-collapse: collapse;
+	margin: 0;
+	width: 100%;
+}
+
+.imania-checkout__panel--summary .woocommerce-checkout-review-order-table th,
+.imania-checkout__panel--summary .woocommerce-checkout-review-order-table td,
+.imania-checkout__aside-card .woocommerce-checkout-review-order-table th,
+.imania-checkout__aside-card .woocommerce-checkout-review-order-table td {
+	border: 0;
+	color: #2f2f2f;
+	font-size: 12px;
+	font-weight: 400;
+	line-height: 1.35;
+	padding: 8px 0;
+	text-align: left;
+	vertical-align: top;
+}
+
+.imania-checkout__panel--summary .woocommerce-checkout-review-order-table td,
+.imania-checkout__aside-card .woocommerce-checkout-review-order-table td {
+	text-align: right;
+}
+
+.imania-checkout__panel--summary .woocommerce-checkout-review-order-table thead,
+.imania-checkout__aside-card .woocommerce-checkout-review-order-table thead {
+	display: none;
+}
+
+.imania-checkout__panel--summary .woocommerce-checkout-review-order-table .order-total th,
+.imania-checkout__panel--summary .woocommerce-checkout-review-order-table .order-total td,
+.imania-checkout__aside-card .woocommerce-checkout-review-order-table .order-total th,
+.imania-checkout__aside-card .woocommerce-checkout-review-order-table .order-total td {
+	font-weight: 800;
+	padding-top: 18px;
+}
+
+.imania-checkout__place-order .place-order {
+	margin-top: 22px;
+	text-align: right;
+}
+
+.imania-checkout__aside {
+	position: sticky;
+	top: 24px;
+}
+
+.imania-checkout__aside-card {
+	background: #fff;
+	border-left: 1px solid #f7cf26;
+	border-radius: 16px;
+	box-shadow: 0 20px 34px rgba(18, 18, 18, 0.1);
+	padding: 32px 34px;
+}
+
+.imania-checkout__aside-card h2 {
+	font-size: 13px;
+	margin-bottom: 18px;
+}
+
+.imania-checkout__aside-card .cart_item {
+	display: none;
+}
+
+.imania-checkout__aside-content:empty::before {
+	background: #efefef;
+	border-radius: 7px;
+	content: "";
+	display: block;
+	height: 28px;
+}
+
+@media (max-width: 991.98px) {
+	.imania-checkout {
+		max-width: none;
+		padding-top: 24px;
+	}
+
+	.imania-checkout__header {
+		display: block;
+	}
+
+	.imania-checkout__header h1 {
+		font-size: 30px;
+		margin-bottom: 18px;
+	}
+
+	.imania-checkout__steps {
+		align-items: flex-start;
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
+
+	.imania-checkout__step {
+		align-items: flex-start;
+	}
+
+	.imania-checkout__step::after {
+		display: none;
+	}
+
+	.imania-checkout__layout {
+		grid-template-columns: 1fr;
+	}
+
+	.imania-checkout__main {
+		border-left: 0;
+		padding-left: 0;
+	}
+
+	.imania-checkout__fields .woocommerce-billing-fields__field-wrapper,
+	.imania-checkout__fields .woocommerce-shipping-fields__field-wrapper {
+		grid-template-columns: 1fr;
+	}
+
+	.imania-checkout__aside {
+		position: static;
+	}
+}

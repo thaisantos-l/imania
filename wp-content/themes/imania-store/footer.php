@@ -11,21 +11,32 @@
 
 ?>
 
-	<footer id="colophon" class="site-footer">
-		<div class="site-info">
-			<a href="<?php echo esc_url( __( 'https://wordpress.org/', 'imania-store' ) ); ?>">
-				<?php
-				/* translators: %s: CMS name, i.e. WordPress. */
-				printf( esc_html__( 'Proudly powered by %s', 'imania-store' ), 'WordPress' );
-				?>
-			</a>
-			<span class="sep"> | </span>
-				<?php
-				/* translators: 1: Theme name, 2: Theme author. */
-				printf( esc_html__( 'Theme: %1$s by %2$s.', 'imania-store' ), 'imania-store', '<a href="http://sunstudio.com.br">Sun Studio</a>' );
-				?>
-		</div><!-- .site-info -->
+	<footer id="colophon" class="site-footer imania-footer">
+		<div class="container">
+			<div class="row g-3 align-items-center">
+				<div class="col-12 col-md-6">
+					<p class="imania-footer__brand"><?php bloginfo( 'name' ); ?></p>
+					<p class="imania-footer__text"><?php bloginfo( 'description' ); ?></p>
+				</div>
+				<div class="col-12 col-md-6 text-md-end">
+					<p class="imania-footer__text">
+						<?php
+						echo esc_html(
+							sprintf(
+								/* translators: %s: current year. */
+								__( '© %s Todos os direitos reservados.', 'imania-store' ),
+								wp_date( 'Y' )
+							)
+						);
+						?>
+					</p>
+				</div>
+			</div>
+		</div>
 	</footer><!-- #colophon -->
+
+	<?php get_template_part('template-parts/modals/login-modal'); ?>
+	<?php get_template_part('template-parts/modals/cart-drawer'); ?>
 </div><!-- #page -->
 
 <?php wp_footer(); ?>

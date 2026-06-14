@@ -1,0 +1,433 @@
+/* Estrutura visual de header e footer. */
+.imania-header {
+	border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+	position: sticky;
+	top: 0;
+	background: var(--im-color-bg);
+	z-index: 90;
+}
+
+.imania-header-topbar {
+	background: var(--im-color-accent);
+	padding: 8px 14px;
+	text-align: center;
+}
+
+.imania-header-topbar p {
+	color: #000;
+	font-size: 1rem;
+	font-weight: 500;
+	line-height: 1.25;
+	margin: 0;
+}
+
+.imania-header-topbar p strong {
+	font-weight: 800;
+}
+
+.imania-header .container {
+	padding-bottom: 14px;
+	padding-top: 14px;
+}
+
+.imania-header-main {
+	min-height: 68px;
+}
+
+.imania-branding img {
+	max-height: 78px;
+	width: auto;
+}
+
+.imania-branding__name {
+	font-size: 2.4rem;
+	font-weight: 800;
+}
+
+.imania-navigation .menu {
+	align-items: center;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px 18px;
+	justify-content: center;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.imania-navigation .menu > .menu-item {
+	position: relative;
+}
+
+.imania-navigation .menu-item a {
+	color: var(--im-color-text);
+	display: inline-block;
+	font-size: 1rem;
+	font-weight: 500;
+	line-height: 1.25;
+	padding: 6px 0 8px;
+	white-space: nowrap;
+}
+
+.imania-navigation .menu-item-has-children > a {
+	padding-right: 18px;
+	position: relative;
+}
+
+.imania-navigation .menu-item-has-children > a::after {
+	border-left: 4px solid transparent;
+	border-right: 4px solid transparent;
+	border-top: 5px solid currentColor;
+	content: '';
+	position: absolute;
+	right: 0;
+	top: 50%;
+	transform: translateY(-35%);
+}
+
+.imania-navigation .current-menu-item > a,
+.imania-navigation .menu-item a:hover {
+	color: var(--im-color-primary);
+}
+
+.imania-navigation .sub-menu {
+	background: #fff;
+	border: 1px solid rgba(0, 0, 0, 0.12);
+	border-radius: 12px;
+	box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+	display: grid;
+	gap: 2px;
+	left: 0;
+	list-style: none;
+	margin: 0;
+	min-width: 230px;
+	opacity: 0;
+	padding: 8px 0;
+	position: absolute;
+	top: calc(100% + 8px);
+	transform: translateY(6px);
+	transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s ease;
+	visibility: hidden;
+	z-index: 150;
+}
+
+.imania-navigation .sub-menu li {
+	position: relative;
+}
+
+.imania-navigation .sub-menu a {
+	display: block;
+	font-size: 0.92rem;
+	font-weight: 500;
+	line-height: 1.35;
+	padding: 8px 14px;
+	white-space: normal;
+}
+
+.imania-navigation .menu-item-has-children:hover > .sub-menu,
+.imania-navigation .menu-item-has-children:focus-within > .sub-menu,
+.imania-navigation .menu-item-has-children.is-open-submenu > .sub-menu {
+	opacity: 1;
+	transform: translateY(0);
+	visibility: visible;
+}
+
+.imania-submenu-toggle {
+	background: transparent;
+	border: 0;
+	border-radius: 6px;
+	cursor: pointer;
+	display: none;
+	height: 24px;
+	padding: 0;
+	position: absolute;
+	right: 0;
+	top: 50%;
+	transform: translateY(-50%);
+	width: 18px;
+}
+
+.imania-submenu-toggle::before {
+	border-left: 4px solid transparent;
+	border-right: 4px solid transparent;
+	border-top: 5px solid currentColor;
+	content: '';
+	display: block;
+	margin: 0 auto;
+	transition: transform 0.18s ease;
+	width: 0;
+}
+
+.imania-navigation .menu-item-has-children.is-open-submenu > .imania-submenu-toggle::before {
+	transform: rotate(180deg);
+}
+
+.imania-header-actions {
+	align-items: center;
+	display: flex;
+	gap: 10px;
+}
+
+.imania-header-actions a,
+.imania-header-actions__btn {
+	align-items: center;
+	background: #fff;
+	border: 1px solid rgba(0, 0, 0, 0.14);
+	border-radius: 999px;
+	display: inline-flex;
+	height: 40px;
+	justify-content: center;
+	min-height: 40px;
+	min-width: 40px;
+	padding: 0;
+	position: relative;
+	width: 40px;
+}
+
+.imania-header-actions__btn {
+	cursor: pointer;
+}
+
+.imania-header-actions a img,
+.imania-header-actions__btn img {
+	display: block;
+	height: 24px;
+	width: 24px;
+}
+
+.imania-cart-count {
+	background: var(--im-color-danger);
+	border: 2px solid #fff;
+	border-radius: 999px;
+	color: #fff;
+	display: inline-flex;
+	font-size: 0.62rem;
+	font-weight: 800;
+	height: 18px;
+	justify-content: center;
+	line-height: 1;
+	min-width: 18px;
+	padding: 0 4px;
+	position: absolute;
+	right: -4px;
+	top: -8px;
+	z-index: 2;
+}
+
+.imania-menu-toggle {
+	background: transparent;
+	border: 1px solid rgba(0, 0, 0, 0.16);
+	border-radius: 8px;
+	display: inline-flex;
+	flex-direction: column;
+	gap: 4px;
+	padding: 8px;
+}
+
+.imania-menu-toggle span {
+	background: var(--im-color-text);
+	border-radius: 999px;
+	display: block;
+	height: 2px;
+	width: 20px;
+}
+
+.imania-footer {
+	background: #0f0f0f;
+	color: #fff;
+	padding: var(--im-space-6) 0;
+}
+
+.imania-footer__brand {
+	font-size: 1.2rem;
+	font-weight: 800;
+	margin: 0 0 8px;
+}
+
+.imania-footer__text {
+	color: rgba(255, 255, 255, 0.74);
+	margin: 0;
+}
+
+.imania-modal-open {
+	overflow: hidden;
+}
+
+.imania-modal {
+	inset: 0;
+	position: fixed;
+	z-index: 9999;
+}
+
+.imania-modal[hidden] {
+	display: none;
+}
+
+.imania-modal__overlay {
+	background: rgba(0, 0, 0, 0.45);
+	inset: 0;
+	position: absolute;
+}
+
+.imania-modal__dialog {
+	background: #fff;
+	border-radius: 14px;
+	box-shadow: 0 16px 50px rgba(0, 0, 0, 0.2);
+	left: 50%;
+	max-width: 520px;
+	padding: 26px 22px 22px;
+	position: relative;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	width: calc(100% - 24px);
+	z-index: 2;
+}
+
+.imania-modal__close {
+	background: transparent;
+	border: 0;
+	color: #000;
+	cursor: pointer;
+	font-size: 2.1rem;
+	line-height: 1;
+	padding: 0;
+	position: absolute;
+	right: 14px;
+	top: 8px;
+}
+
+.imania-modal__dialog h2 {
+	font-size: 1.6rem;
+	font-weight: 800;
+	margin: 0 0 8px;
+}
+
+.imania-modal__dialog p {
+	color: var(--im-color-muted);
+	font-size: 1rem;
+	margin: 0 0 18px;
+}
+
+.imania-modal__actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+}
+
+@media (max-width: 991.98px) {
+	.imania-header-topbar p {
+		font-size: 0.92rem;
+	}
+
+	.imania-header .container {
+		padding-bottom: 12px;
+		padding-top: 12px;
+	}
+
+	.imania-branding img {
+		max-height: 62px;
+	}
+
+	.imania-navigation .menu {
+		justify-content: flex-start;
+	}
+
+	.imania-navigation .menu-item a {
+		font-size: 0.98rem;
+		padding: 6px 0;
+	}
+
+	.imania-navigation .menu-item-has-children > a {
+		padding-right: 30px;
+	}
+
+	.imania-navigation .menu-item-has-children > a::after {
+		display: none;
+	}
+
+	.imania-submenu-toggle {
+		display: inline-flex;
+	}
+
+	.imania-navigation .sub-menu {
+		border: 0;
+		border-left: 2px solid rgba(0, 0, 0, 0.14);
+		border-radius: 0;
+		box-shadow: none;
+		display: none;
+		gap: 0;
+		margin: 4px 0 0;
+		min-width: 0;
+		opacity: 1;
+		padding: 2px 0 2px 12px;
+		position: static;
+		transform: none;
+		transition: none;
+		visibility: visible;
+	}
+
+	.imania-navigation .menu-item-has-children:hover > .sub-menu,
+	.imania-navigation .menu-item-has-children:focus-within > .sub-menu {
+		display: none;
+	}
+
+	.imania-navigation .menu-item-has-children.is-open-submenu > .sub-menu {
+		display: grid;
+	}
+
+	.imania-navigation .sub-menu a {
+		font-size: 0.9rem;
+		padding: 7px 0;
+	}
+}
+
+@media (max-width: 767.98px) {
+	.imania-header-topbar p {
+		font-size: 1rem;
+	}
+
+	.imania-modal__dialog h2 {
+		font-size: 1.3rem;
+	}
+}
+
+/* Cart badge is scoped to the cart trigger so it does not affect wishlist count. */
+.imania-header-actions [data-imania-cart-drawer-trigger] {
+	position: relative;
+}
+
+.imania-header-actions [data-imania-cart-count] {
+	align-items: center;
+	background: var(--im-color-danger);
+	border: 2px solid #fff;
+	border-radius: 999px;
+	color: #fff;
+	display: inline-flex;
+	font-size: 0.62rem;
+	font-weight: 800;
+	height: 18px;
+	justify-content: center;
+	line-height: 1;
+	min-width: 18px;
+	padding: 0 4px;
+	position: absolute;
+	right: -4px;
+	top: -8px;
+	z-index: 2;
+}
+
+.imania-header-actions [data-imania-cart-drawer-trigger] {
+	background: #fff;
+	border: 1px solid rgba(0, 0, 0, 0.14);
+	border-radius: 999px;
+	height: 40px;
+	min-height: 40px;
+	min-width: 40px;
+	padding: 0;
+	width: 40px;
+}
+
+.imania-header-actions [data-imania-cart-drawer-trigger] img {
+	height: 24px;
+	width: 24px;
+}
