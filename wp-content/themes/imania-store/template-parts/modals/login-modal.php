@@ -5,8 +5,10 @@
  * @package Imania_Store
  */
 
-$login_url = function_exists('imania_store_get_login_to_price_url') ? imania_store_get_login_to_price_url() : wp_login_url();
-$register_url = function_exists('wc_get_page_permalink') ? wc_get_page_permalink('myaccount') : wp_registration_url();
+$login_url = function_exists('imania_store_get_login_to_price_url')
+	? imania_store_get_login_to_price_url()
+	: (function_exists('imania_store_get_my_account_url') ? imania_store_get_my_account_url() : home_url('/conta/'));
+$register_url = function_exists('imania_store_get_my_account_url') ? imania_store_get_my_account_url() : home_url('/conta/');
 ?>
 <div class="imania-modal" data-imania-login-modal hidden aria-hidden="true">
 	<div class="imania-modal__overlay" data-imania-modal-close></div>

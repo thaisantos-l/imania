@@ -28,7 +28,7 @@ function imania_store_get_current_url() {
  * @return string
  */
 function imania_store_get_login_to_price_url() {
-	$my_account = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'myaccount' ) : wp_login_url();
+	$my_account = function_exists( 'imania_store_get_my_account_url' ) ? imania_store_get_my_account_url() : home_url( '/conta/' );
 	$current    = imania_store_get_current_url();
 	$encoded    = base64_encode( $current ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
 
