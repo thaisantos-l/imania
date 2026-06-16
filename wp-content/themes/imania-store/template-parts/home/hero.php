@@ -7,21 +7,25 @@
 
 $banner_dir      = trailingslashit( get_template_directory() ) . 'assets/img/home';
 $banner_base_url = trailingslashit( get_template_directory_uri() ) . 'assets/img/home';
-$slides          = array();
+$banner_files    = array(
+	'banner-1-home.jpg',
+	'banner-2-home.png',
+);
+$slides          = array_filter(
+	array_map(
+		static function ( $filename ) use ( $banner_dir, $banner_base_url ) {
+			if ( ! is_readable( trailingslashit( $banner_dir ) . $filename ) ) {
+				return null;
+			}
 
-if ( is_dir( $banner_dir ) ) {
-	$files = glob( $banner_dir . '/*.{jpg,jpeg,png,webp,avif}', GLOB_BRACE );
-	if ( ! empty( $files ) ) {
-		sort( $files );
-		foreach ( $files as $file ) {
-			$filename = wp_basename( $file );
-			$slides[] = array(
+			return array(
 				'url' => trailingslashit( $banner_base_url ) . rawurlencode( $filename ),
 				'alt' => trim( ucwords( str_replace( array( '-', '_' ), ' ', pathinfo( $filename, PATHINFO_FILENAME ) ) ) ),
 			);
-		}
-	}
-}
+		},
+		$banner_files
+	)
+);
 ?>
 <div class="imania-home-banner" data-imania-banner aria-label="<?php esc_attr_e( 'Banners rotativos da home', 'imania-store' ); ?>">
 	<?php if ( ! empty( $slides ) ) : ?>
