@@ -8,12 +8,12 @@
 }
 
 .imania-home-banner {
-	background: #d9d9d9;
+	background: transparent;
 	position: relative;
 }
 
 .imania-home-banner__swiper {
-	min-height: clamp(240px, 44vw, 560px);
+	aspect-ratio: 2560 / 742;
 	position: relative;
 }
 
@@ -510,13 +510,13 @@ gap: 4px;
 
 @media (max-width: 991.98px) {
 	.imania-home-banner__swiper {
-		min-height: clamp(220px, 40vw, 420px);
+		aspect-ratio: 2560 / 742;
 	}
 }
 
 @media (max-width: 767.98px) {
 	.imania-home-banner__swiper {
-		min-height: clamp(180px, 58vw, 320px);
+		aspect-ratio: 2560 / 742;
 	}
 
 	.imania-home-banner__pagination.swiper-pagination-bullets {
