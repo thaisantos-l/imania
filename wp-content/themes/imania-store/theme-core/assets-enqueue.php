@@ -77,7 +77,7 @@ function imania_store_scripts()
 				'ajaxUrl' => admin_url('admin-ajax.php'),
 				'nonce' => wp_create_nonce('imania_single_product_nonce'),
 				'isLoggedIn' => is_user_logged_in(),
-				'loginUrl' => function_exists('imania_store_get_login_to_price_url') ? imania_store_get_login_to_price_url() : wp_login_url(),
+				'loginUrl' => function_exists('imania_store_get_login_to_price_url') ? imania_store_get_login_to_price_url() : imania_store_get_my_account_url(),
 				'messages' => array(
 					'loading' => __('Processando...', 'imania-store'),
 					'genericError' => __('Nao foi possivel adicionar o produto agora. Tente novamente.', 'imania-store'),
@@ -108,7 +108,7 @@ function imania_store_scripts()
 		wp_enqueue_script('imania-store-checkout', get_template_directory_uri() . '/assets/js/checkout.js', array('jquery', 'wc-checkout'), $checkout_js_ver, true);
 	}
 
-	$login_url = function_exists('imania_store_get_login_to_price_url') ? imania_store_get_login_to_price_url() : wp_login_url();
+	$login_url = function_exists('imania_store_get_login_to_price_url') ? imania_store_get_login_to_price_url() : imania_store_get_my_account_url();
 	$wishlist_url = function_exists('wc_get_account_endpoint_url') ? wc_get_account_endpoint_url('wishlist') : home_url('/');
 	wp_localize_script(
 		'imania-store-theme',
@@ -143,7 +143,7 @@ function imania_store_scripts()
 	);
 
 	if (function_exists('is_account_page') && is_account_page()) {
-		$account_base_url = function_exists('wc_get_page_permalink') ? wc_get_page_permalink('myaccount') : home_url('/');
+		$account_base_url = imania_store_get_my_account_url();
 		wp_localize_script(
 			'imania-store-theme',
 			'imaniaAccount',

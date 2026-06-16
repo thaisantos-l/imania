@@ -73,9 +73,7 @@
 
 					<div class="col-lg-2 d-none d-lg-flex justify-content-end">
 						<?php
-						$my_account_url = is_user_logged_in()
-							? (function_exists('wc_get_page_permalink') ? wc_get_page_permalink('myaccount') : home_url('/minha-conta/'))
-							: (function_exists('imania_store_get_conta_url') ? imania_store_get_conta_url() : home_url('/conta/'));
+						$my_account_url = function_exists('imania_store_get_my_account_url') ? imania_store_get_my_account_url() : home_url('/conta/');
 						$cart_url = function_exists('wc_get_cart_url') ? wc_get_cart_url() : home_url('/');
 						$search_url = function_exists('wc_get_page_permalink') ? wc_get_page_permalink('shop') : home_url('/');
 						$favorites_url = function_exists('wc_get_account_endpoint_url') ? wc_get_account_endpoint_url('wishlist') : home_url('/');

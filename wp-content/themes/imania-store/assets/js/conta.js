@@ -98,7 +98,7 @@
 		if (config.myAccountUrl) {
 			return config.myAccountUrl;
 		}
-		return '/minha-conta/';
+		return '/conta/';
 	}
 
 	function requestAuth(payload) {

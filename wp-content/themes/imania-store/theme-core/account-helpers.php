@@ -9,7 +9,7 @@
  */
 function imania_store_add_conta_body_class($classes)
 {
-	if (imania_store_is_conta_page()) {
+	if (imania_store_is_conta_page() && !is_user_logged_in()) {
 		$classes[] = 'imania-page-conta';
 	}
 	if (function_exists('is_product') && is_product()) {
@@ -27,7 +27,7 @@ add_filter('body_class', 'imania_store_add_conta_body_class');
  */
 function imania_store_get_my_account_url()
 {
-	return function_exists('wc_get_page_permalink') ? wc_get_page_permalink('myaccount') : home_url('/');
+	return imania_store_get_conta_url();
 }
 
 /**
@@ -59,18 +59,42 @@ function imania_store_is_conta_page()
 }
 
 /**
- * Redirect logged users from /conta/ to /minha-conta/.
+ * Redirect legacy /minha-conta/ URLs to the canonical /conta/ account URL.
  */
-function imania_store_redirect_logged_user_from_conta()
+function imania_store_redirect_legacy_my_account_url()
 {
-	if (!imania_store_is_conta_page() || !is_user_logged_in()) {
+	$request_uri = isset($_SERVER['REQUEST_URI']) ? wp_unslash($_SERVER['REQUEST_URI']) : '';
+	if (!is_string($request_uri) || '' === $request_uri) {
 		return;
 	}
 
-	wp_safe_redirect(imania_store_get_my_account_url());
+	$request_path = (string) wp_parse_url($request_uri, PHP_URL_PATH);
+	$home_path = (string) wp_parse_url(home_url('/'), PHP_URL_PATH);
+	$home_path = '/' . trim($home_path, '/');
+	$home_path = '/' === $home_path ? '' : $home_path;
+
+	$relative_path = $request_path;
+	if ('' !== $home_path && 0 === strpos($relative_path, $home_path)) {
+		$relative_path = substr($relative_path, strlen($home_path));
+	}
+
+	$relative_path = '/' . ltrim($relative_path, '/');
+	if (!preg_match('#^/minha-conta(?:/|$)#', $relative_path)) {
+		return;
+	}
+
+	$suffix = preg_replace('#^/minha-conta#', '', $relative_path, 1);
+	$target = trailingslashit(imania_store_get_conta_url()) . ltrim((string) $suffix, '/');
+
+	$query = (string) wp_parse_url($request_uri, PHP_URL_QUERY);
+	if ('' !== $query) {
+		$target .= (false === strpos($target, '?') ? '?' : '&') . $query;
+	}
+
+	wp_safe_redirect($target, 301);
 	exit;
 }
-add_action('template_redirect', 'imania_store_redirect_logged_user_from_conta', 1);
+add_action('template_redirect', 'imania_store_redirect_legacy_my_account_url', 0);
 
 /**
  * Allowed custom account endpoints.
